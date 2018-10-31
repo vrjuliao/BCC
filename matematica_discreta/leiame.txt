@@ -1,0 +1,12 @@
+Nome: Vinicius Juliao Ramos
+Matricula: 2018054630
+Instrucoes de execucao do progama rb.c
+
+1 - O programa foi desenvolvido numa plataforma GNU/Linux Ubuntu 16.04 LTS e compilado através do GCC, portanto, para um resultado similar ao obtido, o programa deve ser executado num sistema equivalente.
+2 - Descompacte o arquivo rb.c
+3 - Usando o terminal de comandos, vá até o diretório em que rb.c foi descompactado
+4 - Execute o comando de compilacao "gcc rb.c -o <DIRETORIO/NOME DO ARQUIVO EXECUTAVEL>"
+5 - No mesmo diretorio em que o aquivo de formato ".o" foi criado, coloque um arquivo contendo a relacao. O nome e o formato do arquivo relacional, obrigatoriamente deve ser "relacao.txt".
+6 - Certifique-se que ao final de cada linha do arquivo nao exista nenhum outro caracter que possa causar possiveis erros (como caracter de espaco ou algum caracter diferente de algarismos numéricos). A ultima linha do arquivo deve ser uma linha contendo uma tupla, certifique-se tambem de nao deixar qualquer espaco ou linha em branco (\n ou ' ').
+7 - Assim como no exemplo enviado com a documentacao do trabalho pratico, a primeira linha deve conter um conjunto minimo, ou seja, sem elementos repetidos.
+8 - Estando no diretorio que contem o aquivo ".o" e "relacao.txt" execute o comando "./<NOME DO ARQUIVO EXECUTAVEL>" para que o programa seja inicializado.
