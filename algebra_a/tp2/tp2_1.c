@@ -33,16 +33,6 @@ int talvez_primo(const mpz_t a, const mpz_t n,
 	return value;
 }
 
-void numero_aleatorio(mpz_t r, const mpz_t n, gmp_randstate_t rnd) {
-	mp_bitcnt_t num_bits = mpz_sizeinbase(n, 2);
-	do {
-		mpz_urandomb(r, rnd, num_bits);
-	} while (!(mpz_cmp_ui(r, 1) >= 0 && mpz_cmp(r, n) <= 0));
-}
-
-int provavelmente_primo(const mpz_t n, unsigned int iter, gmp_randstate_t rnd){
-	
-}
 
 int main(){
 	mpz_t resto, a, n, n1, q;
@@ -60,5 +50,10 @@ int main(){
 	printf("%d \n", i);
 	//printf("qualquer coisa \n");
 	//getchar();
+	mpz_clear(resto);
+	mpz_clear(a);
+	mpz_clear(n);
+	mpz_clear(n1);
+	mpz_clear(q);
 	return 1;
 }
