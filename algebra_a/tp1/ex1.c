@@ -75,8 +75,72 @@ int inverso_modular(mpz_t r, const mpz_t a, const mpz_t n){
 	return 0;
 }
 
+void exp_binaria(mpz_t r, const mpz_t b, const mpz_t e, const mpz_t n){
+	mpz_t real_number, aux, pows, half_pow, new_pow, base2, aux_pow;
+	mpz_t current_powered;
+	mpz_init_set(real_number, b);
+	//mpz_init_set_ui(wait_number, 1);
+	mpz_init_set_ui(pows, 1);
+	mpz_init(aux_pow);
+	mpz_init(half_pow);
+	mpz_init(base2);
+	mpz_init(aux);
+
+
+	/*if(mpz_cmp_ui(b, 0) < 0){
+		mpz_init(real_number);
+		int has_modular_inverse;
+		has_modular_inverse = inverso_modular(real_number, b, n);
+		if(!has_modular_inverse) 
+			exit(1);
+	} else {
+		mpz_init_set(real_number, b);
+	}*/
+	mpz_init_set(new_pow, e);
+	mpz_init(current_powered);
+
+	while(mpz_cmp(e, pows) > 0){
+
+		mpz_tdiv_q_ui(half_pow, new_pow, 2);
+		mpz_set_ui(base2, 1);
+		
+		mpz_set(current_powered, real_number);
+
+		while(mpz_cmp(half_pow, base2) > 0){
+			mpz_set(aux_pow, base2);
+			mpz_mul_ui(base2, aux_pow, 2);
+
+			mpz_mul(aux, current_powered, current_powered);
+			//mpz_tdiv_r(r, aux, n);
+			mpz_tdiv_r(current_powered, aux, n);
+
+			mpz_set(aux_pow, pows);
+			mpz_mul_ui(pows, aux_pow, 2);
+			//mpz_set(current_powered, r);
+		}
+//		mpz_set(aux, r);
+		mpz_mul(aux, current_powered, r);
+		mpz_tdiv_r(r, aux, n);
+		//return;
+		mpz_tdiv_r(new_pow, e, pows);
+	} 
+	if(!mpz_cmp_ui(new_pow, 1)){
+		mpz_mul(aux, r, real_number);
+		mpz_tdiv_r(r, aux, n);
+	}
+
+	mpz_clear(real_number);
+	mpz_clear(aux);
+	mpz_clear(pows);
+	mpz_clear(half_pow);
+	mpz_clear(new_pow);
+	mpz_clear(base2);
+	mpz_clear(aux_pow);
+	mpz_clear(current_powered);
+}
+
 int main(){
-	mpz_t g, x, y;
+	/*mpz_t g, x, y;
 	mpz_t a, b, n;
 
 	int inv1, inv2;
@@ -103,5 +167,19 @@ int main(){
 	mpz_clear(g);
 	mpz_clear(a);
 	mpz_clear(b);
+	mpz_clear(n);*/
+
+	mpz_t r, b, e, n;
+	mpz_init_set_ui(b, 2);
+	mpz_init_set_ui(e, 15);
+	mpz_init_set_ui(n, 10);
+	mpz_init(r);
+
+	exp_binaria(r, b , e, n);
+	gmp_printf ("\n%Zd\n", r);
+
+	mpz_clear(r);
+	mpz_clear(b);
+	mpz_clear(e);
 	mpz_clear(n);
 }
