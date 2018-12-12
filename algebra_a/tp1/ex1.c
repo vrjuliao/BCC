@@ -76,17 +76,16 @@ int inverso_modular(mpz_t r, const mpz_t a, const mpz_t n){
 }
 
 void exp_binaria(mpz_t r, const mpz_t b, const mpz_t e, const mpz_t n){
-	mpz_t real_number, aux, pows, half_pow, new_pow, base2, aux_pow;
-	mpz_t current_powered;
-	mpz_init_set(real_number, b);
-	//mpz_init_set_ui(wait_number, 1);
-	mpz_init_set_ui(pows, 1);
-	mpz_init(aux_pow);
-	mpz_init(half_pow);
-	mpz_init(base2);
+	mpz_t aux, base2_exp, new_exp;
+	mpz_t current_base, current_exp;
+	
+
+	mpz_set_ui(r, 1);
+	mpz_init_set_ui(current_exp, 0);
+	mpz_init(new_exp);
+	mpz_init(base2_exp);
+	mpz_init(current_base);
 	mpz_init(aux);
-
-
 	/*if(mpz_cmp_ui(b, 0) < 0){
 		mpz_init(real_number);
 		int has_modular_inverse;
@@ -96,47 +95,60 @@ void exp_binaria(mpz_t r, const mpz_t b, const mpz_t e, const mpz_t n){
 	} else {
 		mpz_init_set(real_number, b);
 	}*/
-	mpz_init_set(new_pow, e);
-	mpz_init(current_powered);
+	
+	// new_exp = e / 2
+	//mpz_tdiv_q_ui(new_exp, e, 2);
 
-	while(mpz_cmp(e, pows) > 0){
+	// rest_new_exp = e - new_exp;
+		//mpz_sub(rest_new_exp, e, new_exp);
 
-		mpz_tdiv_q_ui(half_pow, new_pow, 2);
-		mpz_set_ui(base2, 1);
+	//while(current_exp != e)
+	while(mpz_cmp(current_exp, e) < 0){
+		//new_exp = (e - current_exp)/2;
+		mpz_sub(aux, e, current_exp);
+		mpz_tdiv_q_ui(new_exp, aux, 2);
+
+		//base2 = 1
+		mpz_set_ui(base2_exp, 1);
+
+		//current_base = b;
+		mpz_set(current_base, b);
+		//while(current_base2_exp < new_exp)
+	// gmp_printf ("-----------segundo while-----------\n");
+	// gmp_printf ("new_exp: %Zd\n", new_exp);
+		//base_aux = 1;
+		//mpz_set_ui(base_aux, 1);
 		
-		mpz_set(current_powered, real_number);
+		//do{
+		while(mpz_cmp(base2_exp, new_exp) <= 0){
+			mpz_mul(aux, current_base, current_base);
+			mpz_set(current_base, aux);
+			//mpz_set(aux, r);
+			//mpz_mul(r, current_base, aux);
+	// gmp_printf ("current_base: %Zd\n", current_base);
 
-		while(mpz_cmp(half_pow, base2) > 0){
-			mpz_set(aux_pow, base2);
-			mpz_mul_ui(base2, aux_pow, 2);
+			//base2_exp *= 2;
+			mpz_set(aux, base2_exp);
+			mpz_mul_ui(base2_exp, aux, 2);
+		}// while(mpz_cmp(base2_exp, new_exp) < 0);
 
-			mpz_mul(aux, current_powered, current_powered);
-			//mpz_tdiv_r(r, aux, n);
-			mpz_tdiv_r(current_powered, aux, n);
+		mpz_set(aux, r);
+		mpz_mul(r, current_base, aux);
+	// gmp_printf ("r: %Zd\n", r);
 
-			mpz_set(aux_pow, pows);
-			mpz_mul_ui(pows, aux_pow, 2);
-			//mpz_set(current_powered, r);
-		}
-//		mpz_set(aux, r);
-		mpz_mul(aux, current_powered, r);
-		mpz_tdiv_r(r, aux, n);
-		//return;
-		mpz_tdiv_r(new_pow, e, pows);
-	} 
-	if(!mpz_cmp_ui(new_pow, 1)){
-		mpz_mul(aux, r, real_number);
-		mpz_tdiv_r(r, aux, n);
+		//current_exp += base2_exp;
+		mpz_set(aux, current_exp);
+		mpz_add(current_exp, aux, base2_exp);
+	//gmp_printf ("current_exp: %Zd\n", current_exp);
 	}
 
-	mpz_clear(real_number);
+	gmp_printf ("\n");
+
+	mpz_clear(current_exp);
+	mpz_clear(new_exp);
+	mpz_clear(base2_exp);
+	mpz_clear(current_base);
 	mpz_clear(aux);
-	mpz_clear(pows);
-	mpz_clear(half_pow);
-	mpz_clear(new_pow);
-	mpz_clear(base2);
-	mpz_clear(aux_pow);
-	mpz_clear(current_powered);
 }
 
 int main(){
@@ -170,8 +182,8 @@ int main(){
 	mpz_clear(n);*/
 
 	mpz_t r, b, e, n;
-	mpz_init_set_ui(b, 2);
-	mpz_init_set_ui(e, 15);
+	mpz_init_set_ui(b, 3);
+	mpz_init_set_ui(e, 19);
 	mpz_init_set_ui(n, 10);
 	mpz_init(r);
 
