@@ -46,6 +46,44 @@ void gera_chaves(mpz_t n, mpz_t e, mpz_t d, gmp_randstate_t rnd){
 	mpz_clear(phi);
 }
 
+void codifica(mpz_t r, const char *str){
+	int length, index, index_pow;
+	unsigned long int ascii_number;
+
+	mpz_t gmp_ascii_number, gmp_index_char, aux;
+	mpz_init(gmp_ascii_number);
+	mpz_init(aux);
+	mpz_init_set_ui(gmp_index_char, 1);
+	mpz_set_ui(r, 0);
+
+	length = sizeof(str) / sizeof(char);
+
+	for(index = 0; index < length; index++){
+		ascii_number = *(str + index);
+		//mpz_set_ui(gmp_ascii_number, ascii_number);
+		mpz_mul_ui(aux, gmp_ascii_number, ascii_number);
+
+		mpz_set(gmp_ascii_number, r);
+		mpz_add(r, gmp_ascii_number, aux);
+
+		mpz_set(aux, gmp_index_char);
+		mpz_mul_ui(gmp_index_char, aux, 256);
+	}
+
+	mpz_clear(gmp_ascii_number);
+	mpz_clear(aux);
+	mpz_clear(gmp_index_char);
+}
+
+char *decodifica (const mpz_t n){
+	char *str;
+	str = (char *)malloc(1 * sizeof(char));
+	
+	for(){
+
+	}
+}
+
 int main(){
 	mpz_t n, e, d;
 	mpz_init(n);
