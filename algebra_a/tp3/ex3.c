@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <gmp.h>
+#include <string.h>
 
 void gera_chaves(mpz_t n, mpz_t e, mpz_t d, gmp_randstate_t rnd){
 	mpz_t prime_p, prime_q, phi;
@@ -27,7 +28,7 @@ void gera_chaves(mpz_t n, mpz_t e, mpz_t d, gmp_randstate_t rnd){
 	do {
 		primo_aleatorio(e, 2048, rnd);
 		//mpz_urandomm(e, rnd, phi);
-		gmp_printf ("e: %Zd\n", e);
+		// gmp_printf ("e: %Zd\n", e);
 	} while(!(inverso_modular(d, e, phi)) && (mpz_cmp_ui(e, 65537) < 0) && (mpz_cmp(e, phi) > 0));
 
 
@@ -56,12 +57,14 @@ void codifica(mpz_t r, const char *str){
 	mpz_init_set_ui(gmp_index_char, 1);
 	mpz_set_ui(r, 0);
 
-	length = sizeof(str) / sizeof(char);
+	length = strlen(str);
 
-	for(index = 0; index < length; index++){
+	for(index = 0; index <= length; index++){
 		ascii_number = *(str + index);
-		//mpz_set_ui(gmp_ascii_number, ascii_number);
-		mpz_mul_ui(aux, gmp_ascii_number, ascii_number);
+		// gmp_printf ("char: %c, ascii_number: %ld\n", *(str+index), ascii_number);
+		mpz_set_ui(gmp_ascii_number, ascii_number);
+		mpz_mul(aux, gmp_ascii_number, gmp_index_char);
+		// gmp_printf ("ascII number position: %Zd\n", aux);
 
 		mpz_set(gmp_ascii_number, r);
 		mpz_add(r, gmp_ascii_number, aux);
@@ -76,26 +79,92 @@ void codifica(mpz_t r, const char *str){
 }
 
 char *decodifica (const mpz_t n){
-	char *str;
-	str = (char *)malloc(1 * sizeof(char));
-	
-	for(){
+	char *str, *straux;
+	mpz_t value, aux, current_rest, last_rest, pow256, pow256_plus;
+	mpz_init_set_ui(current_rest, 0);
+	mpz_init_set_ui(last_rest, 0);
+	mpz_init_set(value, n);
+	mpz_init_set_ui(pow256, 1);
+	mpz_init_set_ui(pow256_plus, 256);
+	mpz_init(aux);
 
+	// str = (char *)malloc(1 * sizeof(char));
+	str = (char *)malloc(500 * sizeof(char));
+	int max_index_of_string;
+	max_index_of_string = 0;
+	mpz_tdiv_r(current_rest, n, pow256_plus);
+	mpz_sub(aux, current_rest, last_rest);
+	mpz_tdiv_q(value, aux, pow256);
+	str[max_index_of_string] = mpz_get_ui(value);
+	// gmp_printf ("value string %c\n", str[max_index_of_string]);
+	
+	for(max_index_of_string = 1; mpz_cmp(current_rest, n); max_index_of_string++){
+		mpz_set(pow256, pow256_plus);
+		mpz_mul_ui(pow256_plus, pow256, 256);
+		mpz_tdiv_r(current_rest, n, pow256_plus);
+		mpz_sub(aux, current_rest, last_rest);
+		mpz_tdiv_q(value, aux, pow256);
+		str[max_index_of_string] = mpz_get_ui(value);
+		//straux = (char *)realloc(str, max_index_of_string+1 * sizeof(char));
+		//str = straux;
+		//gmp_printf ("value: %Zd\n", value);
+		str[max_index_of_string] = mpz_get_ui(value);
+		// gmp_printf ("value string %c\n", str[max_index_of_string]);
 	}
+	straux = (char *)realloc(str, max_index_of_string+1 * sizeof(char));
+	str = straux;
+	//gmp_printf ("value: %Zd\n", value);
+	str[max_index_of_string] = '\0';
+	/*
+	mpz_tdiv_r_ui(rest, n, 256*256*256);
+	gmp_printf ("\n\n numero: %Zd\n", rest);
+	mpz_clear(rest);
+	*/
+	mpz_clear(current_rest);
+	mpz_clear(last_rest);
+	mpz_clear(value);
+	mpz_clear(pow256);
+	mpz_clear(pow256_plus);
+	mpz_clear(aux);
+
+	return str;
+}
+
+
+void criptografa(mpz_t C, const mpz_t M, const mpz_t n, const mpz_t e){
+	exp_binaria(C, M, e, n);
+}
+
+void descriptografa(mpz_t M, const mpz_t C, const mpz_t n, const mpz_t d){
+	exp_binaria(M, C, d, n);
 }
 
 int main(){
-	mpz_t n, e, d;
+	mpz_t n, e, d, M, C;
 	mpz_init(n);
 	mpz_init(e);
 	mpz_init(d);
+	mpz_init(M);
+	mpz_init(C);
 	gmp_randstate_t rnd;
 	gmp_randinit_default(rnd);
 	gmp_randseed_ui(rnd, 9879543213);
 	gera_chaves(n, e, d, rnd);
+	codifica(M, "hr5VF4+rSGJiP1cKLMFphi0s5FeDfnjH/7JeeJzS");
+	gmp_printf ("\nMensagem codificada: %Zd\n", M);
 
-	gmp_printf ("\nn: %Zd  \ne: %Zd  \nd: %Zd\n", n, e, d);
+	criptografa(C, M, n, e);
+	gmp_printf ("\nMensagem criptografa: %Zd\n", C);
+	
+	descriptografa(M, C, n, d);
+	gmp_printf ("\nMensagem descriptografa: %Zd\n", M);
+
+	char* str;
+	str = decodifica(M);
+	gmp_printf ("Mensagem original: %s\n", str);
 	mpz_clear(n);
 	mpz_clear(e);
 	mpz_clear(d);
+	mpz_clear(M);
+	mpz_clear(C);
 }
