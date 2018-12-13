@@ -122,7 +122,8 @@ void exp_binaria(mpz_t r, const mpz_t b, const mpz_t e, const mpz_t n){
 		//do{
 		while(mpz_cmp(base2_exp, new_exp) <= 0){
 			mpz_mul(aux, current_base, current_base);
-			mpz_set(current_base, aux);
+			mpz_tdiv_r(current_base, aux, n);
+
 			//mpz_set(aux, r);
 			//mpz_mul(r, current_base, aux);
 	// gmp_printf ("current_base: %Zd\n", current_base);
@@ -134,6 +135,8 @@ void exp_binaria(mpz_t r, const mpz_t b, const mpz_t e, const mpz_t n){
 
 		mpz_set(aux, r);
 		mpz_mul(r, current_base, aux);
+		mpz_set(aux, r);
+		mpz_tdiv_r(r, aux, n);
 	// gmp_printf ("r: %Zd\n", r);
 
 		//current_exp += base2_exp;
@@ -142,7 +145,7 @@ void exp_binaria(mpz_t r, const mpz_t b, const mpz_t e, const mpz_t n){
 	//gmp_printf ("current_exp: %Zd\n", current_exp);
 	}
 
-	gmp_printf ("\n");
+	// gmp_printf ("\n");
 
 	mpz_clear(current_exp);
 	mpz_clear(new_exp);
@@ -151,47 +154,47 @@ void exp_binaria(mpz_t r, const mpz_t b, const mpz_t e, const mpz_t n){
 	mpz_clear(aux);
 }
 
-int main(){
-	/*mpz_t g, x, y;
-	mpz_t a, b, n;
+/*int main(){
+	// mpz_t g, x, y;
+	// mpz_t a, b, n;
 
-	int inv1, inv2;
+	// int inv1, inv2;
 
-	mpz_init_set_ui(b, 7);
-	mpz_init_set_ui(a, 13);
-	mpz_init_set_ui(n, 0);
+	// mpz_init_set_ui(b, 7);
+	// mpz_init_set_ui(a, 13);
+	// mpz_init_set_ui(n, 0);
 	
-	mpz_init(x);
-	mpz_init(y);
-	mpz_init(g);
+	// mpz_init(x);
+	// mpz_init(y);
+	// mpz_init(g);
 
-	//mpz_gcdext(g, x, y, a, b);
-	//mdc_estendido(g, x, y, a, b);
-	//gmp_printf ("x: %Zd | y: %Zd | g: %Zd\n", x, y, g);
-	inv1 = inverso_modular(g, a, n);
-	inv2 = mpz_invert (x, a, n);
+	// //mpz_gcdext(g, x, y, a, b);
+	// //mdc_estendido(g, x, y, a, b);
+	// //gmp_printf ("x: %Zd | y: %Zd | g: %Zd\n", x, y, g);
+	// inv1 = inverso_modular(g, a, n);
+	// inv2 = mpz_invert (x, a, n);
 
-	if(inv1>0)
-	 	gmp_printf ("\n%Zd - %Zd | %Zd %Zd\n", g, x, a, n);
+	// if(inv1>0)
+	//  	gmp_printf ("\n%Zd - %Zd | %Zd %Zd\n", g, x, a, n);
 
-	mpz_clear(x);
-	mpz_clear(y);
-	mpz_clear(g);
-	mpz_clear(a);
-	mpz_clear(b);
-	mpz_clear(n);*/
+	// mpz_clear(x);
+	// mpz_clear(y);
+	// mpz_clear(g);
+	// mpz_clear(a);
+	// mpz_clear(b);
+	// mpz_clear(n);
 
 	mpz_t r, b, e, n;
-	mpz_init_set_ui(b, 3);
-	mpz_init_set_ui(e, 19);
+	mpz_init_set_ui(b, 2);
+	mpz_init_set_ui(e, 14);
 	mpz_init_set_ui(n, 10);
 	mpz_init(r);
 
 	exp_binaria(r, b , e, n);
-	gmp_printf ("\n%Zd\n", r);
+	// gmp_printf ("\n%Zd\n", r);
 
 	mpz_clear(r);
 	mpz_clear(b);
 	mpz_clear(e);
 	mpz_clear(n);
-}
+}*/

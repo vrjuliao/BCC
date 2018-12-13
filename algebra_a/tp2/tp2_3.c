@@ -122,7 +122,7 @@ void primo_aleatorio(mpz_t r, unsigned int b, gmp_randstate_t rnd){
 	}
 }
 
-int main(){
+/*int main(){
 	mpz_t n;
 	mpz_init(n);
 	gmp_randstate_t rnd;
@@ -139,4 +139,4 @@ int main(){
 	//printf("qualquer coisa \n");
 	//getchar();
 	return 0;
-}
+}*/
