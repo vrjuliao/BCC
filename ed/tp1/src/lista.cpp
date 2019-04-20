@@ -1,7 +1,7 @@
 #include "lista.h"
 Lista::Lista(){
-    this->frist = nullptr;
-    this->last = nullptr;
+    this->frist = new ItemLista(nullptr, new Aluno("", 0, 0, 0), nullptr);
+    this->last = this->first;
 }
 
 ItemLista *Lista::get_first(){
@@ -33,11 +33,13 @@ void Lista::add_item(Aluno *aluno, int index){
 void Lista::add_frist(Aluno *aluno){
     ItemLista *new_item  = new ItemLista(nullptr, aluno, this->first);
     this->first->set_previous(new_item);
+    new_item->set_next(this->first);
     this->frist = new_item;
 }
 
 void Lista::add_last(Aluno *aluno){
     ItemLista *new_item  = new ItemLista(this->last, aluno, nullptr);
+    new_item->set_previous(this->last);
     this->last->set_next(new_item);
     this->last = new_item;
 }

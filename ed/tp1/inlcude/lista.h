@@ -2,7 +2,7 @@
 #include "itemlista.h"
 
 class Lista {
-private:
+protected:
     ItemLista *frist;
     ItemLista *last
 public:
