@@ -1,5 +1,4 @@
 #include "itemlista.h"
-#include "aluno.h"
 
 ItemLista::ItemLista(ItemLista *mPrevious, Aluno *mAluno, ItemLista *mNext){
     this->next = mNext;
@@ -8,7 +7,7 @@ ItemLista::ItemLista(ItemLista *mPrevious, Aluno *mAluno, ItemLista *mNext){
 }
 
 Aluno ItemLista::get_content(){
-    return this->*aluno
+    return *(this->aluno);
 }
 
 ItemLista *ItemLista::get_next(){

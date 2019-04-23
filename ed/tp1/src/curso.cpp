@@ -1,4 +1,11 @@
 #include "curso.h"
+Curso::Curso():
+Lista(){
+    this->nome = "";
+    this->vagas = NULL;
+    this->id = NULL;
+    this->alunos_inseridos = 0;
+}
 
 Curso::Curso(std::string mNome, int mId, int mVagas):
 Lista(){
@@ -6,6 +13,18 @@ Lista(){
     this->vagas = mVagas;
     this->id = mId;
     this->alunos_inseridos = 0;
+}
+
+void Curso::set_nome(std::string mNome){
+    this->nome = mNome;
+}
+
+void Curso::set_vagas(int mVagas){
+    this->vagas = mVagas;
+}
+
+void Curso::set_id(int mId){
+    this->id = mId;
 }
 
 int Curso::get_vagas(){
@@ -28,11 +47,10 @@ void Curso::add_last(Aluno *aluno){
         aluno_anterior = item_anterior->get_content();
     }
     this->alunos_inseridos++;
-    itemLista *item_seguinte = this->item_anterior->get_next();
+    ItemLista *item_seguinte = item_anterior->get_next();
     ItemLista *new_item = new ItemLista(item_anterior, aluno, item_seguinte);
     item_seguinte->set_previous(new_item);
     item_anterior->set_next(new_item);
-    return this->alunos_inseridos;
 }
 
 Curso::~Curso(){}

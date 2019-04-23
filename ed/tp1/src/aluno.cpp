@@ -1,5 +1,15 @@
 #include "aluno.h"
 
+Aluno::Aluno(){
+    this->name = "";
+    this->nota = NULL;
+    this->option1 = NULL;
+    this->option2 = NULL;
+    this->rank_option1 = 0;
+    this->rank_option2 = 0;
+    std::cout << "Allocate empty constructor" << std::endl;
+}
+
 Aluno::Aluno(std::string mName, int mNota, int mOption1, int mOption2){
     this->name = mName;
     this->nota = mNota;
@@ -7,6 +17,7 @@ Aluno::Aluno(std::string mName, int mNota, int mOption1, int mOption2){
     this->option2 = mOption2;
     this->rank_option1 = 0;
     this->rank_option2 = 0;
+    std::cout << "Allocate " << mName << std::endl;
 }
 
 std::string Aluno::get_name(){
@@ -25,7 +36,23 @@ int Aluno::get_nota(){
     return this->nota;
 }
 
-void ALuno::set_rank_option1(int rank){
+void Aluno::set_name(std::string mName){
+    this->name = mName;
+}
+
+void Aluno::set_option1(int mOption1){
+    this->option1 = mOption1;
+}
+
+void Aluno::set_option2(int mOption2){
+    this->option2 = mOption2;
+}
+
+void Aluno::set_nota(int mNota){
+    this->nota = mNota;
+}
+
+void Aluno::set_rank_option1(int rank){
     this->rank_option1 = rank;
 }
 void Aluno::set_rank_option2(int rank){
@@ -38,3 +65,5 @@ int Aluno::get_rank_option1(){
 int Aluno::get_rank_option2(){
     return rank_option2;
 }
+
+Aluno::~Aluno(){}
