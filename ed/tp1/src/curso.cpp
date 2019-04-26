@@ -39,10 +39,10 @@ int Curso::get_alunos_inseridos(){
     return this->alunos_inseridos;
 }
 
-void Curso::add_last(Aluno *aluno){
+void Curso::add_on_second_option(Aluno *aluno){
     ItemLista *item_anterior = this->last;
-    Aluno aluno_anterior = item_anterior->get_content();
-    while(aluno_anterior.get_nota() < aluno->get_nota()){
+    Aluno *aluno_anterior = item_anterior->get_content();
+    while(aluno_anterior->get_nota() < aluno->get_nota()){
         item_anterior = item_anterior->get_next();
         aluno_anterior = item_anterior->get_content();
     }

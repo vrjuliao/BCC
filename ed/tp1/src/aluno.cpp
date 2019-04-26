@@ -7,7 +7,7 @@ Aluno::Aluno(){
     this->option2 = NULL;
     this->rank_option1 = 0;
     this->rank_option2 = 0;
-    std::cout << "Allocate empty constructor" << std::endl;
+//    std::cout << "Allocate empty constructor" << std::endl;
 }
 
 Aluno::Aluno(std::string mName, float mNota, int mOption1, int mOption2){
@@ -17,7 +17,7 @@ Aluno::Aluno(std::string mName, float mNota, int mOption1, int mOption2){
     this->option2 = mOption2;
     this->rank_option1 = 0;
     this->rank_option2 = 0;
-    std::cout << "Allocate " << mName << std::endl;
+  //  std::cout << "Allocate " << mName << std::endl;
 }
 
 std::string Aluno::get_name(){

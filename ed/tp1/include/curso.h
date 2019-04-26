@@ -1,11 +1,11 @@
 #ifndef CURSO_TP1_ED
 #define CURSO_TP1_ED
 
-#include<string>
-#include"lista.h"
-#include"itemlista.h"
-#include"aluno.h"
-#include"lista.h"
+#include <string>
+#include "lista.h"
+#include "itemlista.h"
+#include "aluno.h"
+#include "lista.h"
 
 class Curso : public Lista{
 private:
@@ -23,7 +23,7 @@ public:
     int get_vagas();
     std::string get_nome();
     int get_alunos_inseridos();
-    void add_last(Aluno *aluno);
+    void add_on_second_option(Aluno *aluno);
     ~Curso();
 };
 #endif

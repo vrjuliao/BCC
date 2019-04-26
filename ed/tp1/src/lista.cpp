@@ -1,3 +1,4 @@
+//#include <iostream>
 #include "lista.h"
 Lista::Lista(){
     this->first = new ItemLista(nullptr, new Aluno("", 1001.0, 0, 0), nullptr);
@@ -32,14 +33,15 @@ void Lista::add_item(Aluno *aluno, int index){
 
 void Lista::add_first(Aluno *aluno){
     ItemLista *new_item  = new ItemLista(nullptr, aluno, this->first);
-    this->first->set_previous(new_item);
+    //this->first->set_previous(new_item);
     new_item->set_next(this->first);
     this->first = new_item;
 }
 
 void Lista::add_last(Aluno *aluno){
+  //  std::cout << "Adicionando aluno: " << aluno->get_name() << std::endl;
     ItemLista *new_item  = new ItemLista(this->last, aluno, nullptr);
-    new_item->set_previous(this->last);
+    //new_item->set_previous(this->last);
     this->last->set_next(new_item);
     this->last = new_item;
 }

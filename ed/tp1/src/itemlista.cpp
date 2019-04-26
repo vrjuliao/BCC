@@ -6,8 +6,8 @@ ItemLista::ItemLista(ItemLista *mPrevious, Aluno *mAluno, ItemLista *mNext){
     this->aluno = mAluno;
 }
 
-Aluno ItemLista::get_content(){
-    return *(this->aluno);
+Aluno *ItemLista::get_content(){
+    return this->aluno;
 }
 
 ItemLista *ItemLista::get_next(){

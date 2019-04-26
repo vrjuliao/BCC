@@ -2,6 +2,7 @@
 #define ITEMLISTA_TP1_ED
 
 #include "aluno.h"
+
 class ItemLista {
 private:
     ItemLista *previous;
@@ -9,7 +10,7 @@ private:
     Aluno *aluno;
 public:
     ItemLista(ItemLista *mPrevious, Aluno *mAluno, ItemLista *mNext);
-    Aluno get_content();
+    Aluno *get_content();
     ItemLista *get_next();
     ItemLista *get_previous();
     void set_next(ItemLista *mNext);
