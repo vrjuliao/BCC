@@ -64,17 +64,21 @@ void Curso::add_on_second_option(Aluno *aluno){
         if(aluno_anterior->get_nota() == this->nota_de_corte){
             ultimo_colocado = item_anterior;
         }
-        item_anterior = item_anterior->get_next();
+        item_anterior = item_anterior->get_previous();
         aluno_anterior = item_anterior->get_content();
     }
 
 
     this->alunos_inseridos++;
-    ItemLista *item_seguinte = item_anterior->get_next();
-    Aluno *aluno_seguinte = item_seguinte->get_content();
-    ItemLista *new_item = new ItemLista(item_anterior, aluno, item_seguinte);
-    item_seguinte->set_previous(new_item);
-    item_anterior->set_next(new_item);
+    if(item_anterior == this->last){
+        Lista::add_last(aluno);
+    } else {
+        ItemLista *item_seguinte = item_anterior->get_next();
+        Aluno *aluno_seguinte = item_seguinte->get_content();
+        ItemLista *new_item = new ItemLista(item_anterior, aluno, item_seguinte);
+        item_seguinte->set_previous(new_item);
+        item_anterior->set_next(new_item);
+    }
 
     if(ultimo_colocado != nullptr){
         while(ultimo_colocado->get_content()->get_nota() == 
@@ -83,6 +87,29 @@ void Curso::add_on_second_option(Aluno *aluno){
         }
 
     }
+}
+
+void Curso::print(){
+    std::cout << this->nome << " " << this->nota_de_corte << std::endl;
+    //std::cout << "----------- Alunos inseridos: " << this->alunos_inseridos << std::endl;
+    int index;
+    ItemLista *item = this->first->get_next();
+    Aluno *aluno;
+    std::cout << "Classificados" << std::endl;
+    for(index = 0; index < this->vagas && item != nullptr; index++){
+        aluno = item->get_content();
+        std::cout << aluno->get_name() << " " << aluno->get_nota() << std::endl;
+        item = item->get_next();
+    }
+    if(item!= nullptr){
+        std::cout << "Lista de espera" << std::endl;
+        while(item!=nullptr){
+            aluno = item->get_content();
+            std::cout << aluno->get_name() << " " << aluno->get_nota() << std::endl;
+            item = item->get_next();
+        }
+    }
+    std::cout << std::endl;
 }
 
 Curso::~Curso(){}

@@ -33,7 +33,7 @@ int main() {
         //std::cin >> nome_do_curso;
         std::cin >> vagas_do_curso;
         
-        std::cout << nome_do_curso << ": " << numero_de_cursos << std::endl;
+        // std::cout << nome_do_curso << ": " << numero_de_cursos << std::endl;
         
         cursos[index].set_nome(nome_do_curso);
         cursos[index].set_vagas(vagas_do_curso);
@@ -65,9 +65,9 @@ int main() {
             sisu->add_last(aluno);
         else{
 
-            std::cout << "Next of " << aluno->get_name() << std::endl;
+            // std::cout << "Next of " << aluno->get_name() << std::endl;
             while(aluno->get_nota() > proximo->get_content()->get_nota()){
-                std::cout << "       " << proximo->get_content()->get_name() << std::endl;
+                // std::cout << "       " << proximo->get_content()->get_name() << std::endl;
                 proximo = proximo->get_previous();
             }
             anterior = proximo;
@@ -101,18 +101,36 @@ int main() {
         cursos[opcao1].add_last(aluno);
     }
 
-    
 
     //pritar a selecao das primeiras opcoes selecionadas em cada curso
-    /*for(index = 0; index < numero_de_cursos; index++){
+    for(index = 0; index < numero_de_cursos; index++){
         item = cursos[index].get_first()->get_next();
-        std::cout << "======Curso " << index << "======" << std::endl; 
+        // std::cout << "======Curso " << index << "======" << std::endl; 
         while (item != nullptr){
             aluno = item->get_content();
-            std::cout << aluno->get_name() << ": " << aluno->get_nota() << std::endl;
+            // std::cout << aluno->get_name() << ": " << aluno->get_nota() << std::endl;
             item = item->get_next();
         }
-    }*/
+    }
+
+
+    item = sisu->get_first();
+    for(index = 0; index < total_de_alunos; index++){
+        item = item->get_next();
+        aluno = item->get_content();
+        opcao1 = aluno->get_option1();
+
+        if(cursos[opcao1].get_vagas() < aluno->get_rank_option1()){
+            // std::cout<< "Add:   " << aluno->get_name() << std::endl;
+            cursos[aluno->get_option2()].add_on_second_option(aluno);
+        }
+    }
+
+    std::cout << std::endl;
+    for(index = 0; index < numero_de_cursos; index++){
+        // std::cout << "==========Curso " << index <<"=============" << std::endl;
+        cursos[index].print();
+    }
 
     return 1;
 }
