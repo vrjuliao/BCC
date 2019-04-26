@@ -12,6 +12,7 @@ private:
     std::string nome;
     int id;
     int vagas;
+    float nota_de_corte;
     int alunos_inseridos;
 
 public:
@@ -24,6 +25,7 @@ public:
     std::string get_nome();
     int get_alunos_inseridos();
     void add_on_second_option(Aluno *aluno);
+    void add_last(Aluno *aluno);
     ~Curso();
 };
 #endif
