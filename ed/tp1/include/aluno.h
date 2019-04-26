@@ -7,22 +7,22 @@
 class Aluno {
 private:
     std::string name;
-    int nota;
+    float nota;
     int option1;
     int option2;
     int rank_option1;
     int rank_option2;
 public:
     Aluno();
-    Aluno(std::string mName, int mNota, int mOption1, int mOption2);
+    Aluno(std::string mName, float mNota, int mOption1, int mOption2);
     std::string get_name();
     int get_option1();
     int get_option2();
-    int get_nota();
+    float get_nota();
     void set_name(std::string mName);
     void set_option1(int mOption1);
     void set_option2(int mOption2);
-    void set_nota(int mNota);
+    void set_nota(float mNota);
     void set_rank_option1(int rank);
     void set_rank_option2(int rank);
     int get_rank_option1();

@@ -1,6 +1,6 @@
 #include "lista.h"
 Lista::Lista(){
-    this->first = new ItemLista(nullptr, new Aluno("", 0, 0, 0), nullptr);
+    this->first = new ItemLista(nullptr, new Aluno("", 1001.0, 0, 0), nullptr);
     this->last = this->first;
 }
 

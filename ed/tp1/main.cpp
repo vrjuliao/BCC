@@ -1,6 +1,6 @@
-/*
 #include<constream>
 #include<iostream>
+#include<iomanip>
 #include<string>
 #include "lista.h"
 #include "itemlista.h"
@@ -8,6 +8,8 @@
 #include "curso.h"
 
 int main() {
+    Lista sisu = Lista();
+
     int total_de_alunos;
     std::string nome_do_aluno;
     int opcao1, opcao2;
@@ -20,6 +22,7 @@ int main() {
     std::cin >> numero_de_cursos;
     std::cin >> total_de_alunos;
     
+    //adiciona o vetor de cursos
     int index;
     Curso *cursos = new (nothrow) Curso[numero_de_cursos];
     for(index = 0; index < numero_de_cursos; index++){
@@ -30,12 +33,19 @@ int main() {
         cursos[index].set_id(index);
     }
 
-    Aluno *alunos = new (nothrow) Aluno[total_de_alunos];
+    //adiciona os alunos já ordenando-os pela nota
+    ItemLista *item;
+    ItemLista *anterior;
+    ItemLista *proximo;
+    Aluno *aluno;
     for(index = 0; index < total_de_alunos; index++){
         std::cin >> nome_do_aluno;
         std::cin >> nota;
         std::cin >> opcao1;
         std::cin >> opcao2;
+        aluno = new Aluno(nome_do_aluno, nota, opcao1, opcao2);
+
+        while(aluno->get_nota())
 
         alunos[index].set_nome(nome_do_aluno);
         alunos[index].set_nota(nota);
@@ -55,8 +65,8 @@ int main() {
     }
 
     
-}*/
-#include<iostream>
+}
+/*#include<iostream>
 #include "aluno.h"
 
 int main(){
@@ -80,4 +90,4 @@ int main(){
     std::cout << "Lindao" << std::endl;
     delete [] alunos;
     return 0;
-}
+}*/

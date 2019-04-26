@@ -10,7 +10,7 @@ Aluno::Aluno(){
     std::cout << "Allocate empty constructor" << std::endl;
 }
 
-Aluno::Aluno(std::string mName, int mNota, int mOption1, int mOption2){
+Aluno::Aluno(std::string mName, float mNota, int mOption1, int mOption2){
     this->name = mName;
     this->nota = mNota;
     this->option1 = mOption1;
@@ -32,7 +32,7 @@ int Aluno::get_option2(){
     return this->option2;
 }
 
-int Aluno::get_nota(){
+float Aluno::get_nota(){
     return this->nota;
 }
 
@@ -48,7 +48,7 @@ void Aluno::set_option2(int mOption2){
     this->option2 = mOption2;
 }
 
-void Aluno::set_nota(int mNota){
+void Aluno::set_nota(float mNota){
     this->nota = mNota;
 }
 
