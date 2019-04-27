@@ -1,4 +1,5 @@
 #include "itemlista.h"
+// #include <iostream>
 
 ItemLista::ItemLista(ItemLista *mPrevious, Aluno *mAluno, ItemLista *mNext){
     this->next = mNext;
@@ -25,3 +26,5 @@ void ItemLista::set_next(ItemLista *mNext){
 void ItemLista::set_previous(ItemLista *mPrevious){
     this->previous = mPrevious;
 }
+
+ItemLista::~ItemLista(){}

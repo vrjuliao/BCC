@@ -90,7 +90,8 @@ void Curso::add_on_second_option(Aluno *aluno){
 }
 
 void Curso::print(){
-    std::cout << this->nome << " " << this->nota_de_corte << std::endl;
+    std::cout << this->nome << " " ;
+    std::cout << std::fixed << std::setprecision(2) << this->nota_de_corte << std::endl;
     //std::cout << "----------- Alunos inseridos: " << this->alunos_inseridos << std::endl;
     int index;
     ItemLista *item = this->first->get_next();
@@ -98,18 +99,17 @@ void Curso::print(){
     std::cout << "Classificados" << std::endl;
     for(index = 0; index < this->vagas && item != nullptr; index++){
         aluno = item->get_content();
-        std::cout << aluno->get_name() << " " << aluno->get_nota() << std::endl;
+        std::cout << aluno->get_name() << " ";
+        std::cout << std::fixed << std::setprecision(2) << aluno->get_nota() << std::endl;
         item = item->get_next();
     }
-    if(item!= nullptr){
-        std::cout << "Lista de espera" << std::endl;
-        while(item!=nullptr){
-            aluno = item->get_content();
-            std::cout << aluno->get_name() << " " << aluno->get_nota() << std::endl;
-            item = item->get_next();
-        }
+    std::cout << "Lista de espera" << std::endl;
+    while(item!=nullptr){
+        aluno = item->get_content();
+        std::cout << aluno->get_name() << " ";
+        std::cout << std::fixed << std::setprecision(2) << aluno->get_nota() << std::endl;
+        item = item->get_next();
     }
-    std::cout << std::endl;
 }
 
 Curso::~Curso(){}

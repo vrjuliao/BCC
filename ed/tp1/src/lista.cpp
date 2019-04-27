@@ -1,7 +1,7 @@
-//#include <iostream>
+// #include <iostream>
 #include "lista.h"
 Lista::Lista(){
-    this->first = new ItemLista(nullptr, new Aluno("", 1001.0, 0, 0), nullptr);
+    this->first = new ItemLista(nullptr, new Aluno("HEADER", 1001.0, 0, 0), nullptr);
     this->last = this->first;
 }
 
@@ -44,4 +44,28 @@ void Lista::add_last(Aluno *aluno){
     //new_item->set_previous(this->last);
     this->last->set_next(new_item);
     this->last = new_item;
+}
+
+void Lista::free_content(){
+    ItemLista *item = this->last;
+    Aluno *aluno;
+    while(this->last != nullptr){
+        this->last = item->get_previous();
+        aluno = item->get_content();
+        // std::cout << "Deletando:" << item->get_content()->get_name() << std::endl;
+        delete aluno;
+        item = this->last;
+    }
+}
+
+Lista::~Lista(){
+    ItemLista *item = this->last;
+    // std::cout << "Deletando Lista" << std::endl;
+    while(this->last != nullptr){
+        this->last = item->get_previous();
+        
+        // std::cout << "Deletando:" << item->get_content()->get_name() << std::endl;
+        delete item;
+        item = this->last;
+    }
 }

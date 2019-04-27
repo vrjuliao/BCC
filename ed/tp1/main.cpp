@@ -126,36 +126,22 @@ int main() {
         }
     }
 
-    std::cout << std::endl;
-    for(index = 0; index < numero_de_cursos; index++){
+    // std::cout << std::endl;
+    cursos[0].print();
+    for(index = 1; index < numero_de_cursos; index++){
         // std::cout << "==========Curso " << index <<"=============" << std::endl;
+        std::cout <<  std::endl;
         cursos[index].print();
     }
 
+    //limpando a memoria
+    
+    // std::cout << std::endl << "deletando lista incial" << std::endl;
+    sisu->free_content();
+    delete sisu;
+
+    // std::cout << std::endl << "deletando Cursos" << std::endl;
+    delete [] cursos;
+
     return 1;
 }
-/*#include<iostream>
-#include "aluno.h"
-
-int main(){
-    Aluno **alunos = new Aluno* [2];
-    alunos[0] = new Aluno("Juliao", 10, 10, 11);
-    alunos[1] = new Aluno("Kelly", 10, 10, 11);
-    
-    std::cout << "Endereco de memoria aluno 0: " << alunos[0] << std::endl;
-    std::cout << alunos[0]->get_name() << ": "<< alunos[0]->get_nota() << std::endl;
-    Aluno *aluno = alunos[0];
-    aluno->set_nota(897823);
-    std::cout << alunos[0]->get_name() << ": " << alunos[0]->get_nota() << std::endl;
-    std::cout << "Endereco de memoria aluno 1: " << alunos[1] << std::endl;
-    std::cout << alunos[1]->get_name() << ": " << alunos[1]->get_nota() << std::endl;
-    aluno = alunos[1];
-    aluno->set_nota(101010);
-    std::cout << alunos[1]->get_name() << ": " << alunos[1]->get_nota() << std::endl;
-    delete aluno;
-    aluno = alunos[0];
-    delete aluno;
-    std::cout << "Lindao" << std::endl;
-    delete [] alunos;
-    return 0;
-}*/

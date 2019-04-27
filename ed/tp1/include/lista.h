@@ -16,5 +16,7 @@ public:
     void add_item(Aluno *item, int index);
     void add_first(Aluno *item);
     void add_last(Aluno *item);
+    void free_content();
+    ~Lista();
 };
 #endif

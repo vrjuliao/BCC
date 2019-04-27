@@ -15,6 +15,8 @@ public:
     ItemLista *get_previous();
     void set_next(ItemLista *mNext);
     void set_previous(ItemLista *mPrevious);
+    //void free_content();
+    ~ItemLista();
 };
 
 #endif
