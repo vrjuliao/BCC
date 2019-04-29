@@ -42,8 +42,8 @@ int main() {
 
     //adiciona os alunos já ordenando-os pela nota
     ItemLista *item;
-    ItemLista *anterior;
-    ItemLista *proximo;
+    //ItemLista *anterior;
+    //ItemLista *proximo;
     Aluno *aluno;
 
     //std::cout << std::endl;
@@ -59,8 +59,8 @@ int main() {
         
         aluno = new Aluno(nome_do_aluno, nota, opcao1, opcao2);
         
-        
-        proximo = sisu->get_last();
+        sisu->insere_ordenado(aluno);
+        /*proximo = sisu->get_last();
         if(aluno->get_nota() <= proximo->get_content()->get_nota())
             sisu->add_last(aluno);
         else{
@@ -77,7 +77,7 @@ int main() {
             // std::cout << "Nota do Proximo : " << proximo->get_content()->get_nota() << std::endl;
             anterior->set_next(item);
             proximo->set_previous(item);
-        }
+        }*/
         // std::cout << "Aluno[i] = " << aluno->get_name() << std::endl;
     }
 
@@ -103,7 +103,7 @@ int main() {
 
 
     //pritar a selecao das primeiras opcoes selecionadas em cada curso
-    for(index = 0; index < numero_de_cursos; index++){
+    /*for(index = 0; index < numero_de_cursos; index++){
         item = cursos[index].get_first()->get_next();
         // std::cout << "======Curso " << index << "======" << std::endl; 
         while (item != nullptr){
@@ -111,7 +111,7 @@ int main() {
             // std::cout << aluno->get_name() << ": " << aluno->get_nota() << std::endl;
             item = item->get_next();
         }
-    }
+    }*/
 
 
     item = sisu->get_first();

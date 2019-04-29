@@ -10,13 +10,14 @@ protected:
     ItemLista *last;
 public:
     Lista();
-    ItemLista *get_first();
-    ItemLista *get_item(int index);
-    ItemLista *get_last();
-    void add_item(Aluno *item, int index);
-    void add_first(Aluno *item);
-    void add_last(Aluno *item);
-    void free_content();
+    ItemLista *get_first(); //retirar
+    ItemLista *get_item(int index); //retirar
+    ItemLista *get_last(); //retirar
+    void add_item(Aluno *item, int index); //retirar
+    void add_first(Aluno *item); //retirar
+    void insere_ordenado(Aluno *aluno);
+    void add_last(Aluno *item); //renomear para "insere_fim"
+    void free_content(); //renomear para "libera alunos"
     ~Lista();
 };
 #endif

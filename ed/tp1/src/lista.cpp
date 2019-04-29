@@ -38,6 +38,26 @@ void Lista::add_first(Aluno *aluno){
     this->first = new_item;
 }
 
+void Lista::insere_ordenado(Aluno *aluno){
+    ItemLista *proximo = this->last;
+    ItemLista *anterior;
+    if(aluno->get_nota() <= proximo->get_content()->get_nota())
+        this->add_last(aluno);
+    else{
+
+        while(aluno->get_nota() > proximo->get_content()->get_nota()){
+            proximo = proximo->get_previous();
+        }
+        anterior = proximo;
+        proximo = anterior->get_next();
+        ItemLista *item = new ItemLista(anterior, aluno, proximo);
+        // std::cout << "Nota do Anterior : " << anterior->get_content()->get_nota() << std::endl;
+        // std::cout << "Nota do Proximo : " << proximo->get_content()->get_nota() << std::endl;
+        anterior->set_next(item);
+        proximo->set_previous(item);
+    }
+}
+
 void Lista::add_last(Aluno *aluno){
   //  std::cout << "Adicionando aluno: " << aluno->get_name() << std::endl;
     ItemLista *new_item  = new ItemLista(this->last, aluno, nullptr);

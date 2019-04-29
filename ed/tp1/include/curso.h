@@ -23,11 +23,11 @@ public:
     void set_nome(std::string mNome);
     void set_vagas(int mVagas);
     void set_id(int mId);
-    int get_vagas();
-    std::string get_nome();
-    int get_alunos_inseridos();
-    void add_on_second_option(Aluno *aluno);
-    void add_last(Aluno *aluno);
+    int get_vagas();//retirar
+    std::string get_nome();//retirar
+    int get_alunos_inseridos();//retirar
+    void add_on_second_option(Aluno *aluno); //renomear para "insere_ordenado"
+    void add_last(Aluno *aluno); //renomear para "insere_fim"
     void print();
     ~Curso();
 };
