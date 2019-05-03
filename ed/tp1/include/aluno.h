@@ -6,27 +6,24 @@
 
 class Aluno {
 private:
-    std::string name;
+    std::string nome;
     float nota;
-    int option1;
-    int option2;
-    int rank_option1;
-    int rank_option2;
+    int opcao1;
+    int opcao2;
+    int posicao_opcao1; //colocacao do aluno em sua primeira opcao de curso
 public:
     Aluno();
-    Aluno(std::string mName, float mNota, int mOption1, int mOption2);
-    std::string get_name();
-    int get_option1();
-    int get_option2();
+    Aluno(std::string mNome, float mNota, int mOpcao1, int mOpcao2);
+    std::string get_nome();
+    int get_opcao1();
+    int get_opcao2();
     float get_nota();
-    void set_name(std::string mName);
-    void set_option1(int mOption1);
-    void set_option2(int mOption2);
+    void set_nome(std::string mNome);
+    void set_opcao1(int mOpcao1);
+    void set_opcao2(int mOpcao2);
     void set_nota(float mNota);
-    void set_rank_option1(int rank);
-    void set_rank_option2(int rank);
-    int get_rank_option1();
-    int get_rank_option2();
+    void set_posicao_opcao1(int rank);
+    int get_posicao_opcao1();
     ~Aluno();
 };
 

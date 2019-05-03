@@ -5,17 +5,16 @@
 
 class ItemLista {
 private:
-    ItemLista *previous;
-    ItemLista *next;
+    ItemLista *anterior;
+    ItemLista *proximo;
     Aluno *aluno;
 public:
-    ItemLista(ItemLista *mPrevious, Aluno *mAluno, ItemLista *mNext);
-    Aluno *get_content();
-    ItemLista *get_next();
-    ItemLista *get_previous();
-    void set_next(ItemLista *mNext);
-    void set_previous(ItemLista *mPrevious);
-    //void free_content();
+    ItemLista(ItemLista *mAnterior, Aluno *mAluno, ItemLista *mProximo);
+    Aluno *get_conteudo();
+    ItemLista *get_proximo();
+    ItemLista *get_anterior();
+    void set_proximo(ItemLista *mNext);
+    void set_anterior(ItemLista *mPrevious);
     ~ItemLista();
 };
 

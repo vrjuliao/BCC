@@ -27,8 +27,9 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	# $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 main: $(OBJECTS)
-	@mkdir -p $(BINDIR)
-	$(CC) $(CFLAGS) $(INC) $(MAIN) $^ -o $(BINDIR)/main
+	# @mkdir -p $(BINDIR)
+	# $(CC) $(CFLAGS) $(INC) $(MAIN) $^ -o $(BINDIR)/main
+	$(CC) $(CFLAGS) $(INC) $(MAIN) $^ -o main
 
 all: main
 
@@ -36,5 +37,5 @@ run: main
 	$(BINDIR)/main
 
 clean:
-	$(RM) -rf $(BINDIR) $(OBJDIR) *.gcda *.gcno
+	$(RM) -rf $(BINDIR) $(OBJDIR) *.gcda *.gcno main main.dSYM
 	#$(RM) -r $(OBJDIR)/* $(BINDIR)/* *.gcda *.gcno

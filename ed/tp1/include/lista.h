@@ -6,18 +6,18 @@
 
 class Lista {
 protected:
-    ItemLista *first;
-    ItemLista *last;
+    ItemLista *primeiro;
+    ItemLista *ultimo;
 public:
     Lista();
-    ItemLista *get_first(); //retirar
-    ItemLista *get_item(int index); //retirar
-    ItemLista *get_last(); //retirar
-    void add_item(Aluno *item, int index); //retirar
-    void add_first(Aluno *item); //retirar
+    ItemLista *get_primeiro(); 
+    ItemLista *get_item(int index);
+    ItemLista *get_ultimo();
+    void insere_item(Aluno *item, int index);
+    void insere_inicio(Aluno *item);
     void insere_ordenado(Aluno *aluno);
-    void add_last(Aluno *item); //renomear para "insere_fim"
-    void free_content(); //renomear para "libera alunos"
+    void insere_fim(Aluno *item);
+    void free_content();
     ~Lista();
 };
 #endif

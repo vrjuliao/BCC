@@ -1,91 +1,83 @@
-// #include <iostream>
 #include "lista.h"
 Lista::Lista(){
-    this->first = new ItemLista(nullptr, new Aluno("HEADER", 1001.0, 0, 0), nullptr);
-    this->last = this->first;
+    this->primeiro = new ItemLista(nullptr, new Aluno("HEADER", 1001.0, 0, 0), nullptr);
+    this->ultimo = this->primeiro;
 }
 
-ItemLista *Lista::get_first(){
-    return this->first;
+ItemLista *Lista::get_primeiro(){
+    return this->primeiro;
 }
 
-ItemLista *Lista::get_last(){
-    return this->last;
+ItemLista *Lista::get_ultimo(){
+    return this->ultimo;
 }
 
 ItemLista *Lista::get_item(int index){
-    ItemLista *item = this->first;
+    ItemLista *item = this->primeiro;
     for(int i = 0; i < index; i++){
-        item = item->get_next();
+        item = item->get_proximo();
     }
     return item;
 }
 
-void Lista::add_item(Aluno *aluno, int index){
+void Lista::insere_item(Aluno *aluno, int index){
     ItemLista *prev;
     ItemLista *next;
     next = this->get_item(index);
-    prev = next->get_previous();
+    prev = next->get_anterior();
     ItemLista *new_item  = new ItemLista(prev, aluno, next);
-    next->set_previous(new_item);
-    prev->set_next(new_item);
+    next->set_anterior(new_item);
+    prev->set_proximo(new_item);
 }
 
-void Lista::add_first(Aluno *aluno){
-    ItemLista *new_item  = new ItemLista(nullptr, aluno, this->first);
-    //this->first->set_previous(new_item);
-    new_item->set_next(this->first);
-    this->first = new_item;
+void Lista::insere_inicio(Aluno *aluno){
+    ItemLista *segundo = this->primeiro->get_proximo();
+    ItemLista *new_item  = new ItemLista(this->primeiro, aluno, segundo);
+    this->primeiro->set_proximo(new_item);
+    segundo->set_anterior(new_item);
 }
 
 void Lista::insere_ordenado(Aluno *aluno){
-    ItemLista *proximo = this->last;
+    ItemLista *proximo = this->ultimo;
     ItemLista *anterior;
-    if(aluno->get_nota() <= proximo->get_content()->get_nota())
-        this->add_last(aluno);
+    if(aluno->get_nota() <= proximo->get_conteudo()->get_nota())
+        this->insere_fim(aluno);
     else{
 
-        while(aluno->get_nota() > proximo->get_content()->get_nota()){
-            proximo = proximo->get_previous();
+        while(aluno->get_nota() > proximo->get_conteudo()->get_nota()){
+            proximo = proximo->get_anterior();
         }
         anterior = proximo;
-        proximo = anterior->get_next();
+        proximo = anterior->get_proximo();
         ItemLista *item = new ItemLista(anterior, aluno, proximo);
-        // std::cout << "Nota do Anterior : " << anterior->get_content()->get_nota() << std::endl;
-        // std::cout << "Nota do Proximo : " << proximo->get_content()->get_nota() << std::endl;
-        anterior->set_next(item);
-        proximo->set_previous(item);
+        anterior->set_proximo(item);
+        proximo->set_anterior(item);
     }
 }
 
-void Lista::add_last(Aluno *aluno){
-  //  std::cout << "Adicionando aluno: " << aluno->get_name() << std::endl;
-    ItemLista *new_item  = new ItemLista(this->last, aluno, nullptr);
-    //new_item->set_previous(this->last);
-    this->last->set_next(new_item);
-    this->last = new_item;
+void Lista::insere_fim(Aluno *aluno){
+    ItemLista *new_item  = new ItemLista(this->ultimo, aluno, nullptr);
+    this->ultimo->set_proximo(new_item);
+    this->ultimo = new_item;
 }
 
 void Lista::free_content(){
-    ItemLista *item = this->last;
+    ItemLista *item = this->ultimo;
     Aluno *aluno;
-    while(this->last != nullptr){
-        this->last = item->get_previous();
-        aluno = item->get_content();
-        // std::cout << "Deletando:" << item->get_content()->get_name() << std::endl;
+    while(item != this->primeiro){
+        aluno = item->get_conteudo();
         delete aluno;
-        item = this->last;
+        item = item->get_anterior();
     }
 }
 
 Lista::~Lista(){
-    ItemLista *item = this->last;
-    // std::cout << "Deletando Lista" << std::endl;
-    while(this->last != nullptr){
-        this->last = item->get_previous();
-        
-        // std::cout << "Deletando:" << item->get_content()->get_name() << std::endl;
+    Aluno *header = this->primeiro->get_conteudo();
+    delete header;
+    ItemLista *item;
+    while(this->ultimo != nullptr){
+        item = this->ultimo;
+        this->ultimo = item->get_anterior();
         delete item;
-        item = this->last;
     }
 }
