@@ -29,7 +29,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 main: $(OBJECTS)
 	# @mkdir -p $(BINDIR)
 	# $(CC) $(CFLAGS) $(INC) $(MAIN) $^ -o $(BINDIR)/main
-	$(CC) $(CFLAGS) $(INC) $(MAIN) $^ -o main
+	$(CC) $(CFLAGS) $(INC) $(MAIN) $^ -o executavel
 
 all: main
 
