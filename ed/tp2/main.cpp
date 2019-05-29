@@ -31,7 +31,6 @@ int main(int argc, const char *argv[]){
     std::cout << "Tipo do vetor: " << vector_type << std::endl;
     std::cout << "Quantidade de Itens: " << items_quantity << std::endl;
     std::cout << "Print vector: " << print_vector << std::endl;
-
     // Pega o horoario do sistema antes da execucao do cpodigo
     //std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
@@ -126,6 +125,5 @@ int main(int argc, const char *argv[]){
     // Obtem a diferenca entre o horario de fim e o de inicio
     // std::chrono::duration<double, std::micro> elapsed_time = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
     //std::cout << std::endl << "Tempo de execucao: " << elapsed_time.count() << " microssegundos" << std::endl;
-    
     return 1;
 }
