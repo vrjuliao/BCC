@@ -24,6 +24,8 @@ namespace Utils {
 	void create_increasing_vector(int vector[], int length);
 
 	void clear_vector(int vector[], int length);
+	
+	void copy_vector(int copy_vector[], int paste_vector[], int length);
 }
 //#include "../src/utils.cpp"
 #endif

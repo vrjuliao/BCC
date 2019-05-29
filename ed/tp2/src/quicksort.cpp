@@ -7,17 +7,17 @@ QuickSort::QuickSort(){
 }
 
 //template <class T>
-int QuickSort::getting_pivot_index(int i, int j){
-	return (i+j)/2;
+int QuickSort::getting_pivot(int vector[], int i, int j){
+	return vector[(i+j)/2];
 }
 
 //template <class T>
-void QuickSort::begin(int vector[], int elements){
+void QuickSort::begin(int vector[], int num_elements){
 	mComparisons = 0;
 	mMovimentations = 0;
 	int i = 0;
-	elements--;
-	sort(vector, i, elements);
+	num_elements--;
+	sort(vector, i, num_elements);
 }
 
 //template <class T>
@@ -36,8 +36,7 @@ void QuickSort::sort(int vector[], int &left, int &right){
 void QuickSort::partition(int vector[], int left, int right, int &i, int &j){
 	i = left;
 	j = right;
-	int pivot_index = getting_pivot_index(i, j);
-	int pivot = vector[pivot_index];
+	int pivot = getting_pivot(vector, i, j);
 	int aux;
 	do{
 		while(pivot > vector[i]) {
