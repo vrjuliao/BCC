@@ -1,3 +1,4 @@
+# CC := g++-4.8
 CC := g++
 SRCDIR := src
 OBJDIR := build
