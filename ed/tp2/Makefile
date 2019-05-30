@@ -31,11 +31,11 @@ main: $(OBJECTS)
 	# $(CC) $(CFLAGS) $(INC) $(MAIN) $^ -o $(BINDIR)/main
 	$(CC) $(CFLAGS) $(INC) $(MAIN) $^ -o executavel
 
-all: main
+all: clean main
 
 run: main
 	$(BINDIR)/main
 
 clean:
-	$(RM) -rf $(BINDIR) $(OBJDIR) *.gcda *.gcno main main.dSYM
+	$(RM) -rf $(BINDIR) $(OBJDIR) *.gcda *.gcno executavel executavel.dSYM
 	#$(RM) -r $(OBJDIR)/* $(BINDIR)/* *.gcda *.gcno

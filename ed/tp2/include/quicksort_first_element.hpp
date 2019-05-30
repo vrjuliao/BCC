@@ -6,5 +6,6 @@ protected:
 	virtual int getting_pivot(int vector[],int i, int j);	
 public:
 	QuickSort_FirstElement();
+	virtual ~QuickSort_FirstElement();
 };
 #endif

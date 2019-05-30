@@ -1,5 +1,5 @@
 #include "quicksort_insertion.hpp"
-#include <iostream>
+//#include <iostream>
 QuickSort_Insertion::QuickSort_Insertion(int percentual):
 QuickSort_Median(){
     mPercentual = percentual;
@@ -23,14 +23,20 @@ void QuickSort_Insertion::begin(int vector[], int num_elements){
 }
 
 void QuickSort_Insertion::insertion_sort(int vector[], int left, int right){
-    std::cout << "Insertion sort " << std::endl;
+    // std::cout << "Insertion sort " << std::endl;
     int current_element;
     int i, j;
     for(i = left+1; i<=right; i++){
         current_element = vector[i];
+        mComparisons++;
         for(j = i-1; (j >= left) && current_element < vector[j]; j--){
             vector[j+1] = vector[j];
+            mMovimentations++;
+            mComparisons++;
         }
+        mMovimentations++;  
         vector[j+1] = current_element;
     }
 }
+
+QuickSort_Insertion::~QuickSort_Insertion(){}

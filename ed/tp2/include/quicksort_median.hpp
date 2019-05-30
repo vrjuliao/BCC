@@ -6,5 +6,6 @@ protected:
     virtual int getting_pivot(int vector[],int i, int j) override;
 public:
 	QuickSort_Median();
+	virtual ~QuickSort_Median();
 };
 #endif

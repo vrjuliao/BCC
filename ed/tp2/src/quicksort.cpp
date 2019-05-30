@@ -64,3 +64,5 @@ int QuickSort::get_comparisons(){
 int QuickSort::get_movimentations(){
 	return mMovimentations;
 }
+
+QuickSort::~QuickSort(){}

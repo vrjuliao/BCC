@@ -11,6 +11,7 @@ public:
 	virtual void begin(int vector[], int num_elements) override;
 protected:
 	virtual void sort(int vector[], int &left, int &right);
+	virtual ~QuickSort_Insertion();
 	//virtual void partition(int vector[], int left, int right, int &i, int &j);
 };
 #endif

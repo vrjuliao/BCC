@@ -18,3 +18,5 @@ int QuickSort_Median::getting_pivot(int vector[],int i, int j){
     }
     return median;
 }
+
+QuickSort_Median::~QuickSort_Median(){}

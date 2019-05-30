@@ -14,6 +14,7 @@ public:
 	virtual void begin(int vector[], int num_elements);
 	virtual int get_comparisons();
 	virtual int get_movimentations();
+	virtual ~QuickSort();
 };
 //#include "../src/quicksort.cpp"
 #endif
