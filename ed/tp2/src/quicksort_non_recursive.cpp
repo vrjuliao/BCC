@@ -1,10 +1,8 @@
 #include "quicksort_non_recursive.hpp"
 #include "quicksort.hpp"
-//template <class T>
 QuickSort_NonRecursive::QuickSort_NonRecursive(): QuickSort(){}
 
-//template <class T>
-void QuickSort_NonRecursive::sort(int vector[], int &left, int &right){
+void QuickSort_NonRecursive::sort(unsigned int vector[], int &left, int &right){
 	Stack stack = Stack(right+1);
 	int i, j;
 	pair p;

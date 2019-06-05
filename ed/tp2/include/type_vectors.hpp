@@ -1,4 +1,0 @@
-#ifndef TYPER_VECTORS_TP2
-#define TYPER_VECTORS_TP2
-
-#endif

@@ -5,27 +5,12 @@
 #include <chrono>
 
 namespace Utils {
-	/*template <class T>
-	void create_aleatory_vector(T *vector, int length);
+	void create_aleatory_vector(unsigned int vector[], unsigned int length);
 
-	template <class T>
-	void create_decreasing_vector(T *vector, int length);
+	void create_decreasing_vector(unsigned int vector[], unsigned int length);
 
-	template <class T>
-	void create_increasing_vector(T *vector, int length);
-
-	template <class T>
-	void clear_vector(T vector[], int length);*/
-
-	void create_aleatory_vector(int vector[], int length);
-
-	void create_decreasing_vector(int vector[], int length);
-
-	void create_increasing_vector(int vector[], int length);
-
-	void clear_vector(int vector[], int length);
+	void create_increasing_vector(unsigned int vector[], unsigned int length);
 	
-	void copy_vector(int copy_vector[], int paste_vector[], int length);
+	void copy_vector(unsigned int copy_vector[], unsigned int paste_vector[], unsigned int length);
 }
-//#include "../src/utils.cpp"
 #endif

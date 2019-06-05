@@ -2,13 +2,14 @@
 #define QUICKSORT_NON_RECURSIVE_TP2
 #include "quicksort.hpp"
 #include "stack.hpp"
-//template <class T>
+// Non recursive way to execute quicksort
 class QuickSort_NonRecursive : public QuickSort {
 protected:
-	virtual void sort(int vector[], int &left, int &right);
+	// @override QuickSort::sort
+	// execute quicksort through non recursive algorithm
+	virtual void sort(unsigned int vector[], int &left, int &right) override;
 public:
 	QuickSort_NonRecursive();
 	virtual ~QuickSort_NonRecursive();
 };
-//#include "../src/quicksort.cpp"
 #endif

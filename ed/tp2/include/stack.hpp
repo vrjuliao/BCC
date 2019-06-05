@@ -5,6 +5,7 @@ typedef struct {
 	int right;
 } pair;
 
+//simple way to implement a stack data structure
 class Stack{
 private:
 	int MAX_LENGTH;
