@@ -4,8 +4,8 @@
 // Standard way to sort element by quicksort
 class QuickSort {
 protected:
-	unsigned int mComparisons;
-	unsigned int mMovimentations;
+	unsigned long int mComparisons;
+	unsigned long int mMovimentations;
 
 	//get the pivot selectioning the central element of the vector
 	virtual unsigned int getting_pivot(unsigned int vector[], int i, int j);
@@ -21,8 +21,8 @@ public:
 	// start sort procedure
 	virtual void begin(unsigned int vector[], int num_elements);
 	
-	virtual unsigned int get_comparisons();
-	virtual unsigned int get_movimentations();
+	virtual unsigned long int get_comparisons();
+	virtual unsigned long int get_movimentations();
 	virtual ~QuickSort();
 };
 //#include "../src/quicksort.cpp"

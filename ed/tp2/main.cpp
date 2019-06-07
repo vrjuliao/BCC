@@ -10,21 +10,6 @@
 
 void execute_whith_params(std::string algorithm_variation, std::string vector_type, 
                           unsigned int items_quantity, bool print_vector){
-    // int index = 0;
-    // const int MAX_ITERATIONS_TO_AVG = 21;
-    // // const int MAX_ITERATIONS_TO_AVG = 1;
-    // int **vectors_to_print = new int*[MAX_ITERATIONS_TO_AVG];
-    // if (print_vector) {
-    //     for(index = 0; index < MAX_ITERATIONS_TO_AVG; index++){
-    //         vectors_to_print[index] = new int[items_quantity];
-    //     }
-    // }
-    
-    // std::cout << "Argc: " << argc << std::endl;
-    // std::cout << "Variacao algoritmo: " << algorithm_variation << std::endl;
-    // std::cout << "Tipo do vetor: " << vector_type << std::endl;
-    // std::cout << "Quantidade de Itens: " << items_quantity << std::endl;
-    // std::cout << "Print vector: " << print_vector << std::endl;
 
     unsigned int *vector = new unsigned int[items_quantity];
     QuickSort *qs;
@@ -60,8 +45,8 @@ void execute_whith_params(std::string algorithm_variation, std::string vector_ty
     }
 
     unsigned int *executions_times = new unsigned int[MAX_ITERATIONS_TO_AVG];
-    unsigned int sum_comparisons = 0;
-    unsigned int sum_movimentations = 0;
+    unsigned long int sum_comparisons = 0;
+    unsigned long int sum_movimentations = 0;
     std::chrono::high_resolution_clock::time_point t1;
     std::chrono::high_resolution_clock::time_point t2;
     std::chrono::duration<double, std::micro> elapsed_time;

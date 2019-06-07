@@ -52,11 +52,11 @@ void QuickSort::partition(unsigned int vector[], int left, int right, int &i, in
 	} while(i <= j);
 }
 
-unsigned int QuickSort::get_comparisons(){
+unsigned long int QuickSort::get_comparisons(){
 	return mComparisons;
 }
 
-unsigned int QuickSort::get_movimentations(){
+unsigned long int QuickSort::get_movimentations(){
 	return mMovimentations;
 }
 
