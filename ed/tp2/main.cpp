@@ -74,8 +74,8 @@ void execute_whith_params(std::string algorithm_variation, std::string vector_ty
     //TODO - ordenar o vetor de tempos
     qs->begin(executions_times, MAX_ITERATIONS_TO_AVG);
     unsigned int median_time = executions_times[11];
-    unsigned int comparisons_avg = sum_comparisons / MAX_ITERATIONS_TO_AVG;
-    unsigned int movimentations_avg = sum_movimentations / MAX_ITERATIONS_TO_AVG;
+    unsigned long int comparisons_avg = sum_comparisons / MAX_ITERATIONS_TO_AVG;
+    unsigned long int movimentations_avg = sum_movimentations / MAX_ITERATIONS_TO_AVG;
     //std::cout << std::endl;
     std::cout << algorithm_variation  << " ";
     std::cout << vector_type          << " ";
