@@ -1,5 +1,5 @@
 # MiniSisu
-[Documentação](Documentação\ TP1.pdf)
+[Documentação](doc.pdf)
 ### Descrição
 -----
 - Implementação de uma lista duplamente encadeada com inserção ordenada.
