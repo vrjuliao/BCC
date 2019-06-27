@@ -7,13 +7,22 @@
 
 typedef {
 	Pair reg;
-	Pair *left, *right;
+	Node *left, *right;
 } Node;
+
+/*typedef {
+	char reg;
+	Node *left, *right;
+} Node;*/
 
 class BinaryTree {
 private:
+	static const char SCORE = '-';
+	static const char DOT = '.';
 	Node *root;
-	char find_available_nodes(Node node);
+	char _find(std::string key, Node *node, int string_position);
+	void _add(const Pair &p, Node *sub_root, int string_position);
+	Node *create_empty_node();
 public:
 	BinaryTree();
 	char find(std::string key);
