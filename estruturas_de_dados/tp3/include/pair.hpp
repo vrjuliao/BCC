@@ -6,6 +6,7 @@ private:
 	char mData;
 public:
 	Pair(std::string key, char data);
+	Pair();
 	std::string get_key();
 	void set_key(std::string key);
 	void set_data(char data);
