@@ -6,10 +6,10 @@ Pair::Pair(std::string key, char data){
 
 Pair::Pair(){
     mKey = "";
-    mData = '';
+    mData = '\0';
 }
 
-std::string Pair::get_key(){
+std::string Pair::get_key() const{
     return mKey;
 }
 void Pair::set_key(std::string key){
@@ -18,6 +18,8 @@ void Pair::set_key(std::string key){
 void Pair::set_data(char data){
     mData = data;
 }
-char Pair::get_data(){
-    mData = data;
+char Pair::get_data() const{
+    return mData;
 }
+
+Pair::~Pair(){}

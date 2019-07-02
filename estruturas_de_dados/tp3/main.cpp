@@ -18,11 +18,15 @@ int main(){
         std::string delimiter = "\n";
         int index_of_delimiter;
         Pair pair = Pair();
-        while ( getline(myfile, line) ){
+        while (getline(myfile, line) ){
             index_of_delimiter = line.find(delimiter);
-            Pair.set_key(line.substr(index_of_delimiter+1));
-            Pair.set_data(0, line.substr(index_of_delimiter));
+            pair.set_key(line.substr(index_of_delimiter+1));
+            // pair.set_data(line.substr(0,index_of_delimiter));
+            pair.set_data(line[0]);
+        std::cout << "Main call add: Data: " << pair.get_data() << " Key: " << pair.get_key() << std::endl;
+
             dict.add(pair);
+        std::cout << "chegou aqui" << std::endl;
         }
         
         //read data from stdin and print data
@@ -44,11 +48,11 @@ int main(){
                 pos_char = 0;
                 while ((pos_char = word.find(char_separator)) != std::string::npos) {
                     morse_char = word.substr(0, pos_char);
-                    std::cout << binary_tree.find(morse_char);
+                    std::cout << dict.find(morse_char);
                     word.erase(0, pos_char + 1);
                 }
                 std::cout << ' ';
-                std::cout << token << std::endl;
+                // std::cout << token << std::endl;
                 line.erase(0, pos_word + 1);
             }
             std::cout << '\b' <<std::endl; 
