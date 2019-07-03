@@ -104,6 +104,19 @@ char BinaryTree::_find(std::string key, Node *node, int string_position){
 	}
 }
 
+void BinaryTree::print(){
+	_print(root->left);
+	_print(root->right);
+}
+
+void BinaryTree::_print(Node *node){
+	if(node){
+		std::cout<< node->reg->get_data() << " " << node->reg->get_key() << std::endl;
+		_print(node->left);
+		_print(node->right);
+	}
+}
+
 void BinaryTree::delete_node_pos_order(Node *node){
 	if(node){
 		delete_node_pos_order(node->left);

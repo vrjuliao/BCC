@@ -5,7 +5,7 @@
 #include "pair.hpp"
 
 int main(){
-    static const char word_separator = '/';
+    static const std::string word_separator = "/ ";
     static const char char_separator = ' ';
 
 
@@ -24,13 +24,13 @@ int main(){
             pair.set_data(line[0]);
             dict->add(pair);
         }
-        std::cout << dict->find(".") << std::endl;
+        // std::cout << dict->find(".") << std::endl;
         
         
         //read data from stdin and print data
         std::string phrase;
 
-        // std::cin.ignore();
+        std::cin.ignore();
         // getline(std::cin, phrase, '\n');
         getline(std::cin, phrase);
         size_t pos_word;
@@ -54,7 +54,7 @@ int main(){
                 }
                 std::cout << dict->find(word) << " ";
 
-                phrase.erase(0, pos_word+1);
+                phrase.erase(0, pos_word+2);
                 pos_char = word.find(word_separator);
                 if(pos_char == std::string::npos)
                     break;
@@ -72,10 +72,11 @@ int main(){
             } else {
                 std::cout << dict->find(phrase) << std::endl;
             }
-
+            
+            std::cin.ignore();
             getline(std::cin, phrase);
         }
-        
+        dict->print();
         delete dict;
     } else {
         std::cout << "Failed to open morse.txt" << std::endl;

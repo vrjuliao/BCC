@@ -27,6 +27,7 @@ private:
 	// Node *create_empty_node();
 	void create_empty_node(Node *node);
 	void delete_node_pos_order(Node *node);
+	void _print(Node *node);
 public:
 	BinaryTree();
 	char find(std::string key);
