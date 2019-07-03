@@ -5,11 +5,11 @@
 #include <iostream>
 #include"pair.hpp"
 
-typedef struct Node {
-	Pair reg;
-	struct Node *left;
-	struct Node *right;
-} Node;
+struct Node {
+	Pair *reg;
+	Node *left;
+	Node *right;
+};
 
 /*typedef {
 	char reg;
@@ -20,11 +20,12 @@ class BinaryTree {
 private:
 	static const char SCORE = '-';
 	static const char DOT = '.';
-	static const char EMPTY_CHAR = NULL;
+	static const char EMPTY_CHAR = '\0';
 	Node *root;
-	char _find(std::string key, struct Node *node, int string_position);
-	void _add(const Pair &p, struct Node *sub_root, int string_position);
-	Node *create_empty_node();
+	char _find(std::string key, Node *node, int string_position);
+	void _add(const Pair &p, Node *sub_root, int string_position);
+	// Node *create_empty_node();
+	void create_empty_node(Node *node);
 	void delete_node_pos_order(Node *node);
 public:
 	BinaryTree();
