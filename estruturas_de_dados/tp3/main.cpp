@@ -5,8 +5,8 @@
 #include "pair.hpp"
 
 int main(){
-    static const std::string word_separator = " / ";
-    static const char char_separator = ' ';
+    static const std::string WORD_SEPARATOR = " / ";
+    static const char CHAR_SEPARATOR = ' ';
 
 
     BinaryTree *dict = new BinaryTree();
@@ -33,32 +33,43 @@ int main(){
         std::string word, morse_char;
         bool print_blank_line = false;
         
+        //for each line in input, split ir by respective separator
+        //after split operation, translate using <BinaryTree dict>
         while(getline(std::cin, phrase)){
             print_blank_line = true;
-            pos_word = phrase.find(word_separator);
+            //split a string by separator " / "
+            pos_word = phrase.find(WORD_SEPARATOR);
 
+            //each peace will be spitted by separator ' '
+            //the token gived is a morse char
             while(pos_word != std::string::npos){
                 word = phrase.substr(0, pos_word);
-                pos_char = word.find(char_separator);
+                pos_char = word.find(CHAR_SEPARATOR);
 
                 while(pos_char != std::string::npos){
                     morse_char = word.substr(0, pos_char);
                     std::cout << dict->find(morse_char);
                     word.erase(0, pos_char+1);
-                    pos_char = word.find(char_separator);
+                    pos_char = word.find(CHAR_SEPARATOR);
                 }
+                //the rest of word is a morse char too
+                // because in the final of word no have a char separator
                 std::cout << dict->find(word) << ' ';
 
                 phrase.erase(0, pos_word+3);
-                pos_word = phrase.find(word_separator);
+                pos_word = phrase.find(WORD_SEPARATOR);
             }
-            pos_char = phrase.find(char_separator);
+
+            //the rest of phrase is a morse word too
+            //because in the final of phrase no have a word separator
+            //so the same proccess to obtain a word is needed
+            pos_char = phrase.find(CHAR_SEPARATOR);
             if(pos_char != std::string::npos){
                 while(pos_char != std::string::npos){
                     morse_char = phrase.substr(0, pos_char);
                     std::cout << dict->find(morse_char);
                     phrase.erase(0, pos_char+1);
-                    pos_char = phrase.find(char_separator);
+                    pos_char = phrase.find(CHAR_SEPARATOR);
                 }
                 std::cout << dict->find(phrase) << std::endl;
             } else {

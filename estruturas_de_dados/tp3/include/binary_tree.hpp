@@ -3,18 +3,14 @@
 
 #include <string>
 #include <iostream>
-#include"pair.hpp"
+#include <exception>
+#include "pair.hpp"
 
 struct Node {
 	Pair *reg;
 	Node *left;
 	Node *right;
 };
-
-/*typedef {
-	char reg;
-	Node *left, *right;
-} Node;*/
 
 class BinaryTree {
 private:
@@ -24,7 +20,6 @@ private:
 	Node *root;
 	char _find(std::string key, Node *node, int string_position);
 	void _add(const Pair &p, Node *sub_root, int string_position);
-	// Node *create_empty_node();
 	void create_empty_node(Node *node);
 	void delete_node_pos_order(Node *node);
 	void _print(Node *node);
