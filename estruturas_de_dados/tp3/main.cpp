@@ -1,12 +1,26 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+
 #include "binary_tree.hpp"
 #include "pair.hpp"
 
-int main(){
+int main(int argc, char const *argv[]){
     static const std::string WORD_SEPARATOR = " / ";
     static const char CHAR_SEPARATOR = ' ';
+    bool print_pre_order = false;
+    if(argc == 2){
+        std::string arg = argv[1];
+        if(arg == "-a"){
+            print_pre_order = true;
+        } else {
+            std::cout << "Error: Incorrect Params - only expected parameter is \"-a\"" << std::endl;
+            return 0;
+        }
+    } else if(argc > 2){
+        std::cout << "Error: Incorrect Params - quantity of parameters incorrect" << std::endl;
+        return 0;
+    }
 
 
     BinaryTree *dict = new BinaryTree();
@@ -76,9 +90,13 @@ int main(){
                 std::cout << dict->find(phrase) << std::endl;
             }
         }
-        if(print_blank_line)
-            std::cout << std::endl;
-        dict->print();
+
+        if(print_pre_order){
+            if(print_blank_line)
+                std::cout << std::endl;
+            dict->print();
+        }
+
         delete dict;
     } else {
         std::cout << "Failed to open morse.txt" << std::endl;
