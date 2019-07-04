@@ -5,7 +5,7 @@
 #include "pair.hpp"
 
 int main(){
-    static const std::string word_separator = "/ ";
+    static const std::string word_separator = " / ";
     static const char char_separator = ' ';
 
 
@@ -24,22 +24,17 @@ int main(){
             pair.set_data(line[0]);
             dict->add(pair);
         }
-        // std::cout << dict->find(".") << std::endl;
-        
         
         //read data from stdin and print data
         std::string phrase;
 
-        std::cin.ignore();
-        // getline(std::cin, phrase, '\n');
-        getline(std::cin, phrase);
         size_t pos_word;
         size_t pos_char;
         std::string word, morse_char;
+        bool print_blank_line = false;
         
-        while(phrase.length() != 0){
-            // std::cout << phrase[0] << " -- phrase.length: " << phrase.length() << std::endl;     
-            
+        while(getline(std::cin, phrase)){
+            print_blank_line = true;
             pos_word = phrase.find(word_separator);
 
             while(pos_word != std::string::npos){
@@ -52,14 +47,11 @@ int main(){
                     word.erase(0, pos_char+1);
                     pos_char = word.find(char_separator);
                 }
-                std::cout << dict->find(word) << " ";
+                std::cout << dict->find(word) << ' ';
 
-                phrase.erase(0, pos_word+2);
-                pos_char = word.find(word_separator);
-                if(pos_char == std::string::npos)
-                    break;
+                phrase.erase(0, pos_word+3);
+                pos_word = phrase.find(word_separator);
             }
-            // word = phrase.substr(0, pos_word);
             pos_char = phrase.find(char_separator);
             if(pos_char != std::string::npos){
                 while(pos_char != std::string::npos){
@@ -72,10 +64,9 @@ int main(){
             } else {
                 std::cout << dict->find(phrase) << std::endl;
             }
-            
-            std::cin.ignore();
-            getline(std::cin, phrase);
         }
+        if(print_blank_line)
+            std::cout << std::endl;
         dict->print();
         delete dict;
     } else {

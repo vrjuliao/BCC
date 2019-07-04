@@ -111,7 +111,8 @@ void BinaryTree::print(){
 
 void BinaryTree::_print(Node *node){
 	if(node){
-		std::cout<< node->reg->get_data() << " " << node->reg->get_key() << std::endl;
+		if(node->reg->get_data() != '\0')
+			std::cout<< node->reg->get_data() << " " << node->reg->get_key() << std::endl;
 		_print(node->left);
 		_print(node->right);
 	}
