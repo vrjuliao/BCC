@@ -52,7 +52,7 @@ int main(int argc, char const *argv[]){
 
             //for each line in input, split ir by respective separator
             //after split operation, translate using <BinaryTree dict>
-            while(getline(std::cin, phrase)){
+            while(getline(std::cin, phrase) && phrase.length()){
                 print_blank_line = true;
                 //split a string by separator " / "
                 pos_word = phrase.find(WORD_SEPARATOR);
