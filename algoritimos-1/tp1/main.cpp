@@ -22,7 +22,7 @@ void print_order_by_person(Person *player){
         bfs_queue.pop_front();
         if(!current_player->marked){
             current_player->marked = true;
-            std::cout << ' ' << current_player->index+1;
+            std::cout << ' ' << current_player->index;
             qtt_children = current_player->childrens.size();
             for(int i = 0; i < qtt_children; i++){
                 bfs_queue.push_back(current_player->childrens[i]);
@@ -41,16 +41,17 @@ void print_order_by_person(Person *player){
 
 bool has_cicle(Person* player){
     //run DFS to check whether graph has a cicle
-    Person *p;
-    int size = player->childrens.size();
+    
+    if(player->marked)
+        return true;
+
     player->marked = true;
-    for(int i = 0; i < size; i++){
-        if(player->childrens[i]->marked){
-            return true;
-        }
-        has_cicle(player->childrens[i]);
+    int size = player->childrens.size();
+    bool cicle = false;
+    for(int i = 0; i < size && !cicle; i++){
+        cicle = has_cicle(player->childrens[i]);
     }
-    return false;
+    return cicle;
 }
 
 int get_lesser_parent_age(Person* player, int current_lesser_age){
@@ -77,9 +78,10 @@ void clear_flags(std::vector<Person*> &players){
 }
 
 void commander(std::vector<Person*> &players, int player_index){
+    int player_age = players[player_index-1]->age;
     int lesser_age = get_lesser_parent_age(players[player_index-1], OVERFLOW_AGE);
     std::cout << "C ";
-    if(lesser_age == OVERFLOW_AGE)
+    if(lesser_age == player_age)
         std::cout << '*';
     else 
         std::cout << lesser_age;
@@ -96,7 +98,7 @@ void swap(std::vector<Person*> &players, int player1, int player2){
     int size = instance_p1->childrens.size();
     int children_index = -1;
     for(int i =0; i<size; i++){
-        if(instance_p1->childrens[i]->index == player2-1){
+        if(instance_p1->childrens[i]->index == player2){
             children_index = i;
             break;
         }
@@ -114,7 +116,7 @@ void swap(std::vector<Person*> &players, int player1, int player2){
     instance_p1->childrens.pop_back();
 
     instance_p2->childrens.push_back(instance_p1);
-
+    
     if(has_cicle(instance_p2)){
         instance_p2->childrens.pop_back();
         instance_p1->childrens.push_back(p);
@@ -193,6 +195,7 @@ int main(){
                 swap(players, value1, value2);
                 break;
         }
+        // std::cout << "-----" << std::endl;
     }
 
     //clearing allocations
