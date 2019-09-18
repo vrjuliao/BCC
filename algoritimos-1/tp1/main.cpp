@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include<stack>
 
 static const int OVERFLOW_AGE = 101;
 
@@ -12,32 +13,15 @@ struct Person{
     std::vector<Person*> childrens;
 };
 
-void print_order_by_person(Person *player){
-    std::list<Person*> bfs_queue = std::list<Person*>();
-    bfs_queue.push_back(player);
-    Person *current_player;
-    int qtt_children;
-    while(bfs_queue.size() > 0){
-        current_player = bfs_queue.front();
-        bfs_queue.pop_front();
-        if(!current_player->marked){
-            current_player->marked = true;
-            std::cout << ' ' << current_player->index;
-            qtt_children = current_player->childrens.size();
-            for(int i = 0; i < qtt_children; i++){
-                bfs_queue.push_back(current_player->childrens[i]);
-            }
-        }
+void print_order_by_person(Person *player, std::stack<Person*> &stack){
+    int size = player->childrens.size();
+    player->marked = true;
+    for (int i = 0; i < size; i++){
+        if(!player->childrens[i]->marked)
+            print_order_by_person(player->childrens[i], stack);
     }
+    stack.push(player);
 }
-
-// void print_order(std::vector<Person*> &graph){
-//     int size = graph.size();
-//     for(int i=0; i < size; i++){
-//         if(!graph[i]->marked && graph[i]->parents.size()==0)
-//             print_order_by_person(graph[i]);
-//     }
-// }
 
 bool has_cicle(Person* player){
     //run DFS to check whether graph has a cicle
@@ -142,13 +126,18 @@ void swap(std::vector<Person*> &players, int player1, int player2){
 }
 
 void meeting(std::vector<Person*> &players){
-    std::cout << 'M';
+    std::cout << "M";
     int size = players.size();
-    
+    std::stack<Person*> stack =  std::stack<Person*>();
     for(int i = 0; i < size; i++){
         if(players[i]->parents.size()==0){
-            print_order_by_person(players[i]);
+            print_order_by_person(players[i], stack);
         }
+    }
+    size = stack.size();
+    for(int i = 0; i < size; i++){
+        std::cout << ' ' << stack.top()->index;
+        stack.pop();
     }
     std::cout << std::endl;
 }
@@ -195,7 +184,6 @@ int main(){
                 swap(players, value1, value2);
                 break;
         }
-        // std::cout << "-----" << std::endl;
     }
 
     //clearing allocations
