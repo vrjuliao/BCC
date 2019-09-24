@@ -15,6 +15,8 @@ struct Person{
     std::vector<Person*> childrens;
 };
 
+static const int OVERFLOW_AGE = 101;
+
 class Graph {
 private:
     std::vector<Person *> mPlayers;
@@ -24,7 +26,6 @@ private:
     bool has_cycle(Person *player, int index_of_root_player);
     int get_lesser_parent_age(Person* player, int current_lesser_age);
 public:
-    static const int OVERFLOW_AGE = 101;
     Graph(int quantity_of_players);
     char swap(int player1_index, int player2_index);
     void meeting(std::vector<int> &sort);

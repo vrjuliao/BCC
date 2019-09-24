@@ -71,7 +71,7 @@ int Graph::get_lesser_parent_age(Person* player, int current_lesser_age){
 char Graph::swap(int player1_index, int player2_index){
     this->clear_flag();
     //verifying if Player1 is a parent of Player2
-    std::cout << "S ";
+    // std::cout << "S ";
 
     Person *instance_p1 = mPlayers[player1_index-1];
     Person *instance_p2 = mPlayers[player2_index-1];
@@ -86,8 +86,8 @@ char Graph::swap(int player1_index, int player2_index){
     }
 
     if(children_index < 0){
-        std::cout << "N" << std::endl;
-        return;
+        // std::cout << "N" << std::endl;
+        return 'N';
     }
 
     //validate whether no have a cycle when add a new edge
@@ -97,11 +97,14 @@ char Graph::swap(int player1_index, int player2_index){
     instance_p1->childrens.pop_back();
 
     instance_p2->childrens.push_back(instance_p1);
-    
+    char return_char;
+
     if(this->has_cycle(instance_p2, player2_index)){
         instance_p2->childrens.pop_back();
         instance_p1->childrens.push_back(p);
-        std::cout << "N" << std::endl;
+        return_char = 'N';
+        // std::cout << "N" << std::endl;
+
     } else {
         //persist changes
         //add player2 as parent of player1
@@ -118,12 +121,14 @@ char Graph::swap(int player1_index, int player2_index){
         instance_p2->parents.pop_back();
 
         instance_p1->parents.push_back(instance_p2);
-        std::cout << "T" << std::endl;
+        // std::cout << "T" << std::endl;
+        return_char =  'T';
     }
+    return return_char;
 }
 void Graph::meeting(std::vector<int> &sort){
     this->clear_flag();
-    std::cout << "M";
+    // std::cout << "M";
     int size = mPlayers.size();
     std::stack<Person*> stack =  std::stack<Person*>();
     for(int i = 0; i < size; i++){
@@ -133,22 +138,25 @@ void Graph::meeting(std::vector<int> &sort){
     }
     size = stack.size();
     for(int i = 0; i < size; i++){
-        std::cout << ' ' << stack.top()->index;
+        // std::cout << ' ' << stack.top()->index;
+        sort[i] = stack.top()->index;
         stack.pop();
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
 }
 
 int Graph::commander(int player_index){
     this->clear_flag();
     int player_age = mPlayers[player_index-1]->age;
     int lesser_age = get_lesser_parent_age(mPlayers[player_index-1], OVERFLOW_AGE);
-    std::cout << "C ";
+    // std::cout << "C ";
     if(lesser_age == player_age)
-        std::cout << '*';
-    else 
-        std::cout << lesser_age;
-    std::cout << std::endl;
+        // std::cout << '*';
+        return OVERFLOW_AGE;
+    // else 
+        // std::cout << lesser_age;
+    // std::cout << std::endl;
+    return lesser_age;
 }
 
 Graph::~Graph(){
