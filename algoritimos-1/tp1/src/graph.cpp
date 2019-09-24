@@ -68,7 +68,7 @@ int Graph::get_lesser_parent_age(Person* player, int current_lesser_age){
     return current_lesser_age;
 }
 
-void Graph::swap(int player1_index, int player2_index){
+char Graph::swap(int player1_index, int player2_index){
     this->clear_flag();
     //verifying if Player1 is a parent of Player2
     std::cout << "S ";
@@ -121,7 +121,7 @@ void Graph::swap(int player1_index, int player2_index){
         std::cout << "T" << std::endl;
     }
 }
-void Graph::meeting(){
+void Graph::meeting(std::vector<int> &sort){
     this->clear_flag();
     std::cout << "M";
     int size = mPlayers.size();
@@ -139,7 +139,7 @@ void Graph::meeting(){
     std::cout << std::endl;
 }
 
-void Graph::commander(int player_index){
+int Graph::commander(int player_index){
     this->clear_flag();
     int player_age = mPlayers[player_index-1]->age;
     int lesser_age = get_lesser_parent_age(mPlayers[player_index-1], OVERFLOW_AGE);
