@@ -78,6 +78,8 @@ char Graph::swap(int player1_index, int player2_index){
 
     int size = instance_p1->childrens.size();
     int children_index = -1;
+    
+    //check if there is an edge between player1 and player2
     for(int i =0; i<size; i++){
         if(instance_p1->childrens[i]->index == player2_index){
             children_index = i;
