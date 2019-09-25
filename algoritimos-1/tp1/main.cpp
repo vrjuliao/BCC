@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <chrono>
-
+#include <fstream>
 #include "graph.hpp"
 
 // receive the age of a player and print according described in work documentation
@@ -28,12 +28,33 @@ void print_meeting(std::vector<int> &topological_sort){
 
 int main(int argc, const char *argv[]){
     //getting parameter whether time must be show
-    bool show_time, show_both = false;
+    bool show_time = false, show_both = false;
+    std::string filename;
     if(argc > 1){
-        std::string param_time = "-t";
-        std::string param_both = "-b";
-        show_both = param_both == argv[1];
-        show_time = param_time == argv[1];
+        filename = argv[1];
+        if(argc > 2){
+            std::string param_time = "-t";
+            std::string param_both = "-b";
+            show_both = param_both == argv[2];
+            show_time = param_time == argv[2];
+        }
+        // std::string param_time = "-t";
+        // std::string param_both = "-b";
+        // show_both = param_both == argv[1];
+        // show_time = param_time == argv[1];
+    } else {
+        std::cout << "Error: file name is not valid" << std::endl;
+        return 0;
+    }
+
+    //file manipulators
+    std::string line;
+    std::ifstream myfile(filename);
+    
+    //throw error if filename is incorrect
+    if(!myfile.is_open()){
+        std::cout << "Error: file name is not valid" << std::endl;
+        return 0;
     }
 
     //time manipulators
@@ -45,22 +66,22 @@ int main(int argc, const char *argv[]){
     //Person count, relashionship count and instructions count.
     int prsn_count, rlshp_count, instr_count;
 
-    std::cin >> prsn_count >> rlshp_count >> instr_count;
+    myfile >> prsn_count >> rlshp_count >> instr_count;
     Graph graph = Graph(prsn_count);
     
     // reading the age of each player
     int age;
     for (int i = 0; i < prsn_count; i++){
-        std::cin >> age;
+        myfile >> age;
         graph.add_player(age, i);
     }
 
     //reading relashionships
     int parent, children;
     for(int i = 0; i<rlshp_count; i++){
-        std::cin.ignore();
-        std::cin >> parent;
-        std::cin >> children;
+        myfile.ignore();
+        myfile >> parent;
+        myfile >> children;
         graph.add_relashionship(parent, children);
     }
 
@@ -74,13 +95,13 @@ int main(int argc, const char *argv[]){
     char instruction;
     int value1, value2;
     for(int i = 0; i < instr_count; i++){
-        std::cin >> instruction;
+        myfile >> instruction;
 
         //define who command must be executed
         switch(instruction){
             //getting (Commander)
             case 'C':
-                std::cin >> value1;
+                myfile >> value1;
                 t1 = std::chrono::high_resolution_clock::now();
                 lesser_parent_age = graph.commander(value1);
                 t2 = std::chrono::high_resolution_clock::now();
@@ -89,7 +110,7 @@ int main(int argc, const char *argv[]){
 
             //getting Swap
             case 'S':
-                std::cin >> value1 >> value2;
+                myfile >> value1 >> value2;
                 t1 = std::chrono::high_resolution_clock::now();
                 change_hierarquical = graph.swap(value1, value2);
                 t2 = std::chrono::high_resolution_clock::now();
