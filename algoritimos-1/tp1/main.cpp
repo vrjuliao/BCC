@@ -89,7 +89,7 @@ int main(int argc, const char *argv[]){
     std::vector<int> topological_sort = std::vector<int>(prsn_count);
     char change_hierarquical;
     int lesser_parent_age;
-    double execution_time;
+    unsigned int execution_time;
 
     // reading each command (Swap, Commander and Meeting)
     char instruction;
