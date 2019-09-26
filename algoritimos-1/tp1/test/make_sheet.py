@@ -4,17 +4,17 @@ from scipy import stats
 import sys
 def main(argv):
     command = argv[0]
-    swap_list = [(['swap_05_1', 'swap_05_2', 'swap_05_3', 'swap_05_4'], 'swap_05'),
-                 (['swap_10_1', 'swap_10_2', 'swap_10_2'],'swap_10'),
-                 (['swap_15_2', 'swap_15_2', 'swap_15_1'], 'swap_15'),
-                 (['swap_20_1', 'swap_20_1', 'swap_20_1'], 'swap_20'),
-                 (['swap_25_1', 'swap_25_2'], 'swap_25'),
-                 (['swap_30_1', 'swap_30_1'], 'swap_30'),
-                 (['swap_35_1', 'swap_35_1'], 'swap_35'),
-                 (['swap_40_1', 'swap_40_2'], 'swap_40'),
-                 (['swap_45_1', 'swap_45_1'], 'swap_45'),
-                 (['swap_50_1', 'swap_50_2'], 'swap_50'),
-                 (['swap_55_1', 'swap_55_2'], 'swap_55')]
+    swap_list = [(['swap_05'], 'swap_05'),
+                 (['swap_10'],'swap_10'),
+                 (['swap_15'], 'swap_15'),
+                 (['swap_20'], 'swap_20'),
+                 (['swap_25'], 'swap_25'),
+                 (['swap_30'], 'swap_30'),
+                 (['swap_35'], 'swap_35'),
+                 (['swap_40'], 'swap_40'),
+                 (['swap_45'], 'swap_45'),
+                 (['swap_50'], 'swap_50'),
+                 (['swap_55'], 'swap_55')]
 
     commander_list = [(['commander_05'], 'commander_05'),
                       (['commander_10'], 'commander_10'),

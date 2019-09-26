@@ -5,6 +5,7 @@ def main(argv):
     N = int(argv[0])
     command = argv[1]
     
+    
     #create ages
     ages = random.sample(range(100), N)
 
@@ -17,9 +18,9 @@ def main(argv):
         np.array([(i, j) for j in range(i + 1, N)])
         for i in range(N - 1)
     ])
-
+    random.seed(time.time_ns())
     np.random.shuffle(possiveis)
-    M = random.randint(N - 1, N * (N - 1) / 2)
+    M = random.randint(N - 1, round(N * (N - 1) / 4))
     arestas = possiveis[:M]
     mapeamento = np.random.permutation(N)
     arestas = list(map(
