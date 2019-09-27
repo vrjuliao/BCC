@@ -38,10 +38,6 @@ int main(int argc, const char *argv[]){
             show_both = param_both == argv[2];
             show_time = param_time == argv[2];
         }
-        // std::string param_time = "-t";
-        // std::string param_both = "-b";
-        // show_both = param_both == argv[1];
-        // show_time = param_time == argv[1];
     } else {
         std::cout << "Error: file name is not valid" << std::endl;
         return 0;
