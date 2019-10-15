@@ -4,6 +4,7 @@
 #include <fstream>
 #include "travel_islands.hpp"
 
+//print data according received parameters
 void show_response(bool show_both, bool show_time, std::pair<int,int> p, unsigned int time){
     if(show_both || !(show_both || show_time)){
         std::cout << p.first << ' ' << p.second;

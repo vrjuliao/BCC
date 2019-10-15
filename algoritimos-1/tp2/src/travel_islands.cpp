@@ -1,10 +1,5 @@
 #include "travel_islands.hpp"
 
-/*struct Island{
-    int mPrice;
-    int mScore;
-};*/
-
 bool TravelIslands::comparator(Island* less, Island* greatter){
     return less->mCostBenefit < greatter->mCostBenefit;
 }
@@ -22,22 +17,26 @@ void TravelIslands::add_island(int index, int price, int score){
 }
 
 std::pair<int, int> TravelIslands::get_better_by_greedy(int max_cost){
+    //sorting mIslands vector by Island.mCostBenefit
     std::sort(mIslands.begin(), mIslands.end(), TravelIslands::comparator);
     int size = mIslands.size();
     int points = 0, days = 0;
     int quocient;
+    // fetch all options of Islands from bigger to smaller mCostBenefit
     for(int i=size-1; i >= 0; i--){
         quocient = max_cost/mIslands[i]->mPrice;
         days += quocient;
         points += (quocient*mIslands[i]->mScore);
         max_cost = max_cost%mIslands[i]->mPrice;
     }
+    //pair.first -> total score by greddy algorithm
+    //pair.secont -> total days computed according the total score
     return std::pair<int, int>(points, days);
 }
 
 std::pair<int, int> TravelIslands::get_beter_by_dinamyc_programming(int max_cost){
     // for each pair of matrix M
-    // pair.first -> points
+    // pair.first -> score
     // pair.second -> quantity of days
 
     int size = mIslands.size();
@@ -46,8 +45,10 @@ std::pair<int, int> TravelIslands::get_beter_by_dinamyc_programming(int max_cost
     //create matrix to solve te problem
     for(int i=0; i<=size; i++){
         M[i] = std::vector<std::pair<int,int>>(max_cost+1);
+        //set the first column by zero
         M[i][0] = std::pair<int,int>(0,0);
     }
+    //set the first line by zero
     for(int i=1; i<=max_cost; i++){
         M[0][i] = std::pair<int,int>(0,0);
     }
@@ -55,8 +56,9 @@ std::pair<int, int> TravelIslands::get_beter_by_dinamyc_programming(int max_cost
     int score_including_j, days_inlcuding_j;
     int before_j_including_j;
 
+    // applying knackpack algorithm variation
+    // the matrix cell M[i][j] represents the better choise than M[k][h], with k < i and h < j
     for(int i=1; i <= size; i++){
-
         for(int j=1; j <= max_cost; j++){
             current_cost = j;
             if(mIslands[i-1]->mPrice > current_cost){
