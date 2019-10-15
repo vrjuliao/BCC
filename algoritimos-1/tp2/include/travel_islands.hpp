@@ -20,7 +20,7 @@ public:
     TravelIslands(int islands_qtt);
     void add_island(int index, int price, int score);
     std::pair<int, int> get_better_by_greedy(int max_cost);
-    void get_beter_by_dinamyc_programming();
+    std::pair<int, int> get_beter_by_dinamyc_programming(int max_cost);
     ~TravelIslands();
 };
 #endif

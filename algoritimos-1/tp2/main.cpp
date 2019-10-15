@@ -4,6 +4,17 @@
 #include <fstream>
 #include "travel_islands.hpp"
 
+void show_response(bool show_both, bool show_time, std::pair<int,int> p, unsigned int time){
+    if(show_both || !(show_both || show_time)){
+        std::cout << p.first << ' ' << p.second;
+    }
+    if(show_time || show_both){
+        if(show_both)
+            std::cout << " - time in nanoseconds: ";
+        std::cout << time;   
+    }
+    std::cout << std::endl;
+}
 
 int main(int argc, const char *argv[]){
     //getting parameter whether time must be show
@@ -45,14 +56,31 @@ int main(int argc, const char *argv[]){
         myfile >> price >> score;
         travel.add_island(i, price, score);
 	}
-    auto p = travel.get_better_by_greedy(max_cost);
-    std::cout << p.first << ' ' << p.second << std::endl;
-
-    //counting time of execution
+    // pair to get response from travel_island algorithms
+    // p.first -> score
+    // p.second -> days count
+    std::pair<int,int> p;
     unsigned int execution_time;
+
+    //t1 = time on begin of execution
     t1 = std::chrono::high_resolution_clock::now();
-    
+    p = travel.get_better_by_greedy(max_cost);
+    //t2 = time on end of execution
     t2 = std::chrono::high_resolution_clock::now();
+    //elapsed_time = difference between t1 and t2
     elapsed_time = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
     execution_time = static_cast<unsigned int>(elapsed_time.count());
+    show_response(show_both, show_time, p, execution_time);
+
+    //t1 = time on begin of execution
+    t1 = std::chrono::high_resolution_clock::now();
+    p = travel.get_beter_by_dinamyc_programming(max_cost);
+    //t2 = time on end of execution
+    t2 = std::chrono::high_resolution_clock::now();
+    //elapsed_time = difference between t1 and t2
+    elapsed_time = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+    execution_time = static_cast<unsigned int>(elapsed_time.count());
+    show_response(show_both, show_time, p, execution_time);
+
+    return 1;
 }
