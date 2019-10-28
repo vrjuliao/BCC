@@ -23,7 +23,7 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 all: clean main
 
 clean:
-	$(RM) -rf $(BINDIR) $(OBJDIR) *.gcda *.gcno tp1 tp1.dSYM
+	$(RM) -rf $(BINDIR) $(OBJDIR) *.gcda *.gcno tp2 tp2.dSYM
 
 main: $(OBJECTS)
 	$(CC) $(CFLAGS) $(INC) $(MAIN) $^ -o tp2
