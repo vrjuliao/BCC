@@ -7,6 +7,7 @@ MAIN := main.cpp
 
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name "*.$(SRCEXT)")
+# SOURCES = src/graph.cpp src/sudoku.cpp
 $(info SOURCES = $(SOURCES))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 $(info OBJECTS = $(OBJECTS))
