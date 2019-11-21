@@ -53,7 +53,7 @@ int main(int argc, const char *argv[]){
 
     // a sudoku block is composed by i_rows an j_cols
     int sudoku_length, i_rows, j_cols;
-    myfile >> sudoku_length >> i_rows >> j_cols;
+    myfile >> sudoku_length >> j_cols >> i_rows;
     Sudoku sudoku = Sudoku(sudoku_length, i_rows, j_cols);
     // std::vector<std::vector<int>> sudoku_table = std::vector<std::vector<int>>(sudoku_length);
     int io_read;
@@ -66,6 +66,7 @@ int main(int argc, const char *argv[]){
     	}
     }
 
+    sudoku.solve();
     for(int i=0; i<sudoku_length; i++){
     	// std::cout << sudoku_table[i][0];
     	std::cout << sudoku.get_map_value(i,0);

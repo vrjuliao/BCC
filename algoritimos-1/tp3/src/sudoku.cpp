@@ -1,5 +1,5 @@
 #include "sudoku.hpp"
-
+#include <iostream>
 Sudoku::Sudoku(int length, int rows, int columns){
 	// mGraph = new Graph(length);
 	mMap = std::vector<std::vector<int>>(length);
@@ -20,7 +20,6 @@ int Sudoku::get_map_value(int row, int column){
 
 void Sudoku::solve(){
 	this->polinomial_transformation();
-	mGraph->color();
 }
 
 void Sudoku::polinomial_transformation(){
@@ -32,7 +31,7 @@ void Sudoku::polinomial_transformation(){
 			mGraph->add_vertex(mMap[i][j]);
 		}
 	}
-	
+
 	//duas células na mesma linha representam uma aresta entre dois vértices
 	//duas células na mesma coluna representam uma aresta entre dois vértices
 	int current_vertex_index, neighbor_vertex_index;
@@ -75,4 +74,14 @@ void Sudoku::polinomial_transformation(){
 			}
 		}
 	}
+	mGraph->color();
+	int local_row;
+	Node *n;
+	for (int i = 0; i < mLength; i++){
+		local_row = i*mLength;
+		for (int j = 0; j < mLength; j++){
+			mMap[i][j] = mGraph->get_vertex_color(local_row + j);
+		}
+	}
+	delete mGraph;
 }

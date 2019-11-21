@@ -10,23 +10,25 @@ bool Graph::color_alowed(int node_index, int color){
 }
 
 bool Graph::backtracking_color(int node_index){
-	Node *n = mNodes[node_index];
 	if(node_index == mNodes.size()) return true;
+	Node *n = mNodes[node_index];
 
-	if(n->color) {
-		return backtracking_color(++node_index);
-	} else {
-		for (int color = 1; color <= mQtt_colors; color++){
-			if(color_alowed(node_index, color)){
-				n->color = color;
-				if(backtracking_color(++node_index)) return true;
-				else n->color = NONE_COLOR;
-			}
+	if(n->color != NONE_COLOR) {
+		return backtracking_color(node_index+1);
+	}
+
+	for (int color = 1; color <= mQtt_colors; color++){
+		if(color_alowed(node_index, color)){
+			n->color = color;
+			if(backtracking_color(node_index+1) == true) return true;
+			n->color = NONE_COLOR;
 		}
-		return false;
 	}
 	return false;
+}
 
+int Graph::get_vertex_color(int node_index){
+	return mNodes[node_index]->color;
 }
 
 Graph::Graph(int qtt_colors){

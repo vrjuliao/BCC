@@ -5,7 +5,7 @@
 
 struct Node{
 	int color;
-	std::vector<Node*> neighbors;	
+	std::vector<Node*> neighbors;
 };
 
 class Graph{
@@ -24,7 +24,7 @@ public:
 	void add_vertex(int color);
 	void add_edge(int index_from, int index_to);
 	bool color();
+	int get_vertex_color(int node_index);
 	~Graph();
-
 };
 #endif
