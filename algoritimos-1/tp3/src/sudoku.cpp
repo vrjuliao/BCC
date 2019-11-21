@@ -1,11 +1,11 @@
 #include "sudoku.hpp"
 #include <iostream>
 Sudoku::Sudoku(int length, int rows, int columns){
-	// mGraph = new Graph(length);
 	mMap = std::vector<std::vector<int>>(length);
 	mLength = length;
 	mRows = rows;
 	mColumns = columns;
+	//initialize all vectors in vector of vectors (mMap)
 	for(int i=0; i < length; i++)
 		mMap[i] = std::vector<int>(length);
 }
@@ -19,31 +19,36 @@ int Sudoku::get_map_value(int row, int column){
 }
 
 void Sudoku::solve(){
+	// call the polinomial transformation and solve the problem
 	this->polinomial_transformation();
 }
 
 void Sudoku::polinomial_transformation(){
 	mGraph = new Graph(mLength);
 
-	//cada célula do sudoku será um vertice do grafo
+	// each cell of sudoku map, will be converted for a graph vertex
 	for(int i=0; i<mLength; i++){
 		for(int j=0; j<mLength; j++){
 			mGraph->add_vertex(mMap[i][j]);
 		}
 	}
 
-	//duas células na mesma linha representam uma aresta entre dois vértices
-	//duas células na mesma coluna representam uma aresta entre dois vértices
+	// adjacent list implementation
+	// two cells on the same row or column have and egde between each other
 	int current_vertex_index, neighbor_vertex_index;
 	for(int i=0; i<mLength; i++){
 		for(int j=0; j<mLength; j++){
 			current_vertex_index = (i*mLength)+j;
 			for(int k=0; k<mLength; k++){
+				// k!=j - carrying for no exists recursive edges
 				if(k!=j){
+					//add vertex for rows
 					neighbor_vertex_index = (i*mLength)+k;
 					mGraph->add_edge(current_vertex_index, neighbor_vertex_index);
 				}
+				// k!=i - carrying for no exists recursive edges
 				if(k!=i){
+					//add vertex for columns
 					neighbor_vertex_index = (k*mLength)+j;
 					mGraph->add_edge(current_vertex_index, neighbor_vertex_index);
 				}
@@ -51,7 +56,8 @@ void Sudoku::polinomial_transformation(){
 		}
 	}
 
-	//duas células no mesmo bloco representam uma aresta entre dois vértices
+	// adjacent list implementation
+	// two cells on the block have and egde between each other
 	int initial_column, initial_row;
 	int row, column;
 	for(int i=0; i<mLength; i++){
@@ -59,7 +65,6 @@ void Sudoku::polinomial_transformation(){
 		for(int j=0; j<mLength; j++){
 			initial_column = j - (j%mColumns);
 			current_vertex_index = (i*mLength)+j;
-
 			for(int r=0; r<mRows; r++){
 				row = initial_row+r;
 				for(int c=0; c<mColumns; c++){
@@ -74,7 +79,11 @@ void Sudoku::polinomial_transformation(){
 			}
 		}
 	}
+
+	//call coloration method from graph
 	mGraph->color();
+
+	//set sudoku matrix with all values of 'colors' after the solution
 	int local_row;
 	Node *n;
 	for (int i = 0; i < mLength; i++){

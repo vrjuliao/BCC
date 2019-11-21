@@ -55,24 +55,23 @@ int main(int argc, const char *argv[]){
     int sudoku_length, i_rows, j_cols;
     myfile >> sudoku_length >> j_cols >> i_rows;
     Sudoku sudoku = Sudoku(sudoku_length, i_rows, j_cols);
-    // std::vector<std::vector<int>> sudoku_table = std::vector<std::vector<int>>(sudoku_length);
-    int io_read;
+    int io_read; // atribute that`s read the standard I\O
     for(int i=0; i<sudoku_length; i++){
-    	// sudoku_table[i] = std::vector<int>(sudoku_length);
     	for(int j=0; j<sudoku_length; j++){
-    		// myfile >> sudoku_table[i][j];
     		myfile >> io_read;
+            // set sudoku matrix values
     		sudoku.set_map_value(io_read, i, j);
     	}
     }
 
+    // call sudoku solve
     sudoku.solve();
+
+    // print the probably solved sudoku
     for(int i=0; i<sudoku_length; i++){
-    	// std::cout << sudoku_table[i][0];
     	std::cout << sudoku.get_map_value(i,0);
     	for(int j=1; j<sudoku_length; j++){
     		std::cout << ' ' << sudoku.get_map_value(i,j);
-    		// std::cout << ' ' <<sudoku_table[i][j]; 
     	}
     	std::cout << std::endl;
     }
