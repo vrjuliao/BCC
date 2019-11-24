@@ -17,7 +17,7 @@ private:
 	int mLength;
 
 	// Blocks of sudoku matriz have the atribute columns and rows
-	int mRows;, mColumns;
+	int mRows, mColumns;
 
 	//to implement problem reduction
 	Graph *mGraph;
