@@ -26,7 +26,7 @@ private:
 	// sudoku cells will be vertex graphs
 	// edger represents that a cell is in the same block, row or column that other
 	// colors will be represented with numbers
-	void polinomial_transformation();
+	bool polinomial_transformation();
 
 public:
 	//constructor that initialize the atributes of Sudoku class
@@ -39,6 +39,6 @@ public:
 	int get_map_value(int row, int column);
 
 	//call the colored graph solution
-	void solve();
+	bool solve();
 };
 #endif

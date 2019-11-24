@@ -18,12 +18,12 @@ int Sudoku::get_map_value(int row, int column){
 	return mMap[row][column];
 }
 
-void Sudoku::solve(){
+bool Sudoku::solve(){
 	// call the polinomial transformation and solve the problem
-	this->polinomial_transformation();
+	return this->polinomial_transformation();
 }
 
-void Sudoku::polinomial_transformation(){
+bool Sudoku::polinomial_transformation(){
 	mGraph = new Graph(mLength);
 
 	// each cell of sudoku map, will be converted for a graph vertex
@@ -81,7 +81,7 @@ void Sudoku::polinomial_transformation(){
 	}
 
 	//call coloration method from graph
-	mGraph->color();
+	bool s = mGraph->color();
 
 	//set sudoku matrix with all values of 'colors' after the solution
 	int local_row;
@@ -93,4 +93,5 @@ void Sudoku::polinomial_transformation(){
 		}
 	}
 	delete mGraph;
+	return s;
 }
