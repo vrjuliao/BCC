@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include <sys/socket.h>
 #include <netdb.h>
@@ -7,9 +8,9 @@
 #include <arpa/inet.h>
 
 #define PORT 51511
-#define READY_LENGTH 5
+#define READY_LENGTH sizeof("READY")
 #define INTEGER_MAX_LENGTH 8
-#define OK_LENGTH 2
+#define OK_LENGTH sizeof("OK")
 
 int main(int argc, const char* argv[]){
 	int num;

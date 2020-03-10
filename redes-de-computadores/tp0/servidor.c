@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <sys/socket.h>
 #include <netdb.h>
@@ -39,30 +40,30 @@ int type_of_key(char buffer[], const char *professor_key, const char *student_ke
 
 void professor_proccess(int *students, int n, int client_sck){
 	int i;
-	int len = n*(MAX_CHAR_ON_INT+1) + 1;
-	char buff[len];
-	memset(buff, '\0', len*sizeof(char));
+	int len;
+	len = n*(MAX_CHAR_ON_INT+1);
+	char buff[len+1];
+	memset(buff, '\0', (len+1)*sizeof(char));
 	for(i=0; i<n; i++){
 		sprintf(buff+((int)strlen(buff)), "%d%c", students[i], '\n');
 	}
-	printf("Professor:\n%s, %d", buff, len);
-	write(client_sck, buff, len);
+	i = send(client_sck, buff, len-1, 0);
 	char ok[2];
-	read(client_sck, ok, 2);
+	recv(client_sck, ok, 2*sizeof(char), 0);
 }
 
 int student_proccess(int client_sck){
 	int read_value;
-	write(client_sck, "OK", sizeof("OK"));
-	write(client_sck, "MATRICULA", sizeof("MATRICULA"));
+	send(client_sck, "OK", sizeof("OK"), 0);
+	send(client_sck, "MATRICULA", sizeof("MATRICULA"), 0);
 
 
 	int32_t ret;
 	char *data = (char*)&ret;
 	int left = sizeof(ret);
-	read_value = read(client_sck, data, left);
+	read_value = recv(client_sck, data, left, 0);
 
-	write(client_sck, "OK", sizeof("OK"));
+	send(client_sck, "OK", sizeof("OK"), 0);
 	return ntohl(ret);
 }
 
@@ -106,8 +107,6 @@ int main(int argc, char const *argv[]){
 	int n_students;
 	n_students = 0;
 	while(1){
-		//put in loop
-
 		len = sizeof(address);
 		if((client_sck = accept(server_sck, (struct sockaddr*)&address, (socklen_t*)&len)) < 0){
 			perror("accept");
@@ -115,16 +114,15 @@ int main(int argc, char const *argv[]){
 		}
 		printf("accept\n");
 
-		write(client_sck, "READY", sizeof("READY"));
+		send(client_sck, "READY", sizeof("READY"), 0);
 		printf("write ready\n");
 		
 		//read key
-		read_value = read(client_sck, key, sizeof(key));
+		read_value = recv(client_sck, key, sizeof(key), 0);
 		printf("read key\n");
 		int type_key;
 		type_key = type_of_key(key, professor_key, student_key);
 		printf("type key\n");
-
 
 		if(type_key == STUDENT){
 			//execute student proccess

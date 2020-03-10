@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
 
 #include <sys/socket.h>
 #include <netdb.h>
@@ -7,9 +9,9 @@
 #include <arpa/inet.h>
 
 #define PORT 51511
-#define READY_LENGTH 5
+#define READY_LENGTH sizeof("READY")
 #define INTEGER_MAX_LENGTH 8
-#define OK_LENGTH 2
+#define OK_LENGTH sizeof("ok")
 
 #define MAX_STUDENTS 256
 #define MAX_CHAR_ON_INT 10
@@ -43,24 +45,15 @@ int main(int argc, const char* argv[]){
 
 	int len;
 	len = (MAX_STUDENTS*(MAX_CHAR_ON_INT+1))+1;
-	char *buff[len];
+	char buff[len];
 	int read_value;
 	read_value = read(server_sck, buff, READY_LENGTH);
 	write(server_sck, argv[1], 8);
 	int i, num;
 	i=0;
-		read_value = recv(server_sck, buff, len, 0);
-		printf("%s, %d\n ", buff, len);
+	read_value = read(server_sck, buff, len*sizeof(char));
 	char c;
-	/*do{
-		read_value = read(server_sck, buff, len);
-		printf("%s\n", buff);
-		if(buff[i] == '\n'){
-			printf("%s", buff);
-			memset(buff, '\0', 11);
-			i=0;
-		}
-	} while(buff[i]!='\0');*/
+	printf("%s", buff);
 	write(server_sck, "OK", 2);
 	close(server_sck);
 
