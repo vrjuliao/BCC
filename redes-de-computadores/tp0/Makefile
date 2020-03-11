@@ -20,8 +20,6 @@ clean:
 	$(RM) -rf servidor prof aluno
 
 main: $(OBJECTS)
-	$(CC) $(CFLAGS) $(SERVIDOR) -o servidor
-	$(CC) $(CFLAGS) $(PROFESSOR) -o prof
-	$(CC) $(CFLAGS) $(ALUNO) -o aluno
-
-
+	$(CC) $(CFLAGS) $(SERVIDOR) -I include/ -o servidor
+	$(CC) $(CFLAGS) $(PROFESSOR) -I include/ -o prof
+	$(CC) $(CFLAGS) $(ALUNO) -I include/ -o aluno

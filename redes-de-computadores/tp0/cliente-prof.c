@@ -8,13 +8,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define PORT 51511
-#define READY_LENGTH sizeof("READY")
-#define INTEGER_MAX_LENGTH 8
-#define OK_LENGTH sizeof("ok")
-
-#define MAX_STUDENTS 256
-#define MAX_CHAR_ON_INT 10
+#include "utils.h"
 
 int main(int argc, const char* argv[]){
 	// execution parameter treatment
@@ -51,26 +45,12 @@ int main(int argc, const char* argv[]){
 	len = (MAX_STUDENTS*(MAX_CHAR_ON_INT+1))+1;
 	char buff[len];
 	
-	if(recv(server_sck, buff, READY_LENGTH, 0) < 0){
-		printf("TIMEOUT\n");
-		close(server_sck);
-		return -1;
-	}
-
-	if(send(server_sck, argv[1], 8, 0) < 0){
-		printf("TIMEOUT\n");
-		close(server_sck);
-		return -1;
-	}
-	
-	if(recv(server_sck, buff, len*sizeof(char), 0) < 0){
-		printf("TIMEOUT\n");
-		close(server_sck);
-		return -1;
-	}
+	recv_(server_sck, buff, READY_LENGTH, 0);
+	send_(server_sck, argv[1], 8, 0);
+	recv_(server_sck, buff, len, 0);
 
 	printf("%s", buff);
-	write(server_sck, "OK", 2);
+	send_(server_sck, "OK", OK_LENGTH, 0);
 	close(server_sck);
 	return 0;
 }

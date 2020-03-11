@@ -8,10 +8,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define PORT 51511
-#define READY_LENGTH sizeof("READY")
-#define INTEGER_MAX_LENGTH 8
-#define OK_LENGTH sizeof("OK")
+#include "utils.h"
 
 int main(int argc, const char* argv[]){
 	int num;
@@ -45,11 +42,11 @@ int main(int argc, const char* argv[]){
 	}
 
 	char buff[11];
-	int read_value;
-	read_value = recv(server_sck, buff, READY_LENGTH, 0);
-	send(server_sck, argv[1], 8, 0);
-	read_value = recv(server_sck, buff, OK_LENGTH, 0);
-	read_value = recv(server_sck, buff, sizeof("MATRICULA"), 0);
+
+	recv_(server_sck, buff, READY_LENGTH, 0);
+	send_(server_sck, argv[1], 8, 0);
+	recv_(server_sck, buff, OK_LENGTH, 0);
+	recv_(server_sck, buff, sizeof("MATRICULA"), 0);
 
 	//send number
 	int32_t conv;
@@ -58,8 +55,8 @@ int main(int argc, const char* argv[]){
 	data = (char*)&conv;
 	int len;
 	len = sizeof(conv);
-	send(server_sck, data, len, 0);
-	read_value = recv(server_sck, buff, OK_LENGTH, 0);
+	send_(server_sck, data, len, 0);
+	recv_(server_sck, buff, OK_LENGTH, 0);
 
 	close(server_sck);
 
