@@ -45,7 +45,7 @@ int type_of_key(char buffer[], const char *professor_key, const char *student_ke
 		return -1;
 }
 
-void professor_proccess(int *students, int n, int client_sck){
+int professor_proccess(int *students, int n, int client_sck){
 	int len;
 	len = n*(MAX_CHAR_ON_INT+1);
 	char buff[len+1];
@@ -55,22 +55,25 @@ void professor_proccess(int *students, int n, int client_sck){
 	for(i=0; i<n; i++){
 		sprintf(buff+((int)strlen(buff)), "%d%c", students[i], '\n');
 	}
-	send_(client_sck, buff, (len+1)*sizeof(char), 0);
-	recv_(client_sck, buff, OK_LENGTH, 0);
+	if(!send_(client_sck, buff, (len+1)*sizeof(char), MSG_WAITALL)) return 0;
+	if(!recv_(client_sck, buff, OK_LENGTH, MSG_WAITALL)) return 0;
+	return 1;
 }
 
-int student_proccess(int client_sck){
-	send_(client_sck, "OK", OK_LENGTH, 0);
-	send_(client_sck, "MATRICULA", sizeof("MATRICULA"), 0);
+int student_proccess(int client_sck, int students[], int *n_students){
+	if(!send_(client_sck, "OK", OK_LENGTH, MSG_WAITALL)) return 0;
+	if(!send_(client_sck, "MATRICULA", sizeof("MATRICULA"), MSG_WAITALL)) return 0;
 
 	// casting network data to integer
 	int32_t ret;
 	char *data = (char*)&ret;
 	int left = sizeof(ret);
-	recv_(client_sck, data, left, 0);
+	if(!recv_(client_sck, data, left, 0)) return 0;
 
-	send_(client_sck, "OK", OK_LENGTH, 0);
-	return ntohl(ret);
+	if(!send_(client_sck, "OK", OK_LENGTH, 0)) return 0;
+	students[*n_students] = ntohl(ret);
+	(*n_students)++;
+	return 1;
 }
 
 int main(int argc, char const *argv[]){
@@ -114,31 +117,42 @@ int main(int argc, char const *argv[]){
 	int students[MAX_STUDENTS];
 	int n_students;
 	n_students = 0;
+	// set up timeout by 1 second
+	setsockopt(server_sck, SOL_SOCKET, SO_RCVTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
+	setsockopt(server_sck, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
 	while(1){
 		len = sizeof(address);
 		if((client_sck = accept(server_sck, (struct sockaddr*)&address, (socklen_t*)&len)) < 0){
 			perror("TIMEOUT");
-			exit(EXIT_FAILURE);
+			continue;
 		}
 
-		// set up timeout by 1 second
-		setsockopt(server_sck, SOL_SOCKET, SO_RCVTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
-		setsockopt(server_sck, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
 		
-		send_(client_sck, "READY", READY_LENGTH, 0);
+		if(!send_(client_sck, "READY", READY_LENGTH, MSG_WAITALL)){
+			close(client_sck);
+			continue;
+		}
 		
 		//read key
-		recv_(client_sck, key, sizeof(key), 0);
+		if(!recv_(client_sck, key, sizeof(key), MSG_WAITALL)){
+			close(client_sck);
+			continue;
+		}
 		int type_key;
 		type_key = type_of_key(key, professor_key, student_key);
 
 		if(type_key == STUDENT){
 			//execute student proccess
-			students[n_students] = student_proccess(client_sck);
-			n_students++;
+			if(!student_proccess(client_sck, students, &n_students)){
+				close(client_sck);
+				continue;
+			}
 		} else if (type_key == PROFESSOR){
 			//execute professor proccess
-			professor_proccess(students, n_students, client_sck);
+			if(!professor_proccess(students, n_students, client_sck)){
+				close(client_sck);
+				continue;
+			}
 		}
 		close(client_sck);
 	}

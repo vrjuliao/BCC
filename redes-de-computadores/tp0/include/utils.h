@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <errno.h>
 
 #include <sys/socket.h>
 
@@ -13,16 +14,22 @@
 #define INTEGER_MAX_LENGTH 8
 #define OK_LENGTH sizeof("OK")
 
-void recv_(int sockfd, char buff[], int size, int flag){
-	if(recv(sockfd, buff, size, flag) < 0){
+int recv_(int sockfd, char buff[], int size, int flag){
+	if(recv(sockfd, buff, size, flag) < 0 ||
+		errno == EAGAIN || errno == EWOULDBLOCK
+		|| errno == ETIMEDOUT){
 		perror("TIMEOUT");
-		exit(EXIT_FAILURE);
+		return 0;
 	}
+	return 1;
 }
 
-void send_(int sockfd, const char buff[], int size, int flag){
-	if(send(sockfd, buff, size, flag) < 0){
+int send_(int sockfd, const char buff[], int size, int flag){
+	if(send(sockfd, buff, size, flag) < 0||
+		errno == EAGAIN || errno == EWOULDBLOCK
+		|| errno == ETIMEDOUT){
 		perror("TIMEOUT");
-		exit(EXIT_FAILURE);
+		return 0;
 	}
+	return 1;
 }

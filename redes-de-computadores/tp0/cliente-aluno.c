@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/time.h>
 
 #include <sys/socket.h>
 #include <netdb.h>
@@ -41,12 +42,18 @@ int main(int argc, const char* argv[]){
 		return -1;
 	}
 
+	// set default timeout
+	struct timeval tv;
+	tv.tv_sec = 1;
+	setsockopt(server_sck, SOL_SOCKET, SO_RCVTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
+	setsockopt(server_sck, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
+
 	char buff[11];
 
-	recv_(server_sck, buff, READY_LENGTH, 0);
-	send_(server_sck, argv[1], 8, 0);
-	recv_(server_sck, buff, OK_LENGTH, 0);
-	recv_(server_sck, buff, sizeof("MATRICULA"), 0);
+	if(!recv_(server_sck, buff, READY_LENGTH, 0)) exit(EXIT_FAILURE);
+	if(!send_(server_sck, argv[1], 8, 0)) exit(EXIT_FAILURE);
+	if(!recv_(server_sck, buff, OK_LENGTH, 0)) exit(EXIT_FAILURE);
+	if(!recv_(server_sck, buff, sizeof("MATRICULA"), 0)) exit(EXIT_FAILURE);
 
 	//send number
 	int32_t conv;
@@ -55,8 +62,8 @@ int main(int argc, const char* argv[]){
 	data = (char*)&conv;
 	int len;
 	len = sizeof(conv);
-	send_(server_sck, data, len, 0);
-	recv_(server_sck, buff, OK_LENGTH, 0);
+	if(!send_(server_sck, data, len, 0)) exit(EXIT_FAILURE);
+	if(!recv_(server_sck, buff, OK_LENGTH, 0)) exit(EXIT_FAILURE);
 
 	close(server_sck);
 
