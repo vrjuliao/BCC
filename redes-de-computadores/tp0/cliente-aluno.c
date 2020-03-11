@@ -51,9 +51,9 @@ int main(int argc, const char* argv[]){
 	char buff[11];
 
 	if(!recv_(server_sck, buff, READY_LENGTH, 0)) exit(EXIT_FAILURE);
-	if(!send_(server_sck, argv[1], 8, 0)) exit(EXIT_FAILURE);
+	if(!send_(server_sck, argv[1], KEY_LENGTH, 0)) exit(EXIT_FAILURE);
 	if(!recv_(server_sck, buff, OK_LENGTH, 0)) exit(EXIT_FAILURE);
-	if(!recv_(server_sck, buff, sizeof("MATRICULA"), 0)) exit(EXIT_FAILURE);
+	if(!recv_(server_sck, buff, sizeof("MATRICULA")-1, 0)) exit(EXIT_FAILURE);
 
 	//send number
 	int32_t conv;

@@ -47,29 +47,35 @@ int type_of_key(char buffer[], const char *professor_key, const char *student_ke
 
 int professor_proccess(int *students, int n, int client_sck){
 	int len;
-	len = n*(MAX_CHAR_ON_INT+1);
-	char buff[len+1];
-	memset(buff, '\0', (len+1)*sizeof(char));
+	// len = n*(MAX_CHAR_ON_INT+1);
+	// char buff[len+1];
+	len = MAX_CHAR_ON_INT;
+	char buff[len+2];
 	// for each student, aggegreat a string with the number + '\n'
 	int i;
 	for(i=0; i<n; i++){
-		sprintf(buff+((int)strlen(buff)), "%d%c", students[i], '\n');
+		memset(buff, '\0', (len+2)*sizeof(char));
+		sprintf(buff, "%d%c", students[i], '\n');
+		if(!send_(client_sck, buff, strlen(buff), 0)) return 0;
+		// sprintf(buff+((int)strlen(buff)), "%d%c", students[i], '\n');
 	}
-	if(!send_(client_sck, buff, (len+1)*sizeof(char), MSG_WAITALL)) return 0;
+
+	if(!send_(client_sck, "\0", sizeof(char), 0)) return 0;
+	// if(!send_(client_sck, buff, (len+1)*sizeof(char), 0)) return 0;
 	if(!recv_(client_sck, buff, OK_LENGTH, MSG_WAITALL)) return 0;
 	return 1;
 }
 
 int student_proccess(int client_sck, int students[], int *n_students){
-	if(!send_(client_sck, "OK", OK_LENGTH, MSG_WAITALL)) return 0;
-	if(!send_(client_sck, "MATRICULA", sizeof("MATRICULA"), MSG_WAITALL)) return 0;
+	if(!send_(client_sck, "OK", OK_LENGTH, 0)) return 0;
+	if(!send_(client_sck, "MATRICULA", sizeof("MATRICULA")-1, 0)) return 0;
 
 	// casting network data to integer
 	int32_t ret;
 	char *data = (char*)&ret;
 	int left = sizeof(ret);
-	if(!recv_(client_sck, data, left, 0)) return 0;
-
+	if(!recv_(client_sck, data, 100000, MSG_WAITALL)) return 0;
+	printf("%s\n", data);
 	if(!send_(client_sck, "OK", OK_LENGTH, 0)) return 0;
 	students[*n_students] = ntohl(ret);
 	(*n_students)++;
@@ -102,40 +108,46 @@ int main(int argc, char const *argv[]){
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
+	// set default timeout
+	struct timeval tv;
+	// set up timeout by 1 second
+	tv.tv_sec = 1;
+	tv.tv_usec = 0;
+	// setsockopt(server_sck, SOL_SOCKET, SO_RCVTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
+	// setsockopt(server_sck, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
 
 	if (listen(server_sck, 3)){
 		perror("listen");
 		exit(EXIT_FAILURE);
 	}
 
-	// set default timeout
-	struct timeval tv;
-	tv.tv_sec = 1;
-
 	char key[KEY_LENGTH];
 
 	int students[MAX_STUDENTS];
 	int n_students;
 	n_students = 0;
-	// set up timeout by 1 second
-	setsockopt(server_sck, SOL_SOCKET, SO_RCVTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
-	setsockopt(server_sck, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
+	len = sizeof(address);
 	while(1){
-		len = sizeof(address);
 		if((client_sck = accept(server_sck, (struct sockaddr*)&address, (socklen_t*)&len)) < 0){
 			perror("TIMEOUT");
+			printf("accept\n");
 			continue;
 		}
 
-		
-		if(!send_(client_sck, "READY", READY_LENGTH, MSG_WAITALL)){
+		setsockopt(client_sck, SOL_SOCKET, SO_RCVTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
+		setsockopt(client_sck, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
+
+
+		if(!send_(client_sck, "READY", READY_LENGTH, 0)){
 			close(client_sck);
+			errno = 0;
 			continue;
 		}
 		
 		//read key
-		if(!recv_(client_sck, key, sizeof(key), MSG_WAITALL)){
+		if(!recv_(client_sck, key, KEY_LENGTH, MSG_WAITALL)){
 			close(client_sck);
+			errno = 0;
 			continue;
 		}
 		int type_key;
@@ -145,16 +157,20 @@ int main(int argc, char const *argv[]){
 			//execute student proccess
 			if(!student_proccess(client_sck, students, &n_students)){
 				close(client_sck);
+				errno = 0;
 				continue;
 			}
 		} else if (type_key == PROFESSOR){
 			//execute professor proccess
 			if(!professor_proccess(students, n_students, client_sck)){
 				close(client_sck);
+				errno = 0;
 				continue;
 			}
 		}
+		// printf("close connection\n");
 		close(client_sck);
+		printf("close\n");
 	}
 	return 0;
 }

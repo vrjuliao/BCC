@@ -40,23 +40,36 @@ int main(int argc, const char* argv[]){
 		return -1;
 	}
 
-	// set default timeout
-	struct timeval tv;
-	tv.tv_sec = 1;
-	setsockopt(server_sck, SOL_SOCKET, SO_RCVTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
-	setsockopt(server_sck, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
-
 	int len;
+	len = MAX_CHAR_ON_INT;
+
 	// max length of a string with 256 students
 	//      where each key has 10 characters
-	len = (MAX_STUDENTS*(MAX_CHAR_ON_INT+1))+1;
-	char buff[len];
+	// len = (MAX_STUDENTS*(MAX_CHAR_ON_INT+1))+1;
+	char buff[len+1];
+
 	
 	if(!recv_(server_sck, buff, READY_LENGTH, 0)) exit(EXIT_FAILURE);
-	if(!send_(server_sck, argv[1], 8, 0)) exit(EXIT_FAILURE);
-	if(!recv_(server_sck, buff, len, 0)) exit(EXIT_FAILURE);
+	if(!send_(server_sck, argv[1], KEY_LENGTH, 0)) exit(EXIT_FAILURE);
+	// if(!recv_(server_sck, buff, len, 0)) exit(EXIT_FAILURE);
+	int i;
+	/*do{
+	// if(!recv_(server_sck, buff, len, 0)) exit(EXIT_FAILURE);
+		i = recv(server_sck, buff, len+1, 0);
+		if(i < 0) exit(EXIT_FAILURE);
+		char aux[i];
+		strncpy(aux, buff, i);
+		printf("%s", buff);
+	} while(!strchr(aux, '\0'));*/
+	while(1){
+		i = recv(server_sck, buff, len+1, 0);
+		if(i < 0) exit(EXIT_FAILURE);
+		char aux[i];
+		strncpy(aux, buff, i);
+		printf("%s", buff);
+		if(!strchr(aux, '\0')) break;
+	}
 
-	printf("%s", buff);
 	if(!send_(server_sck, "OK", OK_LENGTH, 0)) exit(EXIT_FAILURE);
 	close(server_sck);
 	return 0;
