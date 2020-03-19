@@ -47,22 +47,18 @@ int type_of_key(char buffer[], const char *professor_key, const char *student_ke
 
 int professor_proccess(int *students, int n, int client_sck){
 	int len;
-	// len = n*(MAX_CHAR_ON_INT+1);
-	// char buff[len+1];
 	len = MAX_CHAR_ON_INT;
 	char buff[len+2];
-	// for each student, aggegreat a string with the number + '\n'
+	// for each student, aggegreate a string with the number + '\n'
 	int i;
 	for(i=0; i<n; i++){
-		memset(buff, '\0', (len+2)*sizeof(char));
+		memset(buff, '\0', (len+2)*sizeof(char)); 
 		sprintf(buff, "%d%c", students[i], '\n');
 		if(!send_(client_sck, buff, strlen(buff), 0)) return 0;
-		// sprintf(buff+((int)strlen(buff)), "%d%c", students[i], '\n');
 	}
 
 	if(!send_(client_sck, "\0", sizeof(char), 0)) return 0;
-	// if(!send_(client_sck, buff, (len+1)*sizeof(char), 0)) return 0;
-	if(!recv_(client_sck, buff, OK_LENGTH, MSG_WAITALL)) return 0;
+	if(!recv_(client_sck, buff, OK_LENGTH, MSG_WAITALL, "OK")) return 0;
 	return 1;
 }
 
@@ -74,8 +70,7 @@ int student_proccess(int client_sck, int students[], int *n_students){
 	int32_t ret;
 	char *data = (char*)&ret;
 	int left = sizeof(ret);
-	if(!recv_(client_sck, data, 100000, MSG_WAITALL)) return 0;
-	printf("%s\n", data);
+	if(!recv_(client_sck, data, left, MSG_WAITALL, NULL)) return 0;
 	if(!send_(client_sck, "OK", OK_LENGTH, 0)) return 0;
 	students[*n_students] = ntohl(ret);
 	(*n_students)++;
@@ -98,7 +93,8 @@ int main(int argc, char const *argv[]){
 		perror("socket failed"); 
 		exit(EXIT_FAILURE);
 	}
-
+	setsockopt(server_sck, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int));
+	
 	address.sin_family = AF_INET;
 	address.sin_addr.s_addr = inet_addr("127.0.0.1");
 	address.sin_port = htons(PORT);
@@ -113,8 +109,6 @@ int main(int argc, char const *argv[]){
 	// set up timeout by 1 second
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
-	// setsockopt(server_sck, SOL_SOCKET, SO_RCVTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
-	// setsockopt(server_sck, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
 
 	if (listen(server_sck, 3)){
 		perror("listen");
@@ -145,7 +139,7 @@ int main(int argc, char const *argv[]){
 		}
 		
 		//read key
-		if(!recv_(client_sck, key, KEY_LENGTH, MSG_WAITALL)){
+		if(!recv_(client_sck, key, KEY_LENGTH, MSG_WAITALL, NULL)){
 			close(client_sck);
 			errno = 0;
 			continue;
@@ -170,7 +164,6 @@ int main(int argc, char const *argv[]){
 		}
 		// printf("close connection\n");
 		close(client_sck);
-		printf("close\n");
 	}
 	return 0;
 }

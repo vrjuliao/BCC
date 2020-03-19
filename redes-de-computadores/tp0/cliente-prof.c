@@ -42,32 +42,18 @@ int main(int argc, const char* argv[]){
 
 	int len;
 	len = MAX_CHAR_ON_INT;
-
-	// max length of a string with 256 students
-	//      where each key has 10 characters
-	// len = (MAX_STUDENTS*(MAX_CHAR_ON_INT+1))+1;
 	char buff[len+1];
 
-	
-	if(!recv_(server_sck, buff, READY_LENGTH, 0)) exit(EXIT_FAILURE);
+	if(!recv_(server_sck, buff, READY_LENGTH, 0, "READY")) exit(EXIT_FAILURE);
 	if(!send_(server_sck, argv[1], KEY_LENGTH, 0)) exit(EXIT_FAILURE);
-	// if(!recv_(server_sck, buff, len, 0)) exit(EXIT_FAILURE);
 	int i;
-	/*do{
-	// if(!recv_(server_sck, buff, len, 0)) exit(EXIT_FAILURE);
-		i = recv(server_sck, buff, len+1, 0);
-		if(i < 0) exit(EXIT_FAILURE);
-		char aux[i];
-		strncpy(aux, buff, i);
-		printf("%s", buff);
-	} while(!strchr(aux, '\0'));*/
 	while(1){
+		memset(buff, '\0', (len+1)*sizeof(char)); 
 		i = recv(server_sck, buff, len+1, 0);
-		if(i < 0) exit(EXIT_FAILURE);
-		char aux[i];
-		strncpy(aux, buff, i);
+
 		printf("%s", buff);
-		if(!strchr(aux, '\0')) break;
+		if(i < 0) exit(EXIT_FAILURE);
+		else if (i>0 && buff[i-1]=='\0') break;
 	}
 
 	if(!send_(server_sck, "OK", OK_LENGTH, 0)) exit(EXIT_FAILURE);

@@ -14,26 +14,33 @@
 #define INTEGER_MAX_LENGTH 8
 #define OK_LENGTH 2
 
-int recv_(int sockfd, char buff[], int size, int flag){
+int recv_(int sockfd, char buff[], int size, int flag, const char* expected_data){
 	int i;
+	//check timeout occurrence
 	if( (i = recv(sockfd, buff, size, flag)) < 0 ||
 		errno == EAGAIN || errno == EWOULDBLOCK
 		|| errno == ETIMEDOUT){
-		printf("TIMEOUT");
+		printf("TIMEOUT\n");
 		return 0;
 	}
-	// printf("recv: %d %d\n", i, size);
+
+	//check difference between received data and expected data
+	if(expected_data != NULL && 
+	strnstr(buff, expected_data, i) == NULL) {	
+		printf("TIMEOUT\n");
+		return 0;
+	}
 	return 1;
 }
 
 int send_(int sockfd, const char buff[], int size, int flag){
 	int i;
+	//check timeout occurrence
 	if( (i = send(sockfd, buff, size, flag)) < 0||
 		errno == EAGAIN || errno == EWOULDBLOCK
 		|| errno == ETIMEDOUT){
-		printf("TIMEOUT");
+		printf("TIMEOUT\n");
 		return 0;
 	}
-	// printf("send: %d %d\n", i, size);
 	return 1;
 }

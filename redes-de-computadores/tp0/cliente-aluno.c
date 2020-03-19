@@ -49,11 +49,13 @@ int main(int argc, const char* argv[]){
 	setsockopt(server_sck, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
 
 	char buff[11];
+	const char *mat = "MATRICULA";
+	const char *ok = "OK";
 
-	if(!recv_(server_sck, buff, READY_LENGTH, 0)) exit(EXIT_FAILURE);
+	if(!recv_(server_sck, buff, READY_LENGTH, 0, "READY")) exit(EXIT_FAILURE);
 	if(!send_(server_sck, argv[1], KEY_LENGTH, 0)) exit(EXIT_FAILURE);
-	if(!recv_(server_sck, buff, OK_LENGTH, 0)) exit(EXIT_FAILURE);
-	if(!recv_(server_sck, buff, sizeof("MATRICULA")-1, 0)) exit(EXIT_FAILURE);
+	if(!recv_(server_sck, buff, OK_LENGTH, 0, ok)) exit(EXIT_FAILURE);
+	if(!recv_(server_sck, buff, strlen(mat), 0, mat)) exit(EXIT_FAILURE);
 
 	//send number
 	int32_t conv;
@@ -63,7 +65,7 @@ int main(int argc, const char* argv[]){
 	int len;
 	len = sizeof(conv);
 	if(!send_(server_sck, data, len, 0)) exit(EXIT_FAILURE);
-	if(!recv_(server_sck, buff, OK_LENGTH, 0)) exit(EXIT_FAILURE);
+	if(!recv_(server_sck, buff, OK_LENGTH, 0, ok)) exit(EXIT_FAILURE);
 
 	close(server_sck);
 
