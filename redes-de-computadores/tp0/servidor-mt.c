@@ -78,6 +78,10 @@ int student_proccess(int client_sck, int students[], int *n_students){
 	if(!send_(client_sck, "OK", OK_LENGTH, 0)) return 0;
 	if(!send_(client_sck, "MATRICULA", strlen("MATRICULA"), 0)) return 0;
 
+	if((*n_students) >= MAX_STUDENTS){
+		printf("TIMEOUT");
+		return 0;
+	}
 	// casting network data to integer
 	int32_t ret;
 	char *data = (char*)&ret;
@@ -192,7 +196,7 @@ int main(int argc, char const *argv[]){
 	
 	//initializing threads poll proccess
 	begin_thread_proccess_(&poll);
-	
+
 	n_students = 0;
 	len = sizeof(address);
 	while(1){

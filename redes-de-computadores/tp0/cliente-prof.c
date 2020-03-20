@@ -46,7 +46,9 @@ int main(int argc, const char* argv[]){
 
 	if(!recv_(server_sck, buff, READY_LENGTH, 0, "READY")) exit(EXIT_FAILURE);
 	if(!send_(server_sck, argv[1], KEY_LENGTH, 0)) exit(EXIT_FAILURE);
+	
 	int i;
+	//while not match '\0' in buffer, keep receiving data
 	while(1){
 		memset(buff, '\0', (len+1)*sizeof(char)); 
 		i = recv(server_sck, buff, len+1, 0);
