@@ -27,7 +27,7 @@ int recv_(int sockfd, char buff[], int size, int flag, const char* expected_data
 
 	//check difference between received data and expected data
 	if(expected_data != NULL && 
-	strnstr(buff, expected_data, i) == NULL) {	
+	strstr(buff, expected_data) != buff) {	
 		printf("TIMEOUT\n");
 		return 0;
 	}
