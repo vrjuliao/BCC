@@ -64,6 +64,7 @@ int main(int argc, const char* argv[]){
 	data = (char*)&conv;
 	int len;
 	len = sizeof(conv);
+	sleep(1);
 	if(!send_(server_sck, data, len, 0)) exit(EXIT_FAILURE);
 	if(!recv_(server_sck, buff, OK_LENGTH, 0, ok)) exit(EXIT_FAILURE);
 

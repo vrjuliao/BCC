@@ -5,12 +5,24 @@
 #include <time.h>
 #include <sys/time.h>
 
+#include <pthread.h>
+
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
 #include "utils.h"
+#include "thread_treatment.h"
+
+#define MAX_THREADS 5
+
+int students[MAX_STUDENTS];
+int n_students;
+char professor_key[KEY_LENGTH+1] = {'\0'};
+char student_key[KEY_LENGTH+1] = {'\0'};
+
+thpoll poll;
 
 // generate keys on ascii only alpha numeric characters
 void get_keys(char *professor, char *student){
@@ -36,7 +48,7 @@ void get_keys(char *professor, char *student){
 }
 
 //compare type of key
-int type_of_key(char buffer[], const char *professor_key, const char *student_key){
+int type_of_key(char buffer[]){
 	if(!(strncmp(buffer, professor_key, KEY_LENGTH)))
 		return PROFESSOR;
 	if(!(strncmp(buffer, student_key, KEY_LENGTH)))
@@ -77,13 +89,76 @@ int student_proccess(int client_sck, int students[], int *n_students){
 	return 1;
 }
 
+struct data {
+	int th_id;
+	int client_sck;
+    // char *professor_key;
+    // char *student_key;
+	// struct list students;
+};
+
+void *client_thread(void *param) {
+    pthread_t tid = pthread_self();
+	int *i = (int*)tid;
+	printf("thread id: %d", *i);
+
+    struct data *dd = param;
+	int client_sck = dd->client_sck;
+
+    // set default timeout
+	struct timeval tv;
+	// set up timeout by 1 second
+	tv.tv_sec = 1;
+	tv.tv_usec = 0;
+    setsockopt(client_sck, SOL_SOCKET, SO_RCVTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
+	setsockopt(client_sck, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
+
+    char key[KEY_LENGTH];
+
+    if(!send_(client_sck, "READY", READY_LENGTH, 0)){
+        close(client_sck);
+        errno = 0;
+        pthread_exit(EXIT_SUCCESS);
+    }
+    
+    //read key
+    if(!recv_(client_sck, key, KEY_LENGTH, MSG_WAITALL, NULL)){
+        close(client_sck);
+        errno = 0;
+        pthread_exit(EXIT_SUCCESS);
+    }
+
+    int type_key;
+    type_key = type_of_key(key);
+
+
+    if(type_key == STUDENT){
+        //execute student proccess
+        if(!student_proccess(client_sck, students, &n_students)){
+            close(client_sck);
+            errno = 0;
+            pthread_exit(EXIT_SUCCESS);
+        }
+    } else if (type_key == PROFESSOR){
+        //execute professor proccess
+        if(!professor_proccess(students, n_students, client_sck)){
+            errno = 0;
+            close(client_sck);
+            pthread_exit(EXIT_SUCCESS);
+        }
+    }
+    // printf("close connection\n");
+    close(client_sck);
+	int id = dd->th_id;
+	free(dd);
+    close_thread_(&poll, id);
+}
+
 int main(int argc, char const *argv[]){
 	int server_sck, client_sck, len;
 	struct sockaddr_in address;
 
 	//getting initial keys
-	char professor_key[KEY_LENGTH+1] = {'\0'};
-	char student_key[KEY_LENGTH+1] = {'\0'};
 	get_keys(professor_key, student_key);
 	printf("%s\n", professor_key);
 	printf("%s\n", student_key);
@@ -104,64 +179,37 @@ int main(int argc, char const *argv[]){
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-	// set default timeout
-	struct timeval tv;
-	// set up timeout by 1 second
-	tv.tv_sec = 1;
-	tv.tv_usec = 0;
 
 	if (listen(server_sck, 3)){
 		perror("listen");
 		exit(EXIT_FAILURE);
 	}
-
-	char key[KEY_LENGTH];
-
-	int students[MAX_STUDENTS];
-	int n_students;
+	
+	pthread_t threads[MAX_THREADS];
+	poll.qtt_threads = MAX_THREADS;
+	poll.threads = threads;
+	begin_thread_proccess_(&poll);
 	n_students = 0;
 	len = sizeof(address);
 	while(1){
-		if((client_sck = accept(server_sck, (struct sockaddr*)&address, (socklen_t*)&len)) < 0){
-			perror("TIMEOUT");
-			continue;
-		}
-
-		setsockopt(client_sck, SOL_SOCKET, SO_RCVTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
-		setsockopt(client_sck, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
-
-
-		if(!send_(client_sck, "READY", READY_LENGTH, 0)){
-			close(client_sck);
-			errno = 0;
-			continue;
-		}
-		
-		//read key
-		if(!recv_(client_sck, key, KEY_LENGTH, MSG_WAITALL, NULL)){
-			close(client_sck);
-			errno = 0;
-			continue;
-		}
-		int type_key;
-		type_key = type_of_key(key, professor_key, student_key);
-
-		if(type_key == STUDENT){
-			//execute student proccess
-			if(!student_proccess(client_sck, students, &n_students)){
-				close(client_sck);
-				errno = 0;
+		if(can_create_thread_(&poll)){
+			if((client_sck = accept(server_sck, (struct sockaddr*)&address, (socklen_t*)&len)) < 0){
+				perror("TIMEOUT");
 				continue;
 			}
-		} else if (type_key == PROFESSOR){
-			//execute professor proccess
-			if(!professor_proccess(students, n_students, client_sck)){
-				close(client_sck);
-				errno = 0;
-				continue;
-			}
+
+			int th_id = get_new_thread_id(&poll);
+			printf("thread id: %d", th_id);
+			struct data *dt = malloc(sizeof(*dt));
+			dt->client_sck = client_sck;
+			dt->th_id = th_id;
+			create_thread_(&poll, client_thread, dt);
+		} else {
+			printf("waitng\n");
 		}
-		close(client_sck);
+		sleep(1);
 	}
+
+	end_thread_proccess_(&poll);
 	return 0;
 }
