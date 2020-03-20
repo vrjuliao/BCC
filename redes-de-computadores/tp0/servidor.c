@@ -64,8 +64,12 @@ int professor_proccess(int *students, int n, int client_sck){
 
 int student_proccess(int client_sck, int students[], int *n_students){
 	if(!send_(client_sck, "OK", OK_LENGTH, 0)) return 0;
-	if(!send_(client_sck, "MATRICULA", sizeof("MATRICULA")-1, 0)) return 0;
+	if(!send_(client_sck, "MATRICULA", strlen("MATRICULA"), 0)) return 0;
 
+	if((*n_students) >= MAX_STUDENTS){
+		printf("TIMEOUT");
+		return 0;
+	}
 	// casting network data to integer
 	int32_t ret;
 	char *data = (char*)&ret;
@@ -123,13 +127,12 @@ int main(int argc, char const *argv[]){
 	len = sizeof(address);
 	while(1){
 		if((client_sck = accept(server_sck, (struct sockaddr*)&address, (socklen_t*)&len)) < 0){
-			perror("TIMEOUT");
+			printf("TIMEOUT");
 			continue;
 		}
 
 		setsockopt(client_sck, SOL_SOCKET, SO_RCVTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
 		setsockopt(client_sck, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
-
 
 		if(!send_(client_sck, "READY", READY_LENGTH, 0)){
 			close(client_sck);

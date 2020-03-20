@@ -44,7 +44,7 @@ int main(int argc, const char* argv[]){
 
 	// set default timeout
 	struct timeval tv;
-	tv.tv_sec = 1;
+	tv.tv_sec = 2;
 	setsockopt(server_sck, SOL_SOCKET, SO_RCVTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
 	setsockopt(server_sck, SOL_SOCKET, SO_SNDTIMEO,(struct timeval *)&tv,sizeof(struct timeval));
 
@@ -64,7 +64,6 @@ int main(int argc, const char* argv[]){
 	data = (char*)&conv;
 	int len;
 	len = sizeof(conv);
-	sleep(1);
 	if(!send_(server_sck, data, len, 0)) exit(EXIT_FAILURE);
 	if(!recv_(server_sck, buff, OK_LENGTH, 0, ok)) exit(EXIT_FAILURE);
 

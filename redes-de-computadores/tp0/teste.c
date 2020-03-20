@@ -3,13 +3,9 @@
 #include <string.h>
 
 int main(){
-	
-
-	// char b[10];
-	// sprintf(b, "%d", a);
-	printf("%zd\n", sizeof("OK"));
-	/*printf("%d\n", atoi(a));
-	printf("%zd\n", strlen(a));*/
-
+	for(int i=0; i < 250; i++){
+		printf("./aluno %s %d & ", "a1wqARuL", i);
+	}
+	printf("./prof %s", "584U029a");
 	return 0;
 }

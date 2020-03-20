@@ -76,7 +76,7 @@ int professor_proccess(int *students, int n, int client_sck){
 
 int student_proccess(int client_sck, int students[], int *n_students){
 	if(!send_(client_sck, "OK", OK_LENGTH, 0)) return 0;
-	if(!send_(client_sck, "MATRICULA", sizeof("MATRICULA")-1, 0)) return 0;
+	if(!send_(client_sck, "MATRICULA", strlen("MATRICULA"), 0)) return 0;
 
 	// casting network data to integer
 	int32_t ret;
@@ -92,17 +92,13 @@ int student_proccess(int client_sck, int students[], int *n_students){
 struct data {
 	int th_id;
 	int client_sck;
-    // char *professor_key;
-    // char *student_key;
-	// struct list students;
 };
 
 void *client_thread(void *param) {
-    pthread_t tid = pthread_self();
-	int *i = (int*)tid;
-	printf("thread id: %d", *i);
-
+    // pthread_t tid = pthread_self();
+	// int *i = (int*)tid;
     struct data *dd = param;
+	int id = dd->th_id;
 	int client_sck = dd->client_sck;
 
     // set default timeout
@@ -118,40 +114,43 @@ void *client_thread(void *param) {
     if(!send_(client_sck, "READY", READY_LENGTH, 0)){
         close(client_sck);
         errno = 0;
-        pthread_exit(EXIT_SUCCESS);
+		free(dd);
+		close_thread_(&poll, id);
     }
     
     //read key
     if(!recv_(client_sck, key, KEY_LENGTH, MSG_WAITALL, NULL)){
         close(client_sck);
         errno = 0;
-        pthread_exit(EXIT_SUCCESS);
+		free(dd);
+		close_thread_(&poll, id);
     }
 
     int type_key;
     type_key = type_of_key(key);
-
 
     if(type_key == STUDENT){
         //execute student proccess
         if(!student_proccess(client_sck, students, &n_students)){
             close(client_sck);
             errno = 0;
-            pthread_exit(EXIT_SUCCESS);
+			free(dd);
+			close_thread_(&poll, id);
         }
     } else if (type_key == PROFESSOR){
         //execute professor proccess
         if(!professor_proccess(students, n_students, client_sck)){
             errno = 0;
             close(client_sck);
-            pthread_exit(EXIT_SUCCESS);
+			free(dd);
+			close_thread_(&poll, id);
         }
     }
-    // printf("close connection\n");
-    close(client_sck);
-	int id = dd->th_id;
+    close(client_sck);	
 	free(dd);
     close_thread_(&poll, id);
+	void *a;
+	return a;
 }
 
 int main(int argc, char const *argv[]){
@@ -180,36 +179,41 @@ int main(int argc, char const *argv[]){
         exit(EXIT_FAILURE);
     }
 
-	if (listen(server_sck, 3)){
+	// max connections on waiting queue is 10
+	if (listen(server_sck, 10)){
 		perror("listen");
 		exit(EXIT_FAILURE);
 	}
 	
+	// threads poll
 	pthread_t threads[MAX_THREADS];
 	poll.qtt_threads = MAX_THREADS;
 	poll.threads = threads;
+	
+	//initializing threads poll proccess
 	begin_thread_proccess_(&poll);
+	
 	n_students = 0;
 	len = sizeof(address);
 	while(1){
-		if(can_create_thread_(&poll)){
-			if((client_sck = accept(server_sck, (struct sockaddr*)&address, (socklen_t*)&len)) < 0){
-				perror("TIMEOUT");
-				continue;
-			}
+		if((client_sck = accept(server_sck, (struct sockaddr*)&address, (socklen_t*)&len)) < 0){
+			printf("TIMEOUT");
+			continue;
+		}
 
+		//check wheter thread poll is not fully
+		if(can_create_thread_(&poll)){
+			//poll thread id
 			int th_id = get_new_thread_id(&poll);
-			printf("thread id: %d", th_id);
+			//param passed by thread
 			struct data *dt = malloc(sizeof(*dt));
 			dt->client_sck = client_sck;
 			dt->th_id = th_id;
+			//execute communication using thread
 			create_thread_(&poll, client_thread, dt);
-		} else {
-			printf("waitng\n");
 		}
-		sleep(1);
 	}
-
+	//free allocated memory
 	end_thread_proccess_(&poll);
 	return 0;
 }
