@@ -4,8 +4,8 @@
 
 int main(){
 	for(int i=0; i < 250; i++){
-		printf("./aluno %s %d & ", "a1wqARuL", i);
+		printf("./bin/stucli %s & ", "3ZeinZmr");
 	}
-	printf("./prof %s", "584U029a");
+	printf("./bin/profcli %s", "mVqeXmgm");
 	return 0;
 }

@@ -161,33 +161,18 @@ int main(int argc, char const *argv[]){
 	int server_sck, client_sck, len;
 	struct sockaddr_in address;
 
+	if(argc != 2){
+		printf("ERROR: incorrect parameters number\n");
+		return -1;
+	}
+
 	//getting initial keys
 	get_keys(professor_key, student_key);
 	printf("%s\n", professor_key);
 	printf("%s\n", student_key);
 
 	//initializing passive socket
-	if ((server_sck = socket(AF_INET,  SOCK_STREAM, 0)) == 0) { 
-		perror("socket failed"); 
-		exit(EXIT_FAILURE);
-	}
-	setsockopt(server_sck, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int));
-	
-	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = inet_addr("127.0.0.1");
-	address.sin_port = htons(PORT);
-
-	if (bind(server_sck, (struct sockaddr *)&address,
-		sizeof(address))){
-        perror("bind failed");
-        exit(EXIT_FAILURE);
-    }
-
-	// max connections on waiting queue is 10
-	if (listen(server_sck, 10)){
-		perror("listen");
-		exit(EXIT_FAILURE);
-	}
+	server_sck = begin_passive_socket(argc, argv);
 	
 	// threads poll
 	pthread_t threads[MAX_THREADS];

@@ -85,7 +85,12 @@ int main(int argc, char const *argv[]){
 	int server_sck, client_sck, len;
 	struct sockaddr_in address;
 
-	//getting initial keys
+	if(argc != 2){
+		printf("ERROR: incorrect parameters number\n");
+		return -1;
+	}
+
+	//generate initial keys
 	char professor_key[KEY_LENGTH+1] = {'\0'};
 	char student_key[KEY_LENGTH+1] = {'\0'};
 	get_keys(professor_key, student_key);
@@ -93,32 +98,14 @@ int main(int argc, char const *argv[]){
 	printf("%s\n", student_key);
 
 	//initializing passive socket
-	if ((server_sck = socket(AF_INET,  SOCK_STREAM, 0)) == 0) { 
-		perror("socket failed"); 
-		exit(EXIT_FAILURE);
-	}
-	setsockopt(server_sck, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int));
+	server_sck = begin_passive_socket(argc, argv);
 	
-	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = inet_addr("127.0.0.1");
-	address.sin_port = htons(PORT);
-
-	if (bind(server_sck, (struct sockaddr *)&address,
-		sizeof(address))){
-        perror("bind failed");
-        exit(EXIT_FAILURE);
-    }
 	// set default timeout
 	struct timeval tv;
 	// set up timeout by 1 second
 	tv.tv_sec = 1;
 	tv.tv_usec = 0;
-
-	if (listen(server_sck, 3)){
-		perror("listen");
-		exit(EXIT_FAILURE);
-	}
-
+	
 	char key[KEY_LENGTH];
 
 	int students[MAX_STUDENTS];
