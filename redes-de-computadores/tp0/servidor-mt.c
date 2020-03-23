@@ -86,7 +86,14 @@ int student_proccess(int client_sck, int students[], int *n_students){
 	int32_t ret;
 	char *data = (char*)&ret;
 	int left = sizeof(ret);
-	if(!recv_(client_sck, data, left, MSG_WAITALL, NULL)) return 0;
+	
+	int i;
+	i = recv(client_sck, data, left, MSG_WAITALL);
+	if(i<0 || i!=left) {
+		printf("TIMEOUT\n");
+		return 0;
+	}
+	
 	if(!send_(client_sck, "OK", OK_LENGTH, 0)) return 0;
 	students[*n_students] = ntohl(ret);
 	(*n_students)++;
