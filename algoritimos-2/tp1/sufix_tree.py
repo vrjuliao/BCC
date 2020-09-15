@@ -1,9 +1,10 @@
 import pdb
 
 class Node:
-  def __init__(self, left, right):
+  def __init__(self, left, right, end_of_string):
     self.__childrens = []
     self.__sufix = (left, right)
+    self.__end_of_string = end_of_string
 
   def find_children(self, text, left, right):
     for index in range(len(self.__childrens)):
@@ -27,14 +28,22 @@ class Node:
     self.__sufix = sufix
 
   @property
+  def end_of_string(self):
+    return self.__end_of_string
+
+  @end_of_string.setter
+  def end_of_string(self, end_of_string):
+    self.__end_of_string = end_of_string
+
+  @property
   def childrens(self):
     return self.__childrens
 
 
 class SufixTree:
   def __init__(self, text):
-    self.__text = text; 
-    self.__root = Node(-1, -1)
+    self.__text = text
+    self.__root = Node(-1, -1, False)
     self.__create_tree(text)
 
   def __create_tree(self, text):
@@ -65,9 +74,9 @@ class SufixTree:
           # 1 - create a new_child = child
           # 2 - set the sufix of new_child = the difference of the current sufix
           #     and t
-          new_child = Node(new_child_substr[0], new_child_substr[1])
+          new_child = Node(new_child_substr[0], new_child_substr[1], False)
           child.sufix = (child.sufix[0]+new_sufix_len+1, child.sufix[1])
-          new_child.new_children(Node(new_substr[0], new_substr[1]))
+          new_child.new_children(Node(new_substr[0], new_substr[1], True))
           new_child.new_children(child)
           # 3 - the old child will be a children of new_child
           current_node.set_children(new_child, child_index)
@@ -75,7 +84,7 @@ class SufixTree:
           break
 
       if create_new_node:
-        current_node.new_children(Node(left, right))
+        current_node.new_children(Node(left, right, True))
 
   def __difference_sufixes(self, nleft, nright, mleft, mright):
     new_left = mleft
@@ -89,6 +98,53 @@ class SufixTree:
         mleft += 1
     return (mleft, mright), (new_left, mleft-1)
     
+  def biggets_substr(self):
+    # substr_data = (<repetitions>, <(left, right)>)
+    substr_data = (0, (-1, -1))
+    substr_size = 0
+    for child in self.__root.childrens:
+      repetitions, indexes = self.__bfs_for_biggest_susbtr(child)
+      child_size = indexes[1] - indexes[0] + 1
+      if repetitions > substr_data[0]:
+        substr_size = child_size
+        substr_data = repetitions, indexes
+      elif repetitions == substr_data[0]:
+        if child_size > substr_size:
+          substr_size = child_size
+          substr_data = repetitions, indexes
+
+    return substr_data
+
+  def __bfs_for_biggest_susbtr(self, parent):
+    childrens_qtt = len(parent.childrens)
+    substr_data = (0,(0,0))
+    substr_size = 0
+    if childrens_qtt == 0:
+      return (1, (0, 0))
+
+    for child in parent.childrens:
+      repetitions, indexes = self.__bfs_for_biggest_susbtr(child)
+      size = indexes[1] - indexes[0] + 1
+      if repetitions > substr_data[0]:
+        substr_data = (repetitions, indexes)
+        substr_size = size
+      elif repetitions == substr_data[0]:
+        if size > substr_size:
+          substr_data = (repetitions, indexes)
+          substr_size = size
+
+    if substr_data[0] == 1:
+      substr_data = (childrens_qtt, substr_data[1])
+      if parent.end_of_string:
+        substr_data = (substr_data[0]+1, substr_data[1])
+      substr_data = (substr_data[0], parent.sufix)
+    else:
+      size = parent.sufix[1]-parent.sufix[0]+1
+      indexes = substr_data[1]
+      substr_data[1] = (indexes[0] - size, indexes[1])
+
+    return substr_data
+  
   def graph_to_mermaid(self):
     result = ""
     for child in self.__root.childrens :
@@ -106,4 +162,3 @@ class SufixTree:
       s += node_name + " --> " + child_name + "\n"
       s += self.__dfs_to_print(child_name, child)
     return s
-
