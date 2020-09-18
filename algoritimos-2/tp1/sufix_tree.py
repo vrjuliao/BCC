@@ -103,45 +103,47 @@ class SufixTree:
     substr_data = (0, (-1, -1))
     substr_size = 0
     for child in self.__root.childrens:
-      repetitions, indexes = self.__bfs_for_biggest_susbtr(child)
+      repetitions, indexes = self.__dfs_for_biggest_susbtr(child)
       child_size = indexes[1] - indexes[0] + 1
-      if repetitions > substr_data[0]:
-        substr_size = child_size
-        substr_data = repetitions, indexes
-      elif repetitions == substr_data[0]:
-        if child_size > substr_size:
+      if child_size > substr_size:
+        if repetitions > 1:
           substr_size = child_size
           substr_data = repetitions, indexes
-
+      elif child_size == substr_size:
+        if repetitions > substr_data[0]:
+          substr_size = child_size
+          substr_data = repetitions, indexes
+     
     return substr_data
 
-  def __bfs_for_biggest_susbtr(self, parent):
+  def __dfs_for_biggest_susbtr(self, parent):
     childrens_qtt = len(parent.childrens)
-    substr_data = (0,(0,0))
-    substr_size = 0
+    substr_data = (0,(0,0)) # (0, (0,0))
+    substr_size = 0 # 0
     if childrens_qtt == 0:
-      return (1, (0, 0))
+      return (0, (0, 0))
 
     for child in parent.childrens:
-      repetitions, indexes = self.__bfs_for_biggest_susbtr(child)
+      repetitions, indexes = self.__dfs_for_biggest_susbtr(child)
       size = indexes[1] - indexes[0] + 1
-      if repetitions > substr_data[0]:
-        substr_data = (repetitions, indexes)
-        substr_size = size
-      elif repetitions == substr_data[0]:
+      if repetitions > 1:
         if size > substr_size:
           substr_data = (repetitions, indexes)
           substr_size = size
+        elif size == substr_size:
+          if repetitions > substr_data[0]:
+            substr_data = (repetitions, indexes)
+            substr_size = size
 
-    if substr_data[0] == 1:
-      substr_data = (childrens_qtt, substr_data[1])
-      if parent.end_of_string:
-        substr_data = (substr_data[0]+1, substr_data[1])
-      substr_data = (substr_data[0], parent.sufix)
+    if substr_data[0] == 0:
+      substr_data = (childrens_qtt, parent.sufix)
     else:
       size = parent.sufix[1]-parent.sufix[0]+1
       indexes = substr_data[1]
-      substr_data[1] = (indexes[0] - size, indexes[1])
+      substr_data = (substr_data[0], (indexes[0] - size, indexes[1]))
+    
+    if parent.end_of_string:
+      substr_data = (substr_data[0]+1, substr_data[1])
 
     return substr_data
   
@@ -162,3 +164,15 @@ class SufixTree:
       s += node_name + " --> " + child_name + "\n"
       s += self.__dfs_to_print(child_name, child)
     return s
+
+def main():
+    text = "abcdcdabcd"
+    tree = SufixTree(text)
+    
+    repetitions, indexes = tree.biggets_substr()
+    # print(tree.graph_to_mermaid())
+    print(repetitions)
+    print(text[indexes[0]: indexes[1]+1])
+
+if __name__ == "__main__":
+    main()
