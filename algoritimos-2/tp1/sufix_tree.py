@@ -103,6 +103,7 @@ class SufixTree:
         mleft += 1
     return (mleft, mright), (new_left, mleft-1)
     
+  # Comparing if is necessary to switch new biggest_substr
   def __change_substr(self, substr_data, children_data):
     repetitions, indexes = children_data
     child_size = indexes[1] - indexes[0] + 1
@@ -126,8 +127,10 @@ class SufixTree:
 
   def __dfs_for_biggest_susbtr(self, parent):
     childrens_qtt = len(parent.childrens)
-    substr_data = (0,(0 ,-1)) # (0, (0,0))
-    if childrens_qtt == 0:
+    # substr_data[0] => quantity of repetitions
+    # substr_data[1] => a pair with the init and the enf of the substring
+    substr_data = (0,(0 ,-1))
+    if childrens_qtt == 0: # when parent node is a leaf node
       return (0, (0, 0))
 
     for child in parent.childrens:
@@ -136,10 +139,8 @@ class SufixTree:
         substr_data = children_data
 
     if substr_data[0] == 0:
-
       if parent.end_of_string:
         childrens_qtt += 1
-      
       substr_data = (childrens_qtt, parent.sufix)
     else:
       size = parent.sufix[1]-parent.sufix[0]+1
@@ -148,6 +149,8 @@ class SufixTree:
     
     return substr_data
   
+  
+  # return a string with a directed graph in mermaid notation 
   def graph_to_mermaid(self):
     result = ""
     for child in self.__root.childrens :
@@ -163,15 +166,3 @@ class SufixTree:
       s += node_name + " --> " + child_name + "\n"
       s += self.__dfs_to_print(child_name, child)
     return s
-
-def main():
-    text = "abcdefgabcdeiskaabcde"
-    tree = SufixTree(text)
-    
-    repetitions, indexes = tree.biggets_substr()
-    print(tree.graph_to_mermaid())
-    print(repetitions)
-    print(text[indexes[0]: indexes[1]+1])
-
-if __name__ == "__main__":
-    main()
