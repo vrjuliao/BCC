@@ -1,0 +1,33 @@
+Dada a necessidade de se manipular um mesmo texto, através de buscas em suas
+partes, uma boa alternativa para tal tarefa é a utilização de árvore de sufixos.
+Essa estrutura permite realizar diversas consultas ao texto com um custo
+aceitável, uma vez que uma tal estrutura é construída a partir do principio da
+otimização do custo de consultas aos próprios dados.
+Portanto, para esse trabalho, utilizou-se do conceito de \textit{trie compacta}
+na criação da árvore de sufixos.
+Para esse trabalho, foi dada como tarefa principal, a atividade de encontrar a
+maior substring que se repete em um texto.
+Porém, o problema foi divido em duas atividades distintas: a primeira consiste
+na construção da árvore e a segunda trata especificamente da busca da maior
+substring na estrutura montada no passo anterior.
+
+A partir da divisão em duas etapas, pôde-se categorizar o problema e obter os
+custos de execução separadamente de cada uma das tarefas.
+De posse do texto que será manipulado, o algoritmo inicia a montagem dos nós
+internos da árvore avaliando sufixo por sufixo do texto, e para isso executa
+consultas à arvore de sufixos para determinar a posição em que um novo sufixo
+será atribuído.
+Já a obtenção da maior \textit{substring} que se repete na \textit{string}
+inicial exige que todos os nós da árvore sejam consultados.
+Como uma \textit{trie} trata-se de um grafo direcional acíclico, o algoritmo
+selecionado para visitar todos os nós foi a busca em profundidade, visto que
+era necessário retornar para um nó "pai" os valores obtidos em consultas aos
+nós filhos.
+
+Como proposto pela descrição do trabalho, os códigos da solução aqui apresentada
+foram escritos em Python 3.6.
+Isso deu maior clareza à implementação, uma vez que essa linguagem suporta
+orientação a objetos e também possui uma sintaxe com boa legibilidade.
+No entanto, algumas partes do código necessitem de maior clareza para o entendimento
+foram incrementadas com comentários que denotam a funcionalidade de determinados
+trechos do programa.

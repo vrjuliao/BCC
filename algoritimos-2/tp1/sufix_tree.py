@@ -115,7 +115,7 @@ class SufixTree:
     
     return False
 
-  def biggets_substr(self):
+  def biggest_substr(self):
     # substr_data = (<repetitions>, <(left, right)>)
     substr_data = (0, (0, -1))
     for child in self.__root.childrens:

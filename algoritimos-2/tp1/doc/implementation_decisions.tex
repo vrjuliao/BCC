@@ -1,0 +1,99 @@
+Como a solução desse problema consiste em duas etapas que são executada
+separadamente, essa seção detalhará cada uma das etapas e suas respectivas
+peculiaridades.
+
+\subsection{Construção da árvore} 
+Esse é o passo fundamental do problema, uma vez que para realizar qualquer
+operação na árvore de sufixos, é necessário antes de tudo criar a
+estrutura.
+O algoritmo de montagem da árvore foi inspirado na explicação do vídeo
+\footnote{https://www.youtube.com/watch?v=VA9m\_l6LpwI}
+e tem como ponto chave o algoritmo de busca de um a trie.
+Dado um sufixo $s_i$ do texto, o algoritmo tenta realizar \textit{matchs}
+parciais, porém, quando a busca se depara com uma substring de $s_i$ que não
+houve um \textit{match} parcial, então um novo nó é criado para tal substring.
+Nesse cenário, o último nó o qual houve um encontro parcial de caracteres se
+torna o nó "pai" do novo nó.
+O nó inicial da busca é a raiz da árvore, e assume-se por nulidade que na raiz
+já ocorre um match parcial.
+
+Há um \textit{border case} na inserção que merece atenção:
+Quando ocorre um \textit{match} parcial tanto para uma substring $ss$ de $s_i$
+quanto para o nó $t$, ou seja, a substring $ss_t$ contida no nó não é uma
+substring de $s_i$, então o $t$ deverá ser dividido em dois nós (um pai $t_p$ e
+um filho $t_f$).
+Nesse caso, a divisão será de tal forma que:
+\begin{itemize}
+    \item $t_p$ conterá o match parcial entre $t$ e $s_i$, $t_f$ conterá o
+    \item $t_f$ conterá o restante de $t$ que não deu match com $s_i$, sendo que
+    toda a sub árvore com a raiz em $t$, agora terá $t_f$ como raiz.
+    \item um novo nó $h$ será criado a partir do resto de $s_i$ que não combinou
+    com a substring em $t$. O nó $h$ será um nó folha, filho de $t_p$.
+\end{itemize}
+
+Por fim, pode-se afirmar que a montagem da árvore de sufixos tem um comportamento
+assintótico em $O(n^2)$.
+Essa afirmação é trivial, uma vez que é sabido que o custo da busca de uma
+substring de tamanho $m$ em uma árvore de sufixos é $O(m)$.
+Para inserir os $n$ sufixos do texto $Q$ em uma árvore de sufixos, deve-se
+realizar $n$ buscas de tamanho $1, 2, 3, .... n-2, n-1, n$ -- uma para cada
+sufixo, e então encontrar a posição que o novo nó será criado.
+Assim, o custo dessa inserção é a soma de uma progressão aritmética e tem como
+fórmula: 
+
+$$\sum_{i=1}^{n}i = \frac{n(n-1)}{2} = O(\frac{n^2-n}{2}) = O(n^2)$$
+
+
+\subsection{Encontrar a maior substring que se repete}
+Nesse algoritmo, há a necessidade de uma execução recursiva, em que uma chamada
+mais distante do topo da pilha de recursão deverá aplicar uma função
+\textit{max} para as chamadas internas.
+Para isso, o algoritmo escolhido foi uma busca em profundidade, em que o nó
+pai da árvore deverá obter o \textit{max} dentre os nós filhos, mas com algumas
+exceções.
+A seguinte expressão recursiva demonstrará a execução da computação do DFS:
+
+\[ biggest\_substr(t) = 
+    \begin{cases}
+        (repetitions = 0, size = 0) \quad \text{if t is a leaf node} \\
+        \\
+        (repetitions = \text{quantity(t.childrens)}, size = \text{t.size}) \\
+        \quad \quad \quad \text{if all t.childrens are leaf nodes}\\
+        \\
+        (repetitions, size) = max(\text{for each biggest\_subtr(t.childrens)}) \\
+         \quad \quad \quad \text{if one of t.childrens is not a leaf}
+    \end{cases}
+\]
+
+Vale expressar que a função $max$, valida dentre uma lista de pares
+$(repetitions, size)$ qual é o par que tem maior valor $size$ e que
+$repetitions > 1$, ou seja, a maior substring que acontece mais de uma vez.
+Observe que a partir do momento em que $biggest\_substr()$ é chamada passando
+a raiz da árvore como parâmetro, se a raiz não possui nós folha e nem é uma folha
+por si só, então o terceiro caso será executado, chamando $biggest\_substr()$
+para todos os filhos da raiz.
+Esse fato acontece sucessivamente até que se chegue ao primeiro caso base (em
+que o nó é uma folha) e se retorne para o segundo (no qual todos os filhos do
+nó são folhas).
+
+Pode-se dizer então que a função $max$ é executada quando o "desempilhamento"
+das chamadas recursivas acontece, ou seja, é necessário que a busca em
+profundidade que parte de $t$ retorne até $t$ para que o estado $t.(repetitions,
+size)$ seja computado.
+Assim, quando $t$ terminar as chamadas de $biggest\_substring()$ para todos os
+filhos, obterá a melhor escolha.
+De posse da melhor escolha $c = (rep, siz)$, a chamada que solicitou
+$biggest\_substring()$ para $t$ deverá retornar o par $(c.rep, c.siz + t.size)$,
+pois o tamanho de $t$ deve ser incrementado à melhor escolha.
+A quantidade de repetições não mudará na computação de $biggest\_substring(t)$,
+pois as repetições são computadas em função da quantidade de nós folha que a
+sub árvore com raiz em $t$ possui.
+
+A função de encontrar a maior string que se repete no texto é a codificação
+das afirmações feitas acima.
+Entretanto, para possibilitar a obtenção dos índices da string desejada, o
+retorno da função não se trata de $(repetitions, size)$ mas sim $(repetitions,
+indexes)$.
+Nesse caso, $indexes$ se referem aos índices de inicio e fim da maior substring
+que se repete e a partir desses índices é possível obter o tamanho apenas com
+uma subtração.

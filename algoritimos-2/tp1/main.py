@@ -11,7 +11,7 @@ def main(argv):
     text = separator.join([s[:-1] for s in splited_text])
     tree = sufix_tree.SufixTree(text)
     
-    repetitions, indexes = tree.biggets_substr()
+    repetitions, indexes = tree.biggest_substr()
     print(repetitions)
     print(text[indexes[0]: indexes[1]+1])
 
