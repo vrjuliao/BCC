@@ -1,6 +1,69 @@
-A etapa experimental demandou a criação de \textit{scripts} capazes de criarem instâncias do problema de forma aleatória. Tais instâncias foram executadas quinze vezes, sendo que gerou-se dez instâncias para cada uma das seguintes tamanhos de Sukodu($n$): 4, 6, 8, 9. Após tal etapa, pôde-se criar uma tabela para observar o comportamento das médias e do desvio padrão de cada uma das instâncias, permitindo a validação do teste. Além disso pode-se observar a taxa de acertos geral para as instâncias aleatórias geradas, assim, observando uma taxa de acertos de 100\% através da execução do comando de execução \textit{./tp3 entrada.txt -t} que exibe se a solução foi encontrada ou não (s/n)e o tempo de execução em nanosegundos.
+Nesse ponto, serão apresentados dados da execução da solução apresentada pelo
+trabalho.
+Algumas imagens serão demonstradas demonstrando o tempo de execução e a memória
+utilizada.
+Vale ressaltar que os tempos de execução foram computados usando o temporizador
+nativo do Python pela biblioteca texttt{time} sendo que o tempo da leitura do
+arquivo de entrada foi ignorado.
+A obtenção da memória utilizada pelo programa foram obtidos pelo uso do Valgrind.
+Além disso as funções que imprimem a saída também foram removidas nas análises.
+O comando para executar a solução do trabalho usando o arquivo
+\texttt{sarscov2.fasta} é:
 
-Para os dois primeiros gráficos mostrados na Figura \ref{fig:grafico1}, é possível notar o comportamento não linear tanto para o gráfico de comportamento médio (esquerda) quando para o gráfico de desvio padrão (direita). Tal fato é um bom argumento justificativo a cerca do provável comportamento exponencial da solução. Em que é possível ainda, inferir uma provável "assíntota" que representa o rápido crescimento dos valores da função para as entradas de tamanho $n$.
+\lstset{language=bash}
+\begin{lstlisting}[frame=single]
+$ python3 main.py sarscov2.fasta
+\end{lstlisting}
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.75]{Figuras/create-trie.png}
+	\end{center}
+	\caption{\label{fig:create-trie} Tempo de criação da árvore (processamento dos sufixos).}
+\end{figure}
+
+Na Figura \ref{fig:create-trie} apenas a linha que computa
+\texttt{tree = sufix\_tree.SufixTree(text)} é considerada.
+Da mesma forma computou-e o tempo de execução da obtenção da maior substring
+que se repete na árvore apenas pelo tempo da chamada
+\texttt(repetitions, indexes = tree.biggest\_substr()), e o tempo é obsevado
+na Figura \ref{fig:biggest-substr}.
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.75]{Figuras/biggest-substr.png}
+	\end{center}
+	\caption{\label{fig:biggest-substr} Tempo para encontrar a maior substring que se repete na árvore.}
+\end{figure}
+
+Já o tempo total de execução foi obtido através considerando toda a função
+\texttt{main}, incluindo o tempo de leitura da entrada e a impressão da resposta.
+Dessa forma, a Figura \ref{fig:total-execution} demonstra a resposta que a
+solução dá para o arquivo \texttt{sarscov2.fasta}.
+A primeira linha representa a quantidade de repetições encontradas, a próxima
+linha mostra a substring que se repete.
+Por fim, a ultima linha impressa é referente ao tempo de execução de toda a
+função principal.
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.75]{Figuras/total-execution.png}
+	\end{center}
+	\caption{\label{fig:total-execution} Tempo total de execução.}
+\end{figure}
 
 
-Ainda é possível observar que o gráfico de desvio padrão também tem o mesmo comportamento, entretanto para valores muito baixos numericamente, se comparados aos valores médios. Uma vez que os casos de teste foram executados muitas vezes, a variância dos resultados é diminuída, fato explicado pela lei dos grades números. Isso é suficiente para demonstrar que há um comportamento possivelmente exponencial das solução apresentada.
+A resposta obtida pelo Valgrind é demonstrada na Figura \ref{fig:valgrind}, que
+demonstra uma alocação total de $7.936.935$ bytes.
+O comando executado para a obtenção dessa resposta foi:
+\lstset{language=bash}
+\begin{lstlisting}[frame=single]
+$ valgrind --tool=memcheck python3 -E -tt main.py sarscov2.fasta
+\end{lstlisting}
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.5]{Figuras/valgrind.png}
+	\end{center}
+	\caption{\label{fig:valgrind} Execução do Valgrind para obtenção da memória utilizada.}
+\end{figure}

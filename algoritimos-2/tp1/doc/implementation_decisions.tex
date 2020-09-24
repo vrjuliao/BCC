@@ -6,14 +6,22 @@ peculiaridades.
 Esse é o passo fundamental do problema, uma vez que para realizar qualquer
 operação na árvore de sufixos, é necessário antes de tudo criar a
 estrutura.
-O algoritmo de montagem da árvore foi inspirado na explicação do vídeo
+O algoritmo de montagem da árvore foi inspirado na explicação de um vídeo
 \footnote{https://www.youtube.com/watch?v=VA9m\_l6LpwI}
 e tem como ponto chave o algoritmo de busca de um a trie.
 Dado um sufixo $s_i$ do texto, o algoritmo tenta realizar \textit{matchs}
-parciais, porém, quando a busca se depara com uma substring de $s_i$ que não
+parciais, entre algum prefixo de $s_i$ e o texto representado pelos nós
+da árvore.
+Ocorrendo um encontro parcial entre $s_i$ e um nó $N$, $s_i$ é atualizada, retirando
+o prefixo que fora compatível com $N$, então reinicia-se a busca entre os
+filhos de $N$ recursivamente.
+Quando a busca se depara com uma substring $s_i$ (atualizada) que não
 houve um \textit{match} parcial, então um novo nó é criado para tal substring.
 Nesse cenário, o último nó o qual houve um encontro parcial de caracteres se
 torna o nó "pai" do novo nó.
+Em resumo o algoritmo de busca e construção consiste em consumir prefixos de
+$s_i$, que é atualizado a cada etapa que o prefixos é encontrado no nó,
+e então sufixo restante que não fora compatível é adicionado como um nó folha.
 O nó inicial da busca é a raiz da árvore, e assume-se por nulidade que na raiz
 já ocorre um match parcial.
 
@@ -65,8 +73,12 @@ A seguinte expressão recursiva demonstrará a execução da computação do DFS
     \end{cases}
 \]
 
-Vale expressar que a função $max$, valida dentre uma lista de pares
-$(repetitions, size)$ qual é o par que tem maior valor $size$ e que
+Vale expressar que a função $max$, para cada retorno de $biggest\_substr()$,
+realiza uma comparação entre a melhor substring atual e a obtida com o
+retorno da função, então se o retorno for uma melhor escolha que o atual,
+uma troca acontece.
+Essa validação ocorre de forma a obter o melhor conjunto
+$(repetitions, size)$ o qual é o par que tem maior valor $size$ e que
 $repetitions > 1$, ou seja, a maior substring que acontece mais de uma vez.
 Observe que a partir do momento em que $biggest\_substr()$ é chamada passando
 a raiz da árvore como parâmetro, se a raiz não possui nós folha e nem é uma folha
@@ -94,6 +106,51 @@ das afirmações feitas acima.
 Entretanto, para possibilitar a obtenção dos índices da string desejada, o
 retorno da função não se trata de $(repetitions, size)$ mas sim $(repetitions,
 indexes)$.
-Nesse caso, $indexes$ se referem aos índices de inicio e fim da maior substring
+Nesse caso, $indexes$ se refere aos índices de inicio e fim da maior substring
 que se repete e a partir desses índices é possível obter o tamanho apenas com
 uma subtração.
+
+Para determinar o comportamento assintótico da busca da maior substring que se
+repete, serão tomadas duas afirmações como base.
+Levando em consideração que a árvore fora escrita a partir de um texto $T$ de
+tamanho $n$, ou seja, $T$ possui $n$ sufixos diferentes.
+Dito isto, pode-se afirmar que:
+\begin{enumerate}
+    \item A quantidade de nós folha da árvore de sufixo é igual $n$.
+    É possível verificar tal afirmação, validando que a construção da árvore
+    consiste na criação de nós folha para cada sufixo de $T$.
+    Uma vez que a busca da posição correta para adicionar um novo sufixo $s_i$
+    parte do princípio de consumir o maior prefixo possível de $s_i$,
+    o que restará após tal busca é um sufixo restante de $s_i$ (que também é um
+    sufixo de $T$) e que se tornará uma nova folha.
+    \item A quantidade de nós intermediários na árvore é no máximo igual a $n-1$.
+    Pela criação da árvore, nunca haverá um nó intermediário que possua apenas um
+    nó filho, pois a criação de nós intermediários parte do caso de borda citado
+    na subseção anterior.
+    Ou seja, um nó intermediário é criado apenas em \textit{splits}.
+    Assim, para um nível $j$ da árvore com $m$ nós a quantidade máxima de nós
+    no nível $j-1$ é igual a $m \div 2$, sendo o caso em que cada nó de $j-1$
+    tem apenas dois filhos.
+    Por fim, visto o caso da máxima existência de nós pai (2 filhos por nó),
+    para a árvore completa de $n$ folhas com $l$ níveis, pode-se obter a
+    quantidade de nós intermediários pela soma: $\sum_{i=0}^{l-1}2^i = 2^l-1 = n-1$,
+    pois o $i$-ésimo nível de uma árvore binária completa, possui $2^{i-1}$ nós.
+\end{enumerate}
+
+Tomando as duas afirmações como base, e o algoritmo de busca em profundidade,
+pode-se afirmar que $n$ nós folha serão visitados e no máximo $n-1$ nós
+intermediários.
+Isso significa que, uma vez que a visita a cada nó tem custo $O(1)$ o custo total
+da busca de maior substring é $O(2n-1) = O(n)$.
+
+\subsection{Custo de espaço}
+
+As duas afirmações da subseção anterior, permitem admitir que no máximo $2n-1$
+nó são criados.
+Então, por hora, ignorando as arestas do grafo, o custo de memória $O(n)$.
+Porém, como uma árvore é um grafo direcional acíclico, em que um nó não possui
+mais de um nó "pai", a quantidade de arestas é igual a quantidade de nós na árvore
+decrescido de $1$, pois o nó raiz não possui predecessor.
+Logo a quantidade de arestas é no máximo $2n-2$.
+Portanto o custo de memória do grafo é uma soma de $2n-1$ nós mais $2n-2$ arestas,
+o que resulta em $O(n)$ para o custo de espaço.

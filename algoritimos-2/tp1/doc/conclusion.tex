@@ -1,3 +1,18 @@
-Conclui-se portanto, que a escolha do algoritmo de \textit{backtrackin} é boa para entradas pequenas, visto a baixa quantidade de saídas não solucionadas em um tempo aceitável. Entretanto, pela análise dos gráficos, pode observar que essa não é uma boa metodologia de solução caso deseja-se executar uma instancia de tamanho muito grande, dado o comportamento exponencial da solução.
+Através da análise assintótica das duas funções e da observação das respostas
+de tempo de execução da solução para a entrada passada, pôde-se concluir
+que há uma grande diferença entre os tempos de obtenção da maior string e 
+do processamento de sufixos.
+Entretanto pode-se realizar um experimento com diversas entradas (de tamanhos
+variados) para observar os tempos de execução de cada uma das funções e então
+traçar um gráfico.
+Nesse experimento, o comportamento do gráfico que computa os sufixos, terá uma
+curva que remete à uma função polinômial quadrática.
+Já a obtenção da maior substring que se repete o comportamento do gráfico é um
+polinômio de grau 1.
 
-Mostrou-se ainda que é possível resolver um problema do mundo real, como um jogo de Sudoku, através da redução a soluções anteriormente conhecidas outros tipos de casos. É necessário ressaltar que a solução encontrada nesse trabalho pertence à classe de problemas NP-Completo, uma vez que coloração de grafos está nessa mesma classe e foi utilizado como forma de solução.
+A elaboração desse trabalho mostrou quão rápido é a manipulação de textos utilizando
+uma árvore de sufixos compacta.
+Apesar do custo elevado de construção da árvore apresentado nesse trabalho, existem
+alternativas de construção da árvore com um custo menor que $O(n^2)$.
+Esse fato torna a árvore de sufixos extremamente útil e aplicável em manipulações de
+textos.
