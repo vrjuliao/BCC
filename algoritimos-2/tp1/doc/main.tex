@@ -1,0 +1,103 @@
+\documentclass[10pt]{extarticle}
+
+%SOME USEFUL PACKAGES
+\usepackage[portuguese]{babel}
+\usepackage{extsizes}
+\usepackage[reqno]{amsmath} % equation numbers on the right
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{dsfont}
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[margin=1in]{geometry}
+\usepackage[hypcap]{caption}
+\usepackage{longtable}
+\usepackage{etoolbox}
+%\usepackage[alf]{abntex2cite}
+\usepackage[siunitx]{circuitikz}
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+
+\usepackage{verbatim}
+\usepackage{float}
+\usepackage{indentfirst}
+
+%HEADER
+\pagestyle{fancy}\lhead{Vinícius Julião Ramos} \rhead{DCC207 - Algoritmos II - 2020.1}
+\chead{{\large{\bf }}} \lfoot{} \rfoot{\bf \thepage} 
+\cfoot{}
+
+
+\title{ \textsc{Universidade Federal de Minas Gerais} \\ \textsc{Departamento de Ciência da Computação} \\ \bigskip TP1 -- Árvore de Sufixos}
+
+\author{Vinícius Julião Ramos \\ \normalsize{viniciusjuliao@dcc.ufmg.br}}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+O trabalho aqui apresentado consiste na elaboração de um modelo computacional
+que consiga resolver o problema de encontrar a maior \textit{substring} que
+se repete em um texto.
+Para isso solicitou-se que fosse realizada a construção de uma árvore de sufixos
+e a partir dessa arvore, se encontrasse a cadeia de caracteres com o maior
+tamanho e que se repete.
+\end{abstract}
+    
+\section{Introdução}
+\input{introduction.tex}
+\newpage
+
+\section{Modelagem}
+\input{modeling.tex}
+% \newpage
+
+\section{Decisões de implementação}
+\input{implementation_decisions.tex}
+% \newpage
+
+\section{Análise Experimental}
+\input{experimental_analysis.tex}
+
+\section{Conclusão}
+\input{conclusion.tex}
+
+% \begin{thebibliography}{9}
+
+% \bibitem{cplusplus}
+%     http://www.cplusplus.com 27 nov. 2019
+    
+% \bibitem{book:DFS}
+%     Jon Kleinberg, Eva Tardos. 2006. \textit{Algorithm Design} (1st Edition, p 83). Pearson - Addison Wesley.
+    
+% \bibitem{book:BFS}
+%     Jon Kleinberg, Eva Tardos. 2006. \textit{Algorithm Design} (1st Edition, p 79). Pearson - Addison Wesley.
+
+% \bibitem{book:DAG}
+%     Jon Kleinberg, Eva Tardos. 2006. \textit{Algorithm Design} (1st Edition, p 99 - 101). Pearson - Addison Wesley.
+    
+% \bibitem{cpp:vector}
+%     http://www.cplusplus.com/reference/vector/vector 27 nov. 2019
+    
+% \bibitem{cpp:stack}
+%     http://www.cplusplus.com/reference/stack/stack 27 nov. 2019
+    
+% \bibitem{cpp:iostream}
+%     http://www.cplusplus.com/reference/iostream 27 nov. 2019
+    
+% \bibitem{cpp:chronos}
+%     http://www.cplusplus.com/reference/chrono 27 nov. 2019
+% \end{thebibliography}
+\end{document}
