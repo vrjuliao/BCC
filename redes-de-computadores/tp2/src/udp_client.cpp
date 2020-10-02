@@ -4,12 +4,14 @@
 #include <arpa/inet.h>
 #include <cstring>
 
+#include <string>
+
 UDPClient::UDPClient(const char *ipaddr, const char *sck_port){
     this->init_client_socket(ipaddr, sck_port);
 }
 
 void UDPClient::init_client_socket(const char *ipaddr, const char *sck_port){
-    uint16_t port = (uint16_t)atoi(sck_port);
+    uint16_t port = (uint16_t)std::stoi(sck_port);
     if (port == 0) {
         throw InitSocketException("Invalid port");
     }

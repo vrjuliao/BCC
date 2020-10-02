@@ -5,6 +5,8 @@
 #include <cstring>
 #include <sys/socket.h>
 
+#include <string>
+
 UDPServer::UDPServer(const char *sck_port){
     memset(&this->sck_addr, 0, sizeof(sockaddr_storage));
     memset(&this->cli_sockaddr, 0, sizeof(sockaddr_storage));
@@ -12,7 +14,7 @@ UDPServer::UDPServer(const char *sck_port){
 }
 
 void UDPServer::init_server_socket(const char *sck_port){
-    uint16_t port = (uint16_t)atoi(sck_port); // unsigned short
+    uint16_t port = (uint16_t)std::stoi(sck_port); // unsigned short
     if (port == 0) {
         throw InitSocketException("Invalid port");
     }

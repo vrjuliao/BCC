@@ -1,11 +1,19 @@
 #include <bits/stdc++.h>
+#include <errno.h>
 using namespace std;
 
 int main(){
 
-    char *a = "asdf\0";
-    string s = string(a);
-    cout << s << " " << s.size() << endl;
-    cout << string(a) << endl;
+    const char *c = "ssssssssssss";
+    try{
+        stoi(c);
+    } catch (exception const &e){
+        cout << "error: " << e.what() << endl;
+    } catch (string &s){
+        cout << s << endl;
+    } catch (int &s){
+        cout << s << endl;
+    }
+
     return 0;
 }
