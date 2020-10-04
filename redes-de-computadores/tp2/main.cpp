@@ -2,6 +2,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <fstream>
 
 #include <pthread.h>
 
@@ -25,17 +26,17 @@ struct data{
 };
 
 void *dns_handling_server(void *params);
-std::string search_in_link(const Link &link);
+std::string search_in_link(const std::vector<Link> &links, std::string hostname);
 
 int main(int argc, const char *argv[]){
     const char *port;
     if(argc <= 3 && argc > 1){
         port = argv[1];
         if(argc == 3){
-            // read from file
-            // put the input stream as the file 
-        } else {
-            // input stream is the stdin
+            // redirecting the input stream to read a file
+            std::ifstream in(argv[2]);
+            std::streambuf *cinbuf = std::cin.rdbuf();
+            std::cin.rdbuf(in.rdbuf());
         }
     } else {
         std::cout << "Initialization error" << std::endl;
@@ -65,10 +66,51 @@ int main(int argc, const char *argv[]){
         exit(EXIT_FAILURE);
     }
 
-    // read input proccess
+    // read input commands
+    std::string command, s1, s2;
+    while(std::cin >> command){
+        if (command == "add") {
+            std::cin >> s1 >> s2;
+            auto it = hosts_map.find(s1);
+            if(it == hosts_map.end()){
+                hosts_map[s1] = s2;
+            } else {
+                it->ipaddr = s2;
+                std::cout << "Endereco atualizado" << std::endl;
+            }
+        } else if (command == "search"){
+            std::cin >> s1;
+            auto it = hosts_map.find(s1);
+            if(it != hosts_map.end()){
+                std::cout << it->ipaddr << std::endl;
+                continue;
+            } 
 
+            // search client in the links
+            std::string hostaddr = search_in_link(links, s1);
+            if(hostaddr == "-1"){
+                std::cout << "Endereco nao encontrado" << std::endl;
+            } else {
+                std::cout << hostaddr << std::endl;
+            }
+        } else if(command == "link"){
+            std::cin >> s1 >> s2;
+            Link l = {s1, s2};
+            links.push_back(Link{s1, s2});
+        }
+    }
 
     return 0;
+}
+
+std::string search_in_link(const std::vector<Link> &links, const std::string hostname){
+    std::string hostaddr = "-1";
+    for(int i=0; i<links.size(); i++){
+        UDPClient cli = UDPClient(links[i].ipaddress.c_str(), links[i].port.c_str());
+        hostaddr = cli.ask_by_hostname(hostname);
+        if(hostaddr != "-1") break;
+    }
+    return hostaddr;
 }
 
 
@@ -77,7 +119,7 @@ void *dns_handling_server(void *params){
     
     //create a new UDPClient for search a host in link
 
-    //bind the server
+    // bind the server
     // UDPServer server = UDPServer(dd->port);
     UDPServer *server = dd->server;
     std::string hostname;
@@ -88,22 +130,10 @@ void *dns_handling_server(void *params){
         if(it != dd->hosts_map->end()){
             server->send_hostaddress(it->ipaddr);
         } else {
-            // search client in the links
-            Link l;
-            std::string hostaddr = "";
-            for(int i=0; i<dd->links->size(); i++){
-                l = dd->links->at(i);
-                hostaddr = search_in_link(l);
-                if(!hostaddr.empty()){
-                    break;
-                }
 
-            }
-            if(hostaddr.empty()){
-                char empty_response[1];
-                empty_response[0] = static_cast<int8_t>(-1);
-                hostaddr = std::string(empty_response);
-            }
+            // search client in the links
+            std::string hostaddr = "-1";
+            hostaddr = search_in_link(*(dd->links), hostname);
             server->send_hostaddress(hostaddr);
         }
     }

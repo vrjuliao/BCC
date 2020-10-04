@@ -5,7 +5,7 @@
 #include <cstring>
 #include <sys/socket.h>
 
-#include <string>
+#include <iostream>
 
 UDPServer::UDPServer(const char *sck_port){
     memset(&this->sck_addr, 0, sizeof(sockaddr_storage));
@@ -36,7 +36,7 @@ void UDPServer::init_server_socket(const char *sck_port){
     }
 
     this->server_sck_id = socket(this->sck_addr.ss_family, SOCK_DGRAM, 0);
-    if(server_sck_id < -1) throw InitSocketException("Init UDP socket error");
+    if(this->server_sck_id < -1) throw InitSocketException("Init UDP socket error");
     
     
     int i=1;
