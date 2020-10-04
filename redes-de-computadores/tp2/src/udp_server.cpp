@@ -14,13 +14,16 @@ UDPServer::UDPServer(const char *sck_port){
 }
 
 void UDPServer::init_server_socket(const char *sck_port){
-    uint16_t port = (uint16_t)std::stoi(sck_port); // unsigned short
+    uint16_t port = (uint16_t)std::stoi(sck_port);
     if (port == 0) {
         throw InitSocketException("Invalid port");
     }
-    port = htons(port); // host to network short
+    port = htons(port);
 
-    
+    /* - bind an socket with the IP Version based on 
+         Utils::IPVERSION static attribute
+       - Throws an exception case the IPVersion is not correct
+    */
     if (Utils::IPVERSION ==  Utils::IPV4) {
         sockaddr_in *addr4 = (sockaddr_in *)(&this->sck_addr);
         addr4->sin_family = AF_INET;
@@ -39,6 +42,7 @@ void UDPServer::init_server_socket(const char *sck_port){
     if(this->server_sck_id < -1) throw InitSocketException("Init UDP socket error");
     
     
+    // set option to reuse the same socket port and ip address
     int i=1;
     if(0 != setsockopt(server_sck_id, SOL_SOCKET, SO_REUSEADDR, &i, sizeof(int))){
         throw InitSocketException("Setting up socket options error");
@@ -50,13 +54,15 @@ void UDPServer::init_server_socket(const char *sck_port){
     }
 }
 
+// receive the hostname from a client
 std::string UDPServer::recv_hostname(){
     char buffer[Utils::MAX_BUFFER_SIZE];
 
     buffer[0] = 0;
     socklen_t len = sizeof(this->cli_sockaddr);
     int n_bytes;
-    // could result in a problem because sockaddr_storage != sockaddr
+    
+    // wait for the correct message code
     while(buffer[0] != 1){
         n_bytes = recvfrom(this->server_sck_id, buffer, Utils::MAX_BUFFER_SIZE, 0,
           (sockaddr *) &this->cli_sockaddr, &len);
@@ -66,6 +72,7 @@ std::string UDPServer::recv_hostname(){
 }
 
 
+// send to the client the hostaddress
 void UDPServer::send_hostaddress(const std::string &msg){
     char msg_code = 2;
     std::string new_message = msg_code + msg;

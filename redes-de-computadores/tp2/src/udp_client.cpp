@@ -19,6 +19,8 @@ void UDPClient::init_client_socket(const char *ipaddr, const char *sck_port){
     }
     port = htons(port);
 
+    // create the client according to [ipaddr]
+    // throws an exception case [ipaddr] is not a valid ip
     in_addr inaddr4; // IPV4
     in6_addr inaddr6; // IPv6
     if (inet_pton(AF_INET, ipaddr, &inaddr4)) {
@@ -37,11 +39,20 @@ void UDPClient::init_client_socket(const char *ipaddr, const char *sck_port){
     }
 
     this->sck_id = socket(this->sck_addr.ss_family, SOCK_DGRAM, 0);
-    if(this->sck_id < -1) throw InitSocketException("Init UDP socket error");
+    
+    // set timetout with 2 seconds
+    timeval tv;
+	tv.tv_sec = 2;
+    tv.tv_usec = 0;
+    if(0 > setsockopt(this->sck_id, SOL_SOCKET, SO_RCVTIMEO, (timeval *)&tv, sizeof(timeval))){
+        throw InitSocketException("Set timeout error.");
+    }
 
+    if(this->sck_id < -1) throw InitSocketException("Init UDP socket error");
 }
 
 std::string UDPClient::ask_by_hostname(const std::string &hostname){
+    // send the message with the hostname
     char msg_code = 1;
     std::string message = msg_code + hostname;
 
@@ -52,13 +63,8 @@ std::string UDPClient::ask_by_hostname(const std::string &hostname){
     char buffer[Utils::MAX_BUFFER_SIZE];
     buffer[0] = 0;
     int n_bytes;
-
-    timeval tv;
-	tv.tv_sec = 2;
-	setsockopt(this->sck_id, SOL_SOCKET, SO_RCVTIMEO, (timeval *)&tv, sizeof(timeval));
-    setsockopt(this->sck_id, SOL_SOCKET, SO_SNDTIMEO,(timeval *)&tv, sizeof(timeval));
     
-    // could result in a problem because sockaddr_storage != sockaddr
+    // wait a response with the correct code and a valid hostaddress
     n_bytes = recvfrom(this->sck_id, buffer, Utils::MAX_BUFFER_SIZE, 0,
       (sockaddr *) &this->sck_addr, &len);
 

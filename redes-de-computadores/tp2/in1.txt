@@ -1,0 +1,2 @@
+add google.com 1.2.3.4
+link 127.0.0.1 9999

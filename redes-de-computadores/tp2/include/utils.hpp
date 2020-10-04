@@ -14,11 +14,12 @@ class InitSocketException: virtual public std::exception {
 
 };
 
+// Common attributes
 class Utils{
     public:
+        static int IPVERSION;
         static const int IPV4 = 4;
         static const int IPV6 = 6;
-        static const int IPVERSION = IPV4;
         static const int MAX_BUFFER_SIZE = 1024;
         Utils();
 };

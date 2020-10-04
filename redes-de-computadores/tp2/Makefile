@@ -11,8 +11,6 @@ $(info SOURCES = $(SOURCES))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 $(info OBJECTS = $(OBJECTS))
 
-# -g debug, --coverage para cobertura
-#CFLAGS := --coverage -g -Wall -O3 -std=c++11
 CFLAGS := -std=c++11 -pthread
 INC := -I include/
 
