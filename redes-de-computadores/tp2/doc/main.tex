@@ -28,6 +28,7 @@
 \usepackage{enumitem}
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{hyperref}
 
 
 \usepackage{verbatim}
@@ -66,58 +67,118 @@ A parte que recebe requisições de rede realiza verifica se o endereço está p
 em seus dados, e caso não esteja, requisita o endereço para os outros servidores
 DNS que são adicionados como forma de \textit{links}.
 
-\section{Protocolo de comunicação}
-Cada um dos programas, cliente e servidor, possui uma forma particular de tomada de decisões, um algoritmo, no qual, de acordo com o cabeçalho da mensagem recebida, deverá tomar determinadas ações. Apesar do comportamento diferente entre os programas, estes são complementares, logo compõem um protocolo de comunicação.
+\section{Decisões de implementação}
+Na solução apresentada por esse trabalho, um mesmo programa se encarrega de
+executar cliente e servidor UDP.
+A comunicação é feita de forma que a parte servidor é requisitado para responder
+se conhece algum endereço IP de acordo com o \textit{hostname}.
+No caso em que o programa não conheça o nome do \textit{host}, uma parte
+cliente é chamada para requisitar a outros servidores DNS sobre tal
+\textit{hostname}.
 
-\begin{figure}[h]
-	\begin{center}
-		\includegraphics[scale=0.5]{Figuras/diagrama.png}
-	\end{center}
-	\caption{\label{fig:diagrama} Protocolo de comunicação entre cliente e o servidor.}
-\end{figure}
+\subsection{Protocolo de comunicação}
 
-O diagrama da Figura \ref{fig:diagrama} exibe como se dá a comunicação entre os programas, sendo que um ponto merece atenção. Após o cliente identificar que acertou toda a palavra, podem ocorrer diversas requisições entre \textbf{Palpites} e \textbf{Game Over}, mas a conexão só é encerrada após o envio da mensagem de fim de jogo.
-
-Após o estabelecimento da conexão, a primeira mensagem é enviada pelo servidor, sendo que o segundo passo é composto pelo processo de recebimento de palpites. Nesse ponto, o servidor só aceitará requisições que têm o identificador de \textbf{Palpite} no cabeçalho, até que toda a palavra seja acertada. Por fim uma mensagem indicando o fim de jogo é enviada e a conexão é fechada.
-
-Após finalizar a conexão com um cliente, o servidor poderá receber outro cliente que deseje jogar o jogo. Então a cada nova conexão o jogo é reiniciado.
-
-\section{Implementação}
-Dadas as especificações do trabalho, necessitou-se organizar o código e implementar funcionalidades que viabilizassem a boa execução dos programas. Dentre tais decisões destaca-se o uso de um \textit{array} e de um \textit{map} para armazenar a palavra do jogo e computar quais os caracteres foram recebidos como palpites no lado servidor. Optou-se pela utilização de um \textit{map} para que o custo de busca de um caractere na palavra seja da ordem de $O(log n)$ com $n$ sendo o tamanho da palavra. É sabido que tal implementação não reduz o custo geral de execução, uma vez que a busca pelos índices os quais o caractere está inserido na palavra é da ordem de $O(n)$, dada a necessidade de varrer toda a \textit{string}.
-
-Na parte cliente, utilizou-se de duas estruturas aninhadas, uma do tipo \textit{vector} e outra do tipo \textit{pair}, ou seja, um arranjo de tuplas. A tupla é composta por um caractere e um \textit{booleano} em que o cliente marca nos índices corretos se o caractere está na palavra oculta. Tal marcação é feita de acordo com o \textit{feedback} recebidos do servidor após o palpite. Por fim, ao final de cada iteração para realizar o palpite, o cliente valida se a palavra foi completamente adivinhada, sendo que tal operação tem um custo de execução $O(n)$.
-
-Para garantir a persistência da execução dos programas, alguns aspectos do protocolo foram inferidos a partir da leitura da descrição do trabalho. Tais decisões de implementação são:
+Uma vez que protocolo de comunicação, foi descrito pela especificação do
+trabalho, esse relatório descreverá as decisões de implementação.
+Entretanto há três pontos que merecem atenção quanto ao padrão de comunicação:
 \begin{enumerate}
-    \item No cliente, a mensagem que identifica fim de jogo tem alta prioridade. Logo, sempre que o cliente recebe um cabeçalho de tipo com o identificador $4$, o programa cliente é encerrado.
-    \item Em ambos os programas, dado o \textit{workflow} descrito na Figura \ref{fig:diagrama}, o destinatário da mensagem está em um laço aguardando até que a mensagem com o cabeçalho correto seja enviado. Por exemplo, no cliente, a primeira mensagem recebida deve ter o código $1$ ou $4$ (considerando o item acima), e até que um desses códigos não sejam recebidos, o programa permanece aguardando o cabeçalho correto.
-    \item Para garantir que o servidor permaneça em execução mesmo com a "queda" do cliente, um pequeno tratamento de erros foi adicionado. O servidor valida se o cliente está enviando informações ou não. Caso o cliente não esteja mais em execução, o servidor reinicia o jogo e aguarda uma nova conexão.
+    \item As mensagens trocadas entre servidor e cliente possuem um cabeçalho
+          de 1 Byte, devendo conter o número inteiro \texttt{1} ou \texttt{2}.
+          Esse valor não se trata de um \textit{string} contendo o caractere
+          \texttt{'1'}, uma vez que esse valor na tabela ASCII seria convertido
+          para o inteiro \texttt{49}. O mesmo acontece com o código \texttt{2}.
+    \item Quando o servidor não encontra um endereço para determinado host,
+          inclusive analisando os \textit{links}, deve-se retornar o
+          \textit{payload} contendo \texttt{-1}. Nesse caso o corpo da mensagem
+          possui uma \textit{string} \texttt{"-1"} e não um valor inteiro.
+          Essa decisão foi tomada com base numa postagem no fórum de
+          dúvidas da disciplina no Moodle.
+    \item O endereço IP que o servidor envia para o cliente é uma \textit{string}
+          em formato decimal. Ou seja, dado um endereço \texttt{192.0.0.1}, o
+          servidor envia uma mensagem com a \textit{string} \texttt{"192.0.0.1"}.
 \end{enumerate}
 
-Por fim, ainda sobre o padrão de implementação que os programas devem ter, de acordo com a especificação deste trabalho, há mais outros dois fatores que merecem atenção: A palavra oculta do jogo é uma constante que está declarada nas primeiras linhas do código \textbf{servidor.cpp}. O mesmo acontece para a versão do protocolo \textit{IP} utilizada; também é uma constante definida nas primeiras linhas de código do arquivo citado anteriormente.
+
+\subsection{Estruturas de dados}
+Uma vez que a solução foi elaborada em C++, as estruturas utilizadas foram
+providas pela biblioteca padrão da linguagem. Os \textit{hostnames} e seus
+respectivos endereços são salvos em \texttt{std::map}\
+\footnote{\href{http://www.cplusplus.com/reference/map/map/}\
+{http://www.cplusplus.com/reference/map/map/}} em que as chaves são
+os nomes e o valor é o endereço IP correspondente.
+Esse detalhe de implementação faz com que a busca pelo endereço de um
+\textit{host} tenha um custo menor em contraste ao uso de um \textit{array}.
+
+Também era necessário armazenar os links que futuramente seriam utilizados para
+encontrar os \textit{hostnames} que não estivessem presentes no mapa.
+Então, criou-se uma \textit{struct} que armazena duas strings: endereço IP e
+porta UDP em que outro servidor DNS estiver em execução.
+Como podem existir múltiplos links, novamente um recurso da biblioteca padrão
+de C++ foi utilizado, provendo um \texttt{std::vector}\
+\footnote{\href{http://www.cplusplus.com/reference/vector/vector/}\
+{http://www.cplusplus.com/reference/vector/vector/}}
+que permite o armazenamento em forma de um \textit{array} dinâmicamente
+gerenciado.
+
+Tais estruturas instanciadas em forma de ponteiros, para que os dois
+subprocessos possam acessá-las.
+Portanto, há um trecho de memória comum a mais de uma função, sendo que apenas
+a parte que recebe comandos pelo terminal podem alterar as informações dessas
+estruturas.
+Já o processo servidor utiliza o mapa e o vetor apenas como consulta que é
+igualmente executada pelo comando \textit{search} da linha de comando.
+Na thread que executa um socket ativo, existe uma instância da classe
+\textbf{UDPServer}, a qual é responsável pelo recebimento das requisições de
+\textit{search}. Essa classe implementa as funções de socket passivo POSIX.
+
+\subsection{Comando \textit{search}}
+Esse comando merece atenção pelo uso da classe \textbf{UDPClient}.
+Neste ponto, a primeira etapa é validar junto ao mapa de \textit{hosts}, se
+o nome pesquisado está presente ou não.
+Uma vez que o host não é encontrado, então a segunda etapa se trata da criação
+de múltiplas instâncias de \textbf{UDPClient} para requisitar a cada servidor
+DNS (link) se estes possuem o \textit{hostname} pesquisado.
+Tanto o subprocesso servidor quanto o subprocesso de comandos da linha de
+comandos podem executar um \textit{search}.
+
 
 \section{Execução}
-Visto que o código foi escrito em C++, a compilação é feita por meio de um arquivo \textit{Makefile}. Então, usando uma máquina Linux, execute:
+Visto que o código foi escrito em C++, a compilação é feita por meio de um
+arquivo \textit{Makefile}.
+Então, usando uma máquina Linux, execute:
 \lstset{language=bash}
-    \begin{lstlisting}[frame=single]
-foo@bar:~/tp1$ make
-    \end{lstlisting}
+\begin{lstlisting}[frame=single]
+foo@bar:~/tp2$ make
+\end{lstlisting}
 
-Após a compilação, dois arquivos binários serão gerados (\textbf{servidor} e \textbf{cliente}). Os comandos de execução são:
+Após a compilação, um arquivo executável será gerado (\textbf{servidor\_dns}).
+O comando de execução é:
 \lstset{language=bash}
-    \begin{lstlisting}[frame=single]
-$ ./servidor-mt <porta tcp>
-    \end{lstlisting}
+\begin{lstlisting}[frame=single]
+$ ./servidor_dns <porta udp> [arquivo-inicial]
+\end{lstlisting}
 
-\lstset{language=bash}
-    \begin{lstlisting}[frame=single]
-$ ./cliente-aluno <ip servidor> <porta tcp servidor>
-    \end{lstlisting}
+O argumento obrigatório \texttt{<porta udp>} é o número da porta que o servidor
+dns alocará.
+Já o \texttt{[arquivo-inicial]} é um argumento opcional no qual, dado o arquivo
+nomeado por esse parâmetro, o programa executará os comando presentes nele.
+Após a execução dos comandos do arquivo, novos comandos poderão ser digitados
+no terminal.
 
-Vale lembrar que, para trocar a versão do protocolo IP utilizada ou a palavra secreta do jogo, basta mudar as constantes no código de \textbf{servidor.cpp}. Então recompile usando o comando \textit{make}.
+Um aspecto que merece atenção é que a versão do IP é parametrizado por um
+atributo da classe \textbf{Utils}.
+Caso seja necessário a mudança da versão do protocolo pode ser alterada nas
+linhas iniciais do arquivo de código \texttt{main.cpp}
 
 \section{Conclusão}
-O trabalho prático foi útil para visualizar e entender a comunicação TCP entre cliente e servidor. A utilização de estruturas de dados num cenário simples de um jogo, mostrou como uma aplicação de rede funciona e abriu horizontes para o entendimento da importância da definição de um protocolo de comunicação.
+O trabalho prático foi útil para visualizar e entender a comunicação UDP e
+também entender porquê o serviço de DNS utiliza tal protocolo.
+A utilização de \textit{threads} e de estruturas de dados que compõem uma
+memória compartilhada entre processos, mostrou a relação próxima entre
+aplicações de rede e múltiplos subprocessos.
 
-Ao tentar executar esse trabalho juntamente com o de outro colega de classe, a implementação correta do protocolo se mostrou eficaz. Uma vez que os dois trabalhos estavam de acordo com a especificação, os programas conseguiram se comunicar perfeitamente. 
+Ao tentar executar esse trabalho juntamente com o de outro colega de classe,
+a implementação correta do protocolo se mostrou eficaz.
+Uma vez que os dois trabalhos estavam de acordo com a especificação, os
+programas conseguiram se comunicar perfeitamente. 
 \end{document}
