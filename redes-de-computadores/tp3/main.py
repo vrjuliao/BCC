@@ -5,8 +5,10 @@ from router import Router
 
 def main():
   args = get_system_arguments()
-  router = Router()
+  router = Router(args['ipaddr'], args['period'])
   reader = InputReader(router)
+
+  router.start()
 
   if args['startup'] is not None:
     reader.from_file(args['startup'])
@@ -14,7 +16,7 @@ def main():
   try:
     reader.from_stdin()
   except KeyboardInterrupt:
-    pass
+    router.terminate()
 
 def get_system_arguments():
   parser = argparse.ArgumentParser()
