@@ -2,46 +2,33 @@ import json
 import socket
 import threading
 from datetime import datetime
+from message import Message, Data
+from link import Link, RouterList
+import ipaddress
 
-class Link:
-  def __init__(self, weight, thru):
-    self.__weight = weight
-    self.__thru = thru
-  
-  @property
-  def weight(self):
-    return self.__weight
 
-  @weight.setter
-  def weight(self, weight):
-    self.__weight = weight
-
-  @property
-  def thru(self):
-    return self.__thru
-
-  @thru.setter
-  def thru(self, thru):
-    self.__thru = thru
+BUFFERSIZE = 4096
+DEFAULT_PORT = 55151
 
 class Router(threading.Thread):
-  BUFFERSIZE = 4096
 
   def __init__(self, ipaddr, update_period):
     threading.Thread.__init__(self)
-    self.__links = dict()
-    self.__router_table = dict()
-    self.__port = 55151
-    self.__ipaddr = ipaddr
+    self.__router_list = RouterList(4 * update_period)
+    self.__port = DEFAULT_PORT
+    self.__ipaddr = str(ipaddress.ip_address(ipaddr))
     self.__period = update_period
     self.__running = True
     self.__socket_binding()
 
-  def __recv_json(self):
-    data, addr = self.__sock.recvfrom(self.BUFFERSIZE) # buffer size is 4096 bytes
+  def __recv_message_as_json(self):
+    data, addr = self.__sock.recvfrom(BUFFERSIZE)
     json_str = data.decode('utf-8')
-    message = json.loads(json_str)
+    message = Message.new_message(json_str)
     return message, addr
+
+  def __send_message_as_json(self, message):
+    pass
 
   def __share_router_list(self, past):
     now = datetime.now()
@@ -50,7 +37,34 @@ class Router(threading.Thread):
       return True
       # sent router list to all links
     return False
-  
+
+
+  def __handle_update(self, message):
+    pass
+
+  def __handle_trace(self, message):
+    if message.destination == self.__ipaddr:
+      new_dest = message.source
+      new_message = Data(self.__ipaddr, new_dest, str(message))
+      self.__send_message_as_json(new_message)
+    else:
+      message.new_hops(self.__ipaddr)
+      self.__send_message_as_json(message)
+    
+
+  def __handle_data(self, message):
+    print('payload:', message.payload)
+    if message.destination != self.__ipaddr:
+      self.__send_message_as_json(message)
+
+  def __handle_message(self, message):
+    if message.type_ == 'update':
+      self.__handle_update(message)
+    elif message.type_ == 'trace':
+      self.__handle_trace(message)
+    elif message.type_ == 'data':
+      self.__handle_data(message)
+
   def run(self):
     old_time = datetime.now()
     while self.__running:
@@ -58,8 +72,8 @@ class Router(threading.Thread):
         if self.__share_router_list(old_time):
           old_time = datetime.now()
 
-
-        data, addr = self.__recv_json()
+        data, _ = self.__recv_message_as_json()
+        self.__handle_message(data)
         
       except socket.timeout:
         continue
@@ -75,13 +89,8 @@ class Router(threading.Thread):
     self.__sock.settimeout(0.5)
     self.__sock.bind((self.__ipaddr, self.__port))
 
-  def new_address(self, ipaddress, weight):
-    self.__links[ipaddress] = weight
-    self.__router_table[ipaddress] = Link(weight, ipaddress)
+  def new_address(self, ipaddress_, weight):
+    self.__router_list.add(ipaddress_, weight, ipaddress_)
 
-  def del_address(self, ipaddress):
-    del self.__links[ipaddress]
-
-  def print_address(self):
-    for link in self.__links.items():
-      print(link)
+  def del_address(self, ipaddress_):
+    self.__router_list.remove(ipaddress_)
