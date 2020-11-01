@@ -1,0 +1,5 @@
+add a 1
+add b 2
+add c 3
+del a
+add d 4
