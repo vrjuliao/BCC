@@ -78,15 +78,45 @@ têm seu \textit{timer} atualizado para o momento corrente.
 Isso faz com que essa rota ganhe mais tempo de vida.
 
 \subsection{Rerroteamento imediato}
-% falar que Route.route entrega a melhor rota no momento em que é chamada
+É importante ressaltar que todo roteamento executado pelo servidor é feito de
+forma imediata.
+Ou seja, a melhor rota para determinado destino é calculada apenas quando uma
+mensagem for enviada para tal endereço.
+A troca de mensagens é desempenhada pela classe \textbf{Router}, sendo que
+qualquer envio de dados é executado pelo método \texttt{Router.\_\_send\_message\_as\_json}. 
+Observando o Listing \ref{code:route}, a cadeia de chamadas que retorna a melhor
+rota inicia-se na Linha 16, em que o endereço de destino é informado para
+\texttt{Router.next\_hop}.
+Nesse ultimo método, caso não haja uma rota para tal endereço, então um valor
+\texttt{None} é retornado, mas caso contrário, requisita-se o cálculo da rota
+para classe \textbf{Route}.
+Por fim, \texttt{Route.route} retorna o endereço da rota que possui menor peso.
+
 \lstinputlisting[language=Python,
-label=code:all-distances,
+label=code:route,
 caption=Retorna a melhor rota]
 {codes/route.py}
 
+Na abordagem aplicada para esse calculo de rerroteamento mesmo quando uma rota
+é removida ou alterada da tabela de roteamento, as demais rotas permanecem
+intactas.
+Logo, para o caso em que a melhor rota para um endereço $X$ fora removida,
+quando \textbf{Router} desejar enviar outra mensagem para $X$, uma nova melhor
+rota será obtida pela chamada de \texttt{RouterList.next\_hop(X)}
+
 \subsection{Spilt Horizon}
-As listas de distâncias é retornada pelo método \texttt{RouterList.\_\_distances\_dictionary()},
-então observando o código de tal método:
+O método \textit{Split Horizon} é aplicado na geração dos dicionários
+\textit{distances} que posteriormente serão adicionados às mensagens.
+Antes de gerar o dicionário \textbf{distances} que associa o endereço do
+vizinho à sua lista de distâncias, gera-se um dicionário contendo todas as
+melhores rotas (\textbf{all\_distances}).
+Então, para gerar \textbf{distances[link]} -- que é o dicionário de distâncias
+de determinado link -- itera-se sobre todos os vizinhos, de forma que
+\textbf{distances[link]} recebe todas as rotas que obedecem à optimização
+\textit{Split Horizon}.
+Ou seja, \textbf{distences[link]} recebe um dicionário contendo as rotas as
+quais o endereço de \textbf{link} não seja dado como o melhor caminho.
+
 \lstinputlisting[language=Python,
 label=code:all-distances,
 caption=Retorna o dicionário de distâncias usando Split Horizon]
