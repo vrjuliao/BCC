@@ -11,19 +11,26 @@ class InputReader:
     elif cmd[0] == 'del':
       return ('del', cmd[1])
     elif (cmd[0]) == 'quit':
-      sys.exit()
+      raise KeyboardInterrupt()
+    elif (cmd[0]) == 'trace':
+      return('trace', cmd[1])
     else:
-      raise Exception('Unsupported command "{strline}"'.
-        format(strline=strline))
+      return (strline)
 
   def __execute(self, command):
     command = command.rstrip()
     try:
       cmd_attributes = self.__get_command(command)
-      if cmd_attributes[0] == 'add':
+      action = cmd_attributes[0]
+      if action == 'add':
         self.__router.new_address(cmd_attributes[1], cmd_attributes[2])
-      else:
+      elif action == 'del':
         self.__router.del_address(cmd_attributes[1])
+      elif action == 'trace':
+        self.__router.start_trace(cmd_attributes[1])
+      else:
+        print('Unsupported command "{strline}"'.
+          format(strline=action))
     except Exception as err:
       print(err)
 

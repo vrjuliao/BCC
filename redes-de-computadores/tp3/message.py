@@ -19,11 +19,11 @@ class Message:
     msg = json.loads(message_string)
     msg_type = msg['type']
     if msg_type == 'data':
-      return Data(msg['source'], msg['destination'], msg_type, msg['payload'])
+      return Data(msg['source'], msg['destination'], msg['payload'])
     elif msg_type == 'update':
-      return Update(msg['source'], msg['destination'], msg_type, msg['distances'])
+      return Update(msg['source'], msg['destination'],msg['distances'])
     elif msg_type == 'trace':
-      return Trace(msg['source'], msg['destination'], msg_type, msg['hops'])
+      return Trace(msg['source'], msg['destination'], msg['hops'])
     else:
       raise json.decoder.JSONDecodeError
 
