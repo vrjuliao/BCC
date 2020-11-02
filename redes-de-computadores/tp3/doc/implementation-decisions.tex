@@ -1,0 +1,93 @@
+\section{Decisões de Implementação}
+
+Essa seção trata de como as quatro principais funções, requeridas pela descrição
+do trabalho, foram desenvolvidas.
+Também é colocado em cheque as dificuldades referentes às soluções propostas.
+Mas antes de descrever a implementação, é necessário abordar três estruturas de
+dados presentes na classe RouterList:
+\begin{itemize}
+    \item \textbf{Route}: Atributo \textbf{ipaddr}: é o endereço final da rota.
+    Atributo \textbf{last\_update}: é um atributo que salva a ultima vez em que
+    a rota foi atualizada.
+    Atributo \textbf{hops}: é um dicionário \textbf{(K\_addr, V)} em que
+    \textbf{K\_addr} é o endereço ip do link associado ao roteador e \textbf{V}
+    é o custo de enviar uma mensagem para o endereço \textbf{ipaddr} passando pelo
+    link \textbf{K\_addr}.
+    \item \textbf{RouterList.\_\_routes}: Trata-se de um dicionário
+    \textbf{(R\_addr, R)}. Nesse caso \textbf{R\_addr} é o endereço de uma
+    máquina e \textbf{R} trata-se da instância de \textbf{Route} correspondente
+    a tal destino.
+    \item \textbf{RouterList.\_\_links}: Dicionário \textbf{(L\_addr, L)} em
+    que os links de endereço \textbf{L\_addr} são informados na entrada padrão,
+    através do comando \texttt{add}, juntamente com o seu peso.
+    Essa informação é armazenada em uma instãncia da classe \textbf{Link}.
+\end{itemize}
+
+\subsection{Atualizações Periódicas}
+A cada meio segundo, é feito uma chamada ao método \texttt{Router.\_\_share\_router\_list}.
+Então esse método trata de analisar se já passou tempo suficiente desde a
+última atualização, para que uma nova atualização seja feita.
+Caso seja necessário atualizar novamente, então as listas de distâncias 
+são requisitados da tabela de roteamento.
+Como essa lista de distâncias pode variar de acordo com o link, devido ao
+\textit{Split Horizon}, o retorno dessa chamada é um dicionário, em que cada
+elemento \textbf{(addr, dist)} corresponde à chave \textbf{addr} (endereço) do
+link e \textbf{dist} é a respectiva lista de distancias.
+
+O método itera sobre o dicionário e envia uma mensagem de \texttt{update}
+contendo a respectiva lista de distâncias de cada um dos vizinhos.
+Observe que o método recebe um atributo \textbf{past}, que é um
+\texttt{datetime} da ultima vez em que uma atualização foi enviada.
+Caso uma atualização seja feita, então retorno \texttt{True} informa que o
+atributo \textbf{past} deve ser atualizado para o momento corrente.
+
+\lstinputlisting[language=Python,
+label=code:share-router-list,
+caption=Envio das atualizações periódicas das listas de roteamento]
+{codes/share_routes.py}
+
+\subsection{Remoção de rotas desatualizadas}
+Essa funcionalidade é desempenhada pela classe \textbf{RouterList}.
+Como tal classe é a única que possui o controle para inserção, remoção e
+atualização das rotas, é natural que esses trabalho seja executado pela tabela
+de roteamento.
+Ao instanciar um objeto \textbf{RouterList}, deve-se informar qual o tempo de
+vida de uma rota desatualizada.
+Isso serve para que cada rota criada, tenha um \textit{timer} associado, e esse
+contador de tempo consiga analisar se o tempo de vida foi extrapolado ou não.
+Observe que objetos \textbf{Route} implementa seu próprio \textit{timer} pelo
+atributo \textbf{last\_update}.
+
+O período de remoção das rotas desatualizadas é igual a $4 \times period$, em
+que $period$ é o tempo de atualização das rotas dos links vizinhos.
+Como no método \texttt{\_\_share\_router\_list} há um controle sobre $period$,
+optou-se por implementar uma chamada ao método \texttt{RouterList.refresh\_routes}
+no mesmo controlador do envio das listas de distâncias; assim como mostra a
+Linha 7 do Listing \ref{code:share-router-list}.
+Sendo assim, a cada $period$ segundos, valisa-se se há rotas desatualizadas.
+Isso se dá pelo seguinte código:
+\lstinputlisting[language=Python,
+label=code:refresh-routes,
+caption=Remoção das rotas desatualizadas]
+{codes/refresh_routes.py}
+
+Há outro fator que merece atenção: Quando uma mensagem do tipo \texttt{update}
+chega até o roteador, então a tabela de rotas deve ser atualizada.
+Nessa atualização da tabela de rotas, todas aquelas rotas contidas na mensagem
+têm seu \textit{timer} atualizado para o momento corrente.
+Isso faz com que essa rota ganhe mais tempo de vida.
+
+\subsection{Rerroteamento imediato}
+% falar que Route.route entrega a melhor rota no momento em que é chamada
+\lstinputlisting[language=Python,
+label=code:all-distances,
+caption=Retorna a melhor rota]
+{codes/route.py}
+
+\subsection{Spilt Horizon}
+As listas de distâncias é retornada pelo método \texttt{RouterList.\_\_distances\_dictionary()},
+então observando o código de tal método:
+\lstinputlisting[language=Python,
+label=code:all-distances,
+caption=Retorna o dicionário de distâncias usando Split Horizon]
+{codes/split_horizon.py}

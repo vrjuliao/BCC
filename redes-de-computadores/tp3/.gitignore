@@ -1,1 +1,4 @@
 tests/
+doc/main.*
+!doc/main.pdf
+!doc/main.tex

@@ -1,0 +1,139 @@
+\documentclass[10pt]{extarticle}
+
+%SOME USEFUL PACKAGES
+\usepackage[portuguese]{babel}
+\usepackage{extsizes}
+\usepackage[reqno]{amsmath} % equation numbers on the right
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{indentfirst}
+\usepackage{amsfonts}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{dsfont}
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage[margin=1in]{geometry}
+\usepackage[hypcap]{caption}
+\usepackage{longtable}
+\usepackage{etoolbox}
+%\usepackage[alf]{abntex2cite}
+\usepackage[siunitx]{circuitikz}
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+
+\usepackage{verbatim}
+\usepackage{float}
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{1, 1, 1}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+%HEADER
+\pagestyle{fancy}\lhead{M. Emediato -- V. Julião Ramos} \rhead{DCC023 - Redes de Computadores - 2020.1}
+\chead{{\large{\bf }}} \lfoot{} \rfoot{\bf \thepage} 
+\cfoot{}
+
+
+\title{ \textsc{Universidade Federal de Minas Gerais} \\ \textsc{Departamento de Ciência da Computação} \\ \bigskip TP0}
+
+\author{Breno Poggiali de Sousa \\ \normalsize{brenopoggiali@gmail.com}\\
+Vinicius Julião Ramos \\ \normalsize{viniciusjuliao@dcc.ufmg.br}}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+    O trabalho aqui desenvolvido consiste na construção de um modelo virtual
+    para um roteador que implementar o protocolo RIP.
+    Nessa aplicação, o algoritmo de \textit{Distance Vector} foi introduzido e
+    através de um código encapsulado com a função apenas de gerênciar a tabela
+    de roteamento.
+    Esse encapsulamento, permitiu que cada uma das funções solicitadas pela
+    especificação do trabalho fossem desenvolvidas de forma independente.
+    Tais funções são: Atualizações periódicas, \textit{Split
+    Horizon}, rerroteamento imediato e a remoção de rotas desatualizadas.
+\end{abstract}
+
+\input{introduction.tex}
+\input{implementation-decisions.tex}
+
+\section{Diferença Semântica}
+Cada um dos programas cliente possui uma forma particular de comunicação, um protocolo, na qual, de acordo com a senha recebida, o servidor destina o fluxo de execução para uma comunicação entre o cliente do professor ou para o cliente do aluno; no caso de não receber alguma senha válida, a conexão é encerrada. Algumas mensagens trocadas entre os programas são padrões do protocolo, e para estes casos, ao receber uma mensagem padrão quaisquer dos programas verificam se o conteúdo do pacote recebido é realmente o que se espera. Entretanto, há algumas mensagens que têm conteúdo variável, para estes casos é necessário testar se a quantidade de bytes recebida é o que se espera, ou então aguarda-se alguma mensagem para o fim da comunicação.
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.35]{Figuras/diagrama.png}
+	\end{center}
+	\caption{\label{fig:digrama} Protocolo de comunicação entre clientes e o servidor.}
+\end{figure}
+
+O diagrama da Figura \ref{fig:digrama} exibe como se dá a forma de comunicação entre os programas em que há dois detalhes que merecem certa atenção: na troca de mensagens do fluxo do professor, no caso deste trabalho, implementou-se de forma que o servidor envia uma \textit{string} contendo um número de matricula seguido por um caractere \textbf{$\backslash$n} em cada envio, ao final do envio da lista há o envio do caractere \textbf{$\backslash$0}, identificando o fim da lista. O fechamento da conexão é realizado após o envio de uma mensagem "OK" pelo cliente. Vale lembrar que o maior inteiro de trinta e dois bits (quatro bytes) é o número 4294967295, que possui dez caracteres em sua representação \textit{string}, logo, são enviados de onze em onze bytes, no máximo, sendo que tal mensagem tem tamanho variável, dependendo da quantidade de bytes necessária para representar tal inteiro de forma decimal.
+
+No segundo caso, na troca de mensagens entre o cliente aluno a informação contendo o número de matrícula do aluno possui conteúdo variável, mas o tamanho é fixo de quatro bytes, o que representa um inteiro de trinta e dois bits. O tamanho de tal mensagem é validado sempre que recebida, e computa-se o número de matrícula apenas após o recebimento dos quatro bytes da matrícula, seguidos do envio com sucesso da mensagem "OK" pelo servidor; sendo que essa ultima mensagem identifica o final da comunicação.
+
+\section{Tratamento de múltiplas conexões}
+
+As múltiplas conexões foram tratadas de duas maneiras diferentes, e para isso desenvolveu-se dois tipos de arquivo servidor diferentes; um que utiliza de \textit{threads} e outro não. No caso do servidor que não utiliza \textit{threads} (arquivo \textbf{servidor.c}), as múltiplas conexões são tratadas de forma que se permite dez conexões simultâneas, entretanto, o servidor responde apenas uma por vez de modo que após receber uma primeira comunicação com determinado cliente, a segunda conexão só iniciará a troca de mensagens após a finalização da primeira, criando uma fila de prioridades na qual a função \textit{listen()} recebe como parâmetro a quantidade de elementos (conexões) que essa lista terá.
+
+Quanto ao caso do servidor multi processos (arquivo \textbf{servidor-mt}) a função \textit{listen()} também implementa dez conexões para a fila de prioridades, porém ao utilizar a execução paralela de conexões, em um \textit{poll} de tamanho cinco, pode-se comunicar simultaneamente com cinco clientes enquanto outros cinco aguardam na fila de prioridades, até que haja uma "vaga" no \textit{poll} e assim serão executados.
+
+\section{Implementação e Execução}
+Dadas as especificações do trabalho, necessitou-se organizar o código e implementar funcionalidades que viabilizassem a boa execução dos programas. Dentre tais decisões destaca-se o uso de um \textit{array} com duzentos e cinquenta e seis posições para armazenar os alunos, ou seja, o número máximo de alunos que podem ser registrados é 256. Esse número foi acertado com o professor em sala de aula para que os alunos se prevenissem de implementar a estrutura de lista encadeada. Quanto à geração automática das senhas de acesso ao servidor, as senhas são compostas de algarismos alpha numéricos, valendo destacar que as senhas são \textit{case sensitive} das quais a primeira cadeia de 8 bytes impressa é a senha do professor e a última é a senha dos alunos.
+
+Já na implementação do \textbf{cliente-aluno}, acrescentou-se um novo parâmetro de execução que representa o número de matrícula do aluno, dada a não especificação na descrição do trabalho, optou-se por permitir que cada aluno realize a chamada passando seu próprio número de matrícula. Caso tal parâmetro não seja passado, ou algum outro parâmetro, então o programa retornará uma mensagem de erro. Essa condição dos parâmetros é válida para todos os programas desenvolvidos.
+
+Da \textbf{execução} dos programas, antes de qualquer chamada dos programas, deve-se executar o comando \textbf{make}, e então quatro arquivos executáveis serão gerados (\textbf{servidor}, \textbf{servidor-mt}, \textbf{cliente-professor}, \textbf{cliente-aluno}), sendo um destes o arquivo \textit{multi threads} possuindo o sufixo "mt". a chamada desses aquivos se dará da forma como descria na documentação do trabalho, mas vale destacar que a chamada de qualquer um dos arquivos servidor resultará na impressão de duas senhas, a primeira representando a senha do professor e a segunda a senha dos alunos.
+
+Sobre a execução do programa \textbf{servidor-mt}, essa se dará da seguinte forma:
+\lstset{language=bash}
+    \begin{lstlisting}[frame=single]
+$ ./servidor-mt <porta tcp>
+    \end{lstlisting}
+na sequência do comando acima haverá a impressão das senhas, como já especificado anteriormente.
+
+Quanto à execução do programa \textbf{cliente-aluno}, basta adicionar um ultimo parâmetro comparando-se com a forma de execução solicitada pela descrição do trabalho:
+\lstset{language=bash}
+    \begin{lstlisting}[frame=single]
+$ ./cliente-aluno <ip servidor> <porta tcp servidor> <senha aluno> 
+<matricula aluno>
+    \end{lstlisting}
+
+Quanto às demais execuções, segue-se da maneira que foi solicitada pela descrição do trabalho.
+
+\section{Conclusão}
+O trabalho prático foi útil para visualizar a comunicação TCP entre clientes e servidor utilizando dois tipos diferentes de tratamento de múltiplas conexões, além de desenvolver uma aplicação para ser utilizada em rede, que exigiu uma implementação muito bem organizada das funções e procedimentos.
+
+Com uma pequena execução de duzentos e cinquenta chamadas em paralelo da aplicação cliente, primeiro para o servidor multi tarefas e na sequencia para o servidor com um tratamento mais básico de conexões, pôde-se observar que a quantidade de comunicações sem sucesso foi muito inferior para o caso do servidor que utiliza \textit{threads}. Tal fato se explica pela liberação de novas conexões mais rapidamente do que para o caso em que a execução é sequencial e são tratadas apenas um cliente por vez.
+\end{document}

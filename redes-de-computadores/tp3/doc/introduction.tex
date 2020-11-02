@@ -1,0 +1,23 @@
+\section{Introduction}
+
+Para possibilitar a virtualização de um roteador, através de um aplicação,
+necessitou-se utilizar um protocolo da camada de transporte.
+Nesse cenário, optou-se pelo UDP, uma vez que esse protocolo é o que mais se
+aproxima da camada de rede, pelo motivo de não fornecer quaisquer garantias
+de entrega, controle de erros ou gerenciamento de conexão.
+Portanto, para esse socket, uma classe \textbf{Router} foi criada com a
+finalidade de gerenciar a troca de informações.
+Essa mesma classe é responsável por executar comandos em duas \textit{thread}
+diferentes, sendo que uma delas recebe comandos da entrada padrão do sistema e 
+a outra executa o protocolo de rede especificado pelo trabalho.
+
+A opção de criar uma classe separada para gerenciar a tabela de roteamento
+permitiu gerênciar todas a funções que cabem à uma tabela de roteamento: a
+remoção de rotas desatualizadas, a montagem da lista de distâncias através
+do \textit{Split Horizon} e também o rerroteamente imediato. Essa última função
+é desempenhada por demanda, o que permite que a melhor rota para determinado
+endereço seja calculada apenas quando o roteador envia mensagem para tal
+destino. Já a atualização periódica de rotas é uma atividade conjunta entre o
+roteador e a tabela de roteamento; a tabela de roteamento entrega ao roteador
+a lista de distâncias, mas cabe ao roteador atualizar os vizinhos de acordo com
+o período especificado.
