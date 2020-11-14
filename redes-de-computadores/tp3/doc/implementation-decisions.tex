@@ -1,4 +1,10 @@
 \section{Decisões de Implementação}
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.55]{fig/uml.png}
+	\end{center}
+	\caption{\label{fig:digrama} Diagrama da estrutura de classes.}
+\end{figure}
 
 Essa seção trata de como as quatro principais funções, requeridas pela descrição
 do trabalho, foram desenvolvidas.
@@ -22,6 +28,7 @@ dados presentes na classe RouterList:
     através do comando \texttt{add}, juntamente com o seu peso.
     Essa informação é armazenada em uma instãncia da classe \textbf{Link}.
 \end{itemize}
+
 
 \subsection{Atualizações Periódicas}
 A cada meio segundo, é feito uma chamada ao método \texttt{Router.\_\_share\_router\_list}.

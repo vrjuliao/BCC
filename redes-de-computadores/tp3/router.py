@@ -1,65 +1,111 @@
-import sys
-import argparse
-from input_reader import InputReader
-from dcc_rip import Router
+import json
+import socket
+import threading
+from datetime import datetime
+from message import *
+from router_list import Link, RouterList
+import ipaddress
 
-def main():
-  args = get_system_arguments()
-  print(args)
-  router = Router(args['ipaddr'], args['period'])
-  reader = InputReader(router)
 
-  router.start()
+BUFFERSIZE = 4096
+DEFAULT_PORT = 55151
 
-  if args['startup'] is not None:
-    reader.from_file(args['startup'])
+class Router(threading.Thread):
 
-  try:
-    reader.from_stdin()
-  except KeyboardInterrupt:
-    pass
-  
-  router.terminate()
+  def __init__(self, ipaddr, update_period):
+    threading.Thread.__init__(self)
+    self.__port = DEFAULT_PORT
+    self.__ipaddr = str(ipaddress.ip_address(ipaddr))
+    self.__router_list = RouterList(self.__ipaddr, 4*update_period)
+    self.__period = update_period
+    self.__running = True
+    self.__socket_binding()
 
-def get_system_arguments():
-  parser = argparse.ArgumentParser()
+  def __recv_message_as_json(self):
+    data, addr = self.__sock.recvfrom(BUFFERSIZE)
+    json_str = data.decode('utf-8')
+    message = Message.new_message(json_str)
+    return message, addr
 
-  ipaddr_group = parser.add_mutually_exclusive_group(required=True)
-  ipaddr_group.add_argument('IPADDR', nargs='?',
-    help='IP address')
-  ipaddr_group.add_argument('--addr', metavar='IPADDR',
-    help='Specify the IP address')
+  def __send_message_as_json(self, message):
+    ipaddr = self.__router_list.next_hop(message.destination)
+    if ipaddr is not None:
+      self.__sock.sendto(str(message).encode(), (ipaddr, DEFAULT_PORT))
+    
 
-  period_group = parser.add_mutually_exclusive_group(required=True)
-  period_group.add_argument('PERIOD', nargs='?', type=int,
-    help='Range of updated messages sent to neighbor routers')
-  period_group.add_argument('--update-period', metavar='PERIOD',
-    help='Specify PERIOD', type=int)
+  def __share_router_list(self, past):
+    now = datetime.now()
 
-  startup_group = parser.add_mutually_exclusive_group()
-  startup_group.add_argument('STARTUP', nargs='?',
-    help='Startup file')
-  startup_group.add_argument('--startup-commands', metavar='STARTUP',
-    help='Specify STARTUP')
+    if (now - past).seconds > self.__period:
+      self.__router_list.refresh_routes()
+      all_links_distances = self.__router_list.distances_dictionary()
+      
+      for link, distances in all_links_distances.items():
+        msg = Update(self.__ipaddr, link, distances)
+        self.__send_message_as_json(msg)
 
-  
-  args = parser.parse_args()
-  arguments = {
-    'startup': args.STARTUP,
-    'ipaddr': args.IPADDR,
-    'period': args.PERIOD
-  }
+      return True
+    return False
 
-  if args.startup_commands is not None:
-    arguments['startup'] = args.startup_commands
-  
-  if args.update_period is not None:
-    arguments['period'] = args.update_period
+  def __handle_update(self, message):
+    if message.destination != self.__ipaddr:
+      self.__send_message_as_json(message)
+    else:
+      self.__router_list.update_routes(message.source, message.distances)
 
-  if args.addr is not None:
-    arguments['ipaddr'] = args.addr
+  def __handle_trace(self, message):
+    message.new_hops(self.__ipaddr)
+    if message.destination == self.__ipaddr:
+      new_dest = message.source
+      new_message = Data(self.__ipaddr, new_dest, str(message))
+      self.__send_message_as_json(new_message)
+    else:
+      self.__send_message_as_json(message)
+    
+  def __handle_data(self, message):
+    print('payload:', message.payload)
+    if message.destination != self.__ipaddr:
+      self.__send_message_as_json(message)
 
-  return arguments
+  def __handle_message(self, message):
+    if message.type_ == 'update':
+      self.__handle_update(message)
+    elif message.type_ == 'trace':
+      self.__handle_trace(message)
+    elif message.type_ == 'data':
+      self.__handle_data(message)
 
-if __name__ == '__main__':
-  main()
+  def run(self):
+    old_time = datetime.now()
+    while self.__running:
+      try:
+        if self.__share_router_list(old_time):
+          old_time = datetime.now()
+
+        data, _ = self.__recv_message_as_json()
+        self.__handle_message(data)
+        
+      except socket.timeout:
+        continue
+      except json.decoder.JSONDecodeError:
+        continue
+    self.__sock.close()
+
+  def terminate(self):
+    self.__running = False
+
+  def __socket_binding(self):
+    self.__sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    self.__sock.settimeout(0.5)
+    self.__sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    self.__sock.bind((self.__ipaddr, self.__port))
+
+  def start_trace(self, destination_addr):
+    trace_msg = Trace(self.__ipaddr, destination_addr, [])
+    self.__handle_trace(trace_msg)
+
+  def new_address(self, ipaddress_, weight):
+    self.__router_list.add(ipaddress_, weight, ipaddress_)
+
+  def del_address(self, ipaddress_):
+    self.__router_list.remove(ipaddress_)

@@ -104,11 +104,11 @@ class RouterList:
     for ipaddr in deletion_list:
       del self.__routes[ipaddr]
     
-    link_weight = self.__links[link_addr].weight
+    # link_weight = self.__links[link_addr].weight
     for ipaddr, weight in distances.items():
       if ipaddr not in self.__routes:
         self.__routes[ipaddr] = Route(ipaddr)
-      self.__routes[ipaddr].update_hop(link_addr, weight+link_weight)
+      self.__routes[ipaddr].update_hop(link_addr, int(weight))
 
   '''
     generate a dictionary for each router link unsing split horizon optimization
