@@ -184,3 +184,129 @@ the array is already sorted.
 Because of that we need to make a more concise approach, considering other
 permutation cases.
 We can do that using the worst-better-and-medium cases analysis.
+
+**Worst-case and average-case analysis**\
+Worst-case occurs when the **input** requires the maximum of the time execution
+for resulting the correct **output**.
+In **Insertion sort** the worst case is given by an inverse sorted array, since
+this organization of elements get the maximum of comparisons and elements
+switching to yield the correct sort ordering.
+The worst case of some algorithm give us an upper bound of the execution time;
+that means none **input** can spent more time than the worst case (although it
+is possible to get a time execution equals to the worst case).
+
+For some algorithms, the worst case almost never occurs because the specificity
+required for the **input**.
+In the **Insertion sort**, for a **Input** with $n$ elements, the slowest
+situation happens only for 1 between $n!$ permutations of elements.
+Thus, the worst case has a low probability and in this case a better analysis
+is given by the *average-case*.
+Despite the worst case, commonly, being slowly than average-case, the most of
+algorithms have average-cases close to worst.
+Lastly, with the **Insertion sort**, the average-case also has a quadratic
+time complexity.
+
+**Order of growth**\
+Time complexity (or memory complexity) is a function $f(n)$ where $n$ is the
+size of **input**.
+The $f$ is the theoretical quantity of time (or memory) spent to solve the
+problem with that input.
+But in general an algorithm analysis is interested in the **order of growth**
+of this algorithms.
+This means a function behavior of $f$, for instance, quadratic in our example of
+**Insertion sort**, since $f(n)=\frac{n^2+n}{2}$.
+Thus, our **order of growth** summarize $f$ in the most growing parcel of that
+function, $n^2$.
+So, the time spent to sort $n$ element using **Insertion sort** can grow
+quadratically according to the size of the array.
+
+### 2.3 - Designing algorithms
+**Insertion sort** is an approach of **incremental** algorithm, to solve the
+sort problem, but there are others approaches that allow us to sort an array of
+elements.
+Here we discuss about **divide-and-conquer** algorithms, in which we can
+prevent some instructions to be executed by separating the elements.
+
+#### **2.3.1 - The divide-and-conquer approach**
+This approach is (in many cases) recursive, and consists in divide a big input
+in small pieces (or groups) and solve this groups dividing it in smaller
+sub-groups.
+The smaller sub-groups are a set of elements with common characteristics where
+the algorithm can solve it easier than the whole group.
+In short **divide-and-conquer** has three main steps:
+1. **Divide** the problem in small instances (subproblems).
+2. **Conquer** this subproblems by dividing them recursively.
+3. **Combine** the subproblmes solutions and yield the solutions of the big
+problem.
+
+The **merge sort** algorithm uses this approach by:
+1. **Dividing** (recursively) instance of $n$ elements into two problem with
+$\frac{n}{2}$ elements.
+2. **Conquering** with the recursion of merge sort.
+3. **Combining** two sub-arrays in a big array sorted.
+
+**Merge sort** is a "bottoms-out" recursion, since the divide occurs until the
+subgroup has 1 element - it guarantees that the subgroup is always sorted.
+Then, suppose that **merge sort** algorithm divide the instance $A$ into $B$
+and $C$: Whether $B$ has just 1 element, $B$ is already sorted, now the
+algorithms need to solve the $C$ group.
+Note that if $C$ also has just 1 element, $C$ is sorted.
+Lastly, after to solve $merge(C)$, the groups $A$ will be overwritten with
+$B$ and $C$ elements.
+That overwriting considers the correct sequence, thus the only element inside $B$
+will be copied to $A$ for the correct position among elements of $C$.
+
+This last step (overwritten) occurs whenever these two divided groups are
+sorted.
+The name **merge sort** is given because as these two subgroups are sorted, it
+is easy to create a parent group from these ones.
+
+#### **2.3.2 - Analyzing divide-and-conquer algorithms**
+Algorithms that have recursive call to itself can be time-analyzed using
+**recurrence equation**.
+This equation is given in parts, where each part is an decision case inside
+the algorithm.
+For instance, for an mock array $A$ which is divided in two other arrays $B$
+and $C$:
+
+$$T(n) = 
+\Biggr\{{
+    \normalsize\Theta(1) \quad\qquad\qquad,\ n = 1 \atop\Large {
+    T(n-1) + T(1) \quad, \ n\ \text{is odd}\atop {
+    2T(n/2) \qquad\quad, \ n\ \text{is even}
+}}}
+$$
+
+Look that every when the size of subgroup is even, the cost of calculating the
+result is equals twice executions for $\frac{n}{2}$.
+When the subgroup has an odd quantity of element, then the cost is equals to
+$n-1$ plus the cost of the execution for single one element.
+It implies in a multiple recursion calls until every divided group having 1
+element and finally return a constant cost.
+Then, we can suppose that this algorithm wants to divide the problem in
+subproblems with an even quantity of elements.
+Thus the conditions (that make the recursive calls) decide the execution cost
+of that algorithm.
+
+**Analysis of merge sort**\
+With the tree main stages of **merge sort** (Divide, Conquer and Combine) we can
+analyse separately each task.
+**Divide** executes with only one operation: separate two different indexes gap
+between the bigger array; so we have a cost equals to a constant $c$.
+**Conquer** must call the recursive function for the two pieces of the splitted
+array, as the array (generally) is divided in two equal parts, then the cost is
+$2 \times T(\frac{n}{2})$.
+**Combine** generates a big array from two other smaller arrays (with
+$\frac{n}{2}$ each), therefore this cost is equals to $n$.
+Lastly, when $n=1$, there is a constant cost just returning the array with
+this element.
+In short, the recurrence equation is given by:
+$$
+T(n) = 
+\Biggr\{{
+    \Theta(1) \qquad\qquad\qquad,\ n \leq 1 \atop 
+    T(n/2)+\Theta(n)+\Theta(1) ,\ \text{otherwise}}
+$$
+
+Using the master theorem we can prove the cost of **merge sort** is
+$$f(n) = \Theta(n \times\log_2 n)$$
