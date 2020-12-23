@@ -270,11 +270,11 @@ For instance, for an mock array $A$ which is divided in two other arrays $B$
 and $C$:
 
 $$T(n) = 
-\Biggr\{{
-    \normalsize\Theta(1) \quad\qquad\qquad,\ n = 1 \atop\Large {
-    T(n-1) + T(1) \quad, \ n\ \text{is odd}\atop {
-    2T(n/2) \qquad\quad, \ n\ \text{is even}
-}}}
+\begin{cases}
+  \Theta(1)       & ,\ n=1\\
+  T(n-1) + T(1) & ,\ n \text{ is odd}\\
+  2T(n/2)       & ,\ n \text{ is even}
+\end{cases}
 $$
 
 Look that every when the size of subgroup is even, the cost of calculating the
@@ -303,10 +303,256 @@ this element.
 In short, the recurrence equation is given by:
 $$
 T(n) = 
-\Biggr\{{
-    \Theta(1) \qquad\qquad\qquad,\ n \leq 1 \atop 
-    T(n/2)+\Theta(n)+\Theta(1) ,\ \text{otherwise}}
+\begin{cases}
+  \Theta(1)                   &,\ n \leq 1\\
+  T(n/2)+\Theta(n)+\Theta(1)  &,\text{ otherwise}
+\end{cases}
 $$
 
 Using the master theorem we can prove the cost of **merge sort** is
 $$f(n) = \Theta(n \times\log_2 n)$$
+
+## 3 - Growth of Functions
+In the [chapter 2](#2---getting-started)
+we defined the exact complexity of **Insertion Sort**, but in
+general we are interested in the behavior of the complexity function.
+In other words, we've observed the **Insertion sort** behavior is quadratic,
+because its $f(n) = \frac{n^2+n}{2}$ and the most expressive parcel of this
+function is $c_1 \times n^2$ whose $c_1 = \frac{1}{2}$.
+Using growth functions we are not concerned with this constants, like $c_1$,
+since the **Input** is very large this constants will not be an expressive
+weight on the time spent to solve that problem.
+So, for that case our **Growth function** is $g(n) = n^2$ and this function is
+the asymptotic function of $f(n)$.
+
+### 3.1 - Asymptotic notation
+This notation is used to define the asymptotic running time of an algorithm.
+In general, a asymptotic function summarize the function behavior when the 
+input is infinitive.
+
+**Asymptotic notation, functions, and running times**\
+Asymptotic notations frequently denotes the behavior of functions not mattering
+the input of the problem.
+As we saw in **Insertion Sort**, in the worst-case we have a quadratic
+function, but this occurs just with a specific input organization.
+In other cases, the cost is not a quadratic function, then there is a notation
+to express another input cases.
+
+**$\Theta$-notation**\
+For a given function $g(n)$, we denote by $\Theta(g(n))$ the set of functions:
+$$
+\Theta(g(n)) = \{f(n):\text{ there exist positive constants }c_1, c_2
+\text{ and } n_0 \text{ such that } \atop0 \leq c_1g(n) \leq f(n) \leq c_2g(n)
+\text{, for all } n \geq n_0\}
+$$
+We can interpret that saying for some $n$,  $c_1\times g(n)$ is always lesser
+than $f(n)$.
+In addition, with this same $n$ value, $c_2 \times g(n)$ is always greater than
+$f(n)$.
+Thus $g(n)$ can represent a lower and a upper bound for $f(n)$ when this bound is multiplied by a constant, so $f$ belongs to $\Theta(g(n))$ or
+$f(n) = \Theta(g(n))$.
+
+**$O$-notation**\
+With $\Theta$-notation we are mattering with the upper and lower bounds given
+by an single function $g(n)$, but with $O$-notation we are concerned just with
+the upper bound.
+Then, $O(g(n))$ is a a set of functions where:
+$$
+O(g(n)) = \{f(n):\text{ there exist positive constants }c \text{ and } n_0
+\text{ such that } \atop0 \leq f(n) \leq c\times g(n)
+\text{, for all } n \geq n_0\}
+$$
+
+Note that $f(n) = \Theta(g(n))$ implies $f(n) = O(g(n))$
+
+**$\Omega$-notation**\
+With $\Theta$-notation we are mattering with the upper and lower bounds given
+by an single function $g(n)$, but with $\Omega$-notation we are concerned just
+with the lower bound.
+Then, $\Omega(g(n))$ is a a set of functions where:
+$$
+\Omega(g(n)) = \{f(n):\text{ there exist positive constants }c \text{ and } n_0
+\text{ such that } \atop0 \leq c\times g(n) \leq f(n)
+\text{, for all } n \geq n_0\}
+$$
+
+Note that $f(n) = \Theta(g(n))$ implies $f(n) = O(g(n))$
+
+#### **Theorem**
+For any two functions $f(n)$ and $g(n)$, we have $f(n) = \Theta(g(n))$ if and
+only if $f(n)=O(g(n))$ and $f(n) = \Omega(g(n))$.
+
+**Asymptotic notation in equations and inequalities**\
+When asymptotic notation is shown in formulas, we shall interpret that like
+an anonymous function, where we just know about the possible functions set that
+can be overwrite the asymptotic notation.
+For instance $2n^2+3n+1 = 2n^2+\Theta(n)$ means that
+$2n^2+3n+1 = 2n^2+f(n)$ where $f(n)$ is part of the set $\Theta(n)$.
+In Chapter 2 we've used the recurrence function of **merge sort** as
+$T(n) = 2T(\frac{n}{2}) + \Theta(n)$ to give more details about the recurrence
+function.
+This notation helps to understand behavior of the complexity function.
+
+Using another example, $2n^2 + \Theta(n) = \Theta(n^2)$, the left equation 
+shows more details from the function than the right.
+Then, some different analysis can be extracted from a more detailed asymptotic
+notation.
+Further more, it still possible getting an asymptotic function from the left
+equation, but as we've saide before, the asymptotic notation summarize the
+function behavior by considering an infinitive input.
+
+**$o$-nonation**\
+Differently to $O$-notation, the *little-oh*, not want to denote a tight
+asymptotic function.
+Contrariwise, $o$-notation specifies the set of functions that are an above
+asymptote but are not tight.
+For example, $2n^2 \neq o(n^2)$ since $n^2$ is the tight asymptote for $2n^2$.
+
+$$
+o(g(n)) = \{f(n):\text{ for any positive constants }c > 0 \text{, there exists
+a constant } n_0>0 \text{ such that } \atop0 \leq f(n) < c\times g(n)
+\text{, for all } n \geq n_0\}
+$$
+
+Observe that
+> for any constant $c>0$
+
+$c\times n^2$ can not be an upper bound for $2\times n^2$, because $c \in (0, 2]$ not satisfies that condition.
+But for the case where $2n = o(n^2)$ any value of $c>0$ make $c\times n^2$ an
+grater limit of $2\times n$.
+
+**$\omega$-nonation**\
+Here occurs the same analogy between **$o$** and **$O$** notations, using the
+lower bound instead.
+For that case we have:
+$$
+\omega(g(n)) = \{f(n):\text{ for any positive constants }c > 0 \text{, there exists
+a constant } n_0>0 \text{ such that } \atop0 \leq c\times g(n) < f(n)
+\text{, for all } n \geq n_0\}
+$$
+
+With the same example of $o$-notation, $2n^2 \neq \omega(n^2)$.
+It is explained with the range where $c \in [2, \infty)$; inside this interval
+$c \times n^2$ is always greater than $2n^2$.
+Although, $2n^2 = \omega(n)$, because every value of $c>0$ makes $c\times n$ being lesser than $ 2n^2$.
+
+### 3.2 - Standard notations and common functions
+This chapter explores mathematical relationships among asymptotic notation.
+
+**Monotonicity**\
+A function $f(n)$ is **monotonically increasing** if $m\leq n$ implies
+$f(m) \leq f(n)$.
+Similarly, $f(n)$ is **monotonically decreasing** when $m\leq n$ implies in
+$f(m) \geq f(n)$.
+$f(n)$ is **strictly increasing** whether $m < n$ implies $f(m) < f(n)$ and
+**decreasing** if $m<n$ implies $f(m) > f(n)$.
+
+## 34 - NP-Completeness
+
+### 34.1 - Polynomial time
+To study the NP-completeness we shall consider three things:
+1. Although we feel that a problem that requires time $\Theta(n^{100})$
+to be intractable, in general, practical problems requires very few time, for
+consequence a low-degree polynomial.
+2. Problems that can be solved by reasonable models of computing in polynomial
+time, also can be transposed and solved using another reasonable models.
+3. Since polynomials are closed under addition, multiplication and composition,
+the class of polinomial-time solvable problems has nice closure properties.
+For instance, if the output of a polynomial algorithm is fed into the input of
+another polynomial problem, then this composition results a new polynomial 
+problem.
+
+**Abstract problems**\
+Let us define, firstly, what exactly a problem is:
+- **Abstract problem** is a binary relation between a set $I$ of **inputs**
+with the set $S$ of **solutions**.
+This relation don't need to be an injection, so one input can result in 
+different solutions and vice-versa.
+For instance, two different permutations of an array of elements have the same
+solution for the sorting problem.
+Another example is the shortest path in a graph, a graph can contains two 
+different, but equally short, paths within itself for the same set of edges and
+vertexes.
+This kind of problems is more general than we need, so we shall pay attention
+in **decision problems**, that are a more simple problems whose output always 
+$\in \{yes,\ no\}$.
+- **Decision problems** are a binary relation between some input and a 
+solution, but differently from **abstract problems**, in this case our possible
+solutions set is $\{yes,\ no\}$, or else $\{1,\ 0\}$.
+Then, these problems wants to solve questions like "Is it possible to ... ?"
+and answer either `"yes, it is possible"` or `"no, it is not possible"`.
+- **Optimization problems** are problems where given some input, the solutions
+must yield the solution with some "best result".
+For instance, the Shortest Path problem is an optimization problem, because the
+best solution consists of the shortest path in a graph.
+Then, solutions for optimization problems must grant that there is not a 
+better solution than this one.
+In addition, we can say that if we can solve a **decision problem** in 
+polynomial time, probably we shall solve another problem types also in 
+polynomial time.
+
+**Encodings**\
+Current computers use binary notation to store commands and data.
+To translate real-world problems to computer these computers must encode our
+data and our commands in some binary expression.
+For instance, ASCII code is an encoding of alphabetic characters.
+So, a computer that solves abstract problems, actually encode this problems to
+a language understandable for the computer.
+After such translation, the abstract problem become a **concrete problem**.
+**Concrete problems** are polynomial-tiem solvable when the time complexity
+follows $O(T(n))$ with $T(n) = n^k$ where $k \in \N$ is a constant.
+Lastly, we can formally define the **complexity class P** as the set of 
+**concrete problems** that are polynomial-time solvable.
+Remember that $n$ is the input size whose this input is the
+**concrete elements**, in other words, the translated elements from real-world.
+
+The polynomial behavior depends on the encoding, for example, suppose a 
+problem that the input is an integer $u$ and its complexity is $\Theta(u)$.
+If we consider that input size as 1 (because it is given just one integer), 
+then our solution is not polynomial-time solvable, since the size of the input
+is constant, and the problem can be hard to solve even if the size input not   
+changing.
+In other hand, if we have the another problem that receives an integer $v$ that
+requires $\Theta(w^2)$ of complexity time, where $w$ is the bits of this
+integer in binary base, then we have a polynomial solution.
+It occurs because numbers can be translated with some encoding, and with this 
+tool the solution becomes polynomial.
+
+**Lemma 34.1**\
+Let $Q$ be an abstract decision problem on an instance set $I$, and let $e_1$
+and $e_2$ be polynomially related encodings on $I$.
+Then, $e_1(Q) \in P$ if and only if $e_2(Q) \in P$.
+
+**A formal-language framework**\
+**L** is a language defined by an alphabet $\Sigma$ with finite symbols.
+**L** is any combination of $\Sigma$ symbols.
+Finally, the **P class** can be defined in two ways:
+$$
+P = \{L \subseteq \{0, 1\}^\ast \text{: there exists an algorithm } A
+\text{ that decides } L \text{ in polynomial time} \}
+$$
+OR
+$$
+P = \{L:\ L\text{ is accepted by a polynomial-time algorithm} \}
+$$
+
+### 34.2 - Polynomial-time verification
+Even if we don't know polynomial-time solutions for some problems, given an 
+instance and a result, we can check if that result can answer the question,
+proposed by the problem.
+This checking is called as a certificate algorithm.
+To illustrate, suppose that the polynomial-time algorithm of the sorting 
+problem is unknown, but given two arrays $I$ as input and $R$ as result,
+we can verify all elements $r \in R$ if $r_i \leq r_j$ with
+$i < j \leq R.length$.
+This checking executes in polynomial time and can say us if $R$ is sorted or 
+not.
+
+**The complexity class NP**\
+The NP class contains the problems that can have their solutions checked by a
+polynomial algorithm.
+In other words, a polynomial-time certificate.
+The main question about NP class is: "Is NP=P class?", so far there are 
+problems in NP class which has no a polynomial-time solution.
+Furthermore we can not say that this problems will not have a polynomial-time
+solution in the future, thus we don't know if NP is equals, or not, to P-class.
