@@ -2,3 +2,5 @@
 .vscode
 __pychache__/
 *.pyc
+
+!heuristicas-e-metaheuristicas/.vscode
