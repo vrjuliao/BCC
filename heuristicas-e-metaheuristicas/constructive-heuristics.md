@@ -267,7 +267,167 @@ We might check the memory instead.
 This structure of recomputing the same subproblems is called 
 **overlapping subproblems**.
 
-## 16 - Greedy Algorithms (Cormen)
+----
 
-### 16.1
-### 16.2
+## 16 - Greedy Algorithms (Cormen)
+Contrary to dynamic programing, a greedy algorithm starts choosing the best
+result at the moment, without check all combinations of choices.
+This approach consider locally the best solution, differently dynamic 
+programming needs a global checking of the best solution.
+Greedy algorithms not always yield the optimal result, but for many problems
+this kind of algorithms do.
+
+### 16.1 An activity-selection problem
+We can define this problem as an scheduling of competing activities that 
+require exclusive use of a common resource, with a goal of selecting a 
+maximum-size set of mutually compatible activities.
+The **input** of this problem is an array $A$ with $n$ activities where each 
+one is a tuple $a_i$ where $i\in [1,n]$.
+Each $a_i$ contains two elements $s_i$ (start time) and $f_i$ (finish time) of 
+the required time allocation to the resource.
+It's important to say that the $A$ elements is increasingly sorted by the finish
+time.
+An expected **output** is a set $R$ with the maximum quantity of compatible 
+activities.
+First, we shall use dynamic programming to solve that, and we will observe that 
+the best choices of subproblems are always the same choice that the greedy 
+choice is capable to do.
+
+#### **The optimal substructure of the activity-selection problem**
+It's possible state that there is an optimal result $S$ which contains the 
+maximum number of compatible activities $a_i$.
+So, since we have an interval $S_{ij}$ that starts at time $i$ and finishes at 
+time $j$, we shall find compatible activities within $S_{ij}$.
+Supposing that $a_k$ is an activity of $S_{ij}$, an we choose $a_k$ as an 
+element in the solution set $R_{ij}$, then we can get all other elements of
+$R_{ij}$ through $R_{ik}\ \cup\ R_{kj}\ \cup\ \{a_k\}$.\
+In short, considering $c[i,j]$ as our auxiliar memory of the dynamic 
+programming algorithm, such that this memory is our storing $R_{ij}$, our 
+recursive expression is:
+$$
+c[i,j] = 
+\begin{cases}
+  0 & \text{if } S_{ij} = \empty,\\
+
+  {{\large\max} \atop a_k \in S_{ij}} \ \{c[i,k]+c[k,j]+1\} & \text{if }
+  S_{ij} \neq \empty.\\
+\end{cases}
+$$
+
+#### **Making the greedy choice**
+Even though the dynamic programming algorithm choses the corrects activities and yield 
+the correct answer $R$, checking globally the chooses might not be the fastest option.
+Since we have the activities sorted by the finish time $f_i$, and using the difference
+between the start time $s_i$, it's possible get activities smaller activities that
+finish earlier.
+Then, we could infer we are interested in earliest finishing activities that are 
+compatible with each other.
+In short, the last phrase defines our greedy choice, and since we have the $A$ array 
+sorted by the finish time, we can check it linearly.
+
+> The first element of $A$ always is in a maximum-size subset of mutually compatible
+activities.
+
+#### **A recursive greedy algorithm**
+With the last statement, we can extract a recursive algorithm checking the "sufixes" of
+$A$ which the first element is compatible with the last activity extracted from this 
+one.
+Then, we shall consider four arguments for our algorithm:
+- $S$: We divided $A$ in two arrays, where $S$ represents the start time.
+- $F$: On $A$ division, $F$ represents the finish time.
+- $k$: The index of the last added element in the result.
+- $n$: Size of $A$.
+
+So, since the first element of $A$ is part of a solution of this problem, our initial
+call is `recursive_activity_selector(S, F, 0, n)`.
+
+```python 
+def recursive_activity_selector(S, F, k, n):
+  m = k+1
+  while m <= n and S[m] < F[k]:
+    m += 1
+
+  if m <= n:
+    new_activity = tuple(S[m], F[m])
+    return [new_activity].join( recursive_activity_selector(S, F, m, n) )
+```
+
+#### **A iterative greedy algorithm**
+Observing the greedy algorithm we can divide our iteration in two steps:
+1. Get the first activity $a_j$ from $A$ that is compatible with the last added activity
+in result array $R$, while $j < n$.
+2. Add $a_j$ in result array and repeat the step.
+
+```python
+# the array $A is divided in $S (start) and $F (finish)
+def greedy_activity_selector(S, F, n):
+  last_added_element = (S[0], F[0])
+  R = [last_added_element]
+  j = 1
+  for m in range(2, n):
+    if S[m] >= F[j]:
+      last_added_element = (S[m], F[m])
+      R.append(last_added_element)
+      j = m
+  return R
+```
+
+Both in the iterative version or in recursive version, the time-complexity is 
+$\Theta(n)$, but we should consider $A$ is sorted by the finish time.
+When $A$ is unsorted, then our greedy algorithm must sort this one and it requires a 
+time-complexity of $O(n\log_2n)$ plus $\Theta(n)$ from our array sweeping that checks
+which element is added in $R$.
+In short, we have $\Theta(n)$ when $A$ is sorted and $O(n\log_2n)$ in otherwise.
+
+### 16.2 Elements of the greedy strategy
+A greedy algorithm tries obtain an optimal solution by making a sequence of choices.
+The best choices is made by the moment, instead of considering all possibilities.
+It doesn't produce the correct answer for all problems, but as we saw in 
+activity-selection problem, for some problems it does.
+Then, now we will discuss about some general properties of greedy methods.
+Generally, we follow three steps to design a greedy algorithm:
+1. Cast the optimization problem as one in which we make a choice and are left with one 
+subproblem to solve.
+2. Prove that there is always an optimal solution that can be obtained by greedy 
+choices.
+3. Demonstrate an optimal substructure and show that it's possible get valid 
+substructures by the greedy choices.
+
+#### **Greedy-choice property**
+We can define that as: the global choice made by considering the local values, without
+checking subproblems results.
+So, we don't need to revisit the subproblems solved before, since we just need to 
+analyse if the following "sub-results" are pieces of the whole result.
+
+#### **Optimal substructure**
+A problem exhibits optimal substructure if an optimal solution to the problem contains 
+within it optimal solutions to smaller problems.
+As we have seen on activity-selector algorithm, our problem was reduced to determine the
+first compatible element on an array $S_k$ where $a_k$ is the last added element in the
+result array.
+Then, out initial problem is determine the first element of the $A$ array, and $S_k$ is
+a "sufix" of $A$ where we need to do the same checking than $A$.
+
+#### **Greedy versus dynamic programming**
+- 0-1 knapsack problem:\
+  A thief robbing a store finds $n$ items.
+  The ith item is worth $i$ dollars and weighs $w_i$ pounds, where $i$-th and $w_i$ are
+  integers.
+  The thief wants to take as valuable a load as possible, but he can carry at most $W$
+  pounds in his knapsack, for some integer $W$.
+  Which items should he take?
+
+
+- Fractional knapsack problem:\
+  The setup is the same, but the thief can take fractions of items, rather than having
+  o make a binary (0-1) choice for each item.
+
+In these two problems, the **Fractional knapsack problem** can be solved by the greedy 
+strategy, but the same strategy cannot solve the **0-1** problem.
+In this case, dynamic programming solves both problems.
+
+
+## 35 - Approximation Algorithms (Cormen)
+### 35.1 - The vertex-cover problem (Cormen)
+### 35.2 - The traveling-salesman problem (Cormen)
+### 35.3 - The set-covering problem (Cormen)
