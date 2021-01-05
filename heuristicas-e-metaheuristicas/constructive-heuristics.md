@@ -309,36 +309,39 @@ c[i,j] =
 \begin{cases}
   0 & \text{if } S_{ij} = \empty,\\
 
-  {{\large\max} \atop a_k \in S_{ij}} \ \{c[i,k]+c[k,j]+1\} & \text{if }
+  \max\limits_{a_k \in S_{ij}} \ \{c[i,k]+c[k,j]+1\} & \text{if }
   S_{ij} \neq \empty.\\
 \end{cases}
 $$
 
 #### **Making the greedy choice**
-Even though the dynamic programming algorithm choses the corrects activities and yield 
-the correct answer $R$, checking globally the chooses might not be the fastest option.
-Since we have the activities sorted by the finish time $f_i$, and using the difference
-between the start time $s_i$, it's possible get activities smaller activities that
-finish earlier.
-Then, we could infer we are interested in earliest finishing activities that are 
-compatible with each other.
-In short, the last phrase defines our greedy choice, and since we have the $A$ array 
-sorted by the finish time, we can check it linearly.
+Even though the dynamic programming algorithm choses the corrects activities
+and yield the correct answer $R$, checking globally the chooses might not be 
+the fastest option.
+Since we have the activities sorted by the finish time $f_i$, and using the 
+difference between the start time $s_i$, it's possible get activities smaller 
+activities that finish earlier.
+Then, we could infer we are interested in earliest finishing activities that 
+are compatible with each other.
+In short, the last phrase defines our greedy choice, and since we have the $A$ 
+array sorted by the finish time, we can check it linearly.
 
-> The first element of $A$ always is in a maximum-size subset of mutually compatible
-activities.
+> The first element of $A$ always is in a maximum-size subset of mutually 
+> compatible activities.
 
 #### **A recursive greedy algorithm**
-With the last statement, we can extract a recursive algorithm checking the "sufixes" of
-$A$ which the first element is compatible with the last activity extracted from this 
-one.
+With the last statement, we can extract a recursive algorithm checking the 
+"sufixes" of
+$A$ which the first element is compatible with the last activity extracted from 
+this one.
 Then, we shall consider four arguments for our algorithm:
 - $S$: We divided $A$ in two arrays, where $S$ represents the start time.
 - $F$: On $A$ division, $F$ represents the finish time.
 - $k$: The index of the last added element in the result.
 - $n$: Size of $A$.
 
-So, since the first element of $A$ is part of a solution of this problem, our initial
+So, since the first element of $A$ is part of a solution of this problem, our 
+initial
 call is `recursive_activity_selector(S, F, 0, n)`.
 
 ```python 
@@ -354,9 +357,9 @@ def recursive_activity_selector(S, F, k, n):
 
 #### **A iterative greedy algorithm**
 Observing the greedy algorithm we can divide our iteration in two steps:
-1. Get the first activity $a_j$ from $A$ that is compatible with the last added activity
-in result array $R$, while $j < n$.
-2. Add $a_j$ in result array and repeat the step.
+1. Get the first activity $a_j$ from $A$ that is compatible with the last added 
+activity in result array $R$, while $j < n$.
+1. Add $a_j$ in result array and repeat the step.
 
 ```python
 # the array $A is divided in $S (start) and $F (finish)
@@ -374,60 +377,165 @@ def greedy_activity_selector(S, F, n):
 
 Both in the iterative version or in recursive version, the time-complexity is 
 $\Theta(n)$, but we should consider $A$ is sorted by the finish time.
-When $A$ is unsorted, then our greedy algorithm must sort this one and it requires a 
-time-complexity of $O(n\log_2n)$ plus $\Theta(n)$ from our array sweeping that checks
-which element is added in $R$.
+When $A$ is unsorted, then our greedy algorithm must sort this one and it 
+requires a time-complexity of $O(n\log_2n)$ plus $\Theta(n)$ from our array 
+sweeping that checks which element is added in $R$.
 In short, we have $\Theta(n)$ when $A$ is sorted and $O(n\log_2n)$ in otherwise.
 
 ### 16.2 Elements of the greedy strategy
-A greedy algorithm tries obtain an optimal solution by making a sequence of choices.
-The best choices is made by the moment, instead of considering all possibilities.
+A greedy algorithm tries obtain an optimal solution by making a sequence of 
+choices.
+The best choices is made by the moment, instead of considering all 
+possibilities.
 It doesn't produce the correct answer for all problems, but as we saw in 
 activity-selection problem, for some problems it does.
 Then, now we will discuss about some general properties of greedy methods.
 Generally, we follow three steps to design a greedy algorithm:
-1. Cast the optimization problem as one in which we make a choice and are left with one 
-subproblem to solve.
-2. Prove that there is always an optimal solution that can be obtained by greedy 
-choices.
+1. Cast the optimization problem as one in which we make a choice and are left 
+with one subproblem to solve.
+2. Prove that there is always an optimal solution that can be obtained by 
+greedy choices.
 3. Demonstrate an optimal substructure and show that it's possible get valid 
 substructures by the greedy choices.
 
 #### **Greedy-choice property**
-We can define that as: the global choice made by considering the local values, without
-checking subproblems results.
-So, we don't need to revisit the subproblems solved before, since we just need to 
-analyse if the following "sub-results" are pieces of the whole result.
+We can define that as: the global choice made by considering the local values, 
+without checking subproblems results.
+So, we don't need to revisit the subproblems solved before, since we just need 
+to  analyse if the following "sub-results" are pieces of the whole result.
 
 #### **Optimal substructure**
-A problem exhibits optimal substructure if an optimal solution to the problem contains 
-within it optimal solutions to smaller problems.
-As we have seen on activity-selector algorithm, our problem was reduced to determine the
-first compatible element on an array $S_k$ where $a_k$ is the last added element in the
-result array.
-Then, out initial problem is determine the first element of the $A$ array, and $S_k$ is
-a "sufix" of $A$ where we need to do the same checking than $A$.
+A problem exhibits optimal substructure if an optimal solution to the problem 
+contains within it optimal solutions to smaller problems.
+As we have seen on activity-selector algorithm, our problem was reduced to 
+determine the first compatible element on an array $S_k$ where $a_k$ is the 
+last added element in the result array.
+Then, out initial problem is determine the first element of the $A$ array, and 
+$S_k$ is a "sufix" of $A$ where we need to do the same checking than $A$.
 
 #### **Greedy versus dynamic programming**
 - 0-1 knapsack problem:\
   A thief robbing a store finds $n$ items.
-  The ith item is worth $i$ dollars and weighs $w_i$ pounds, where $i$-th and $w_i$ are
-  integers.
-  The thief wants to take as valuable a load as possible, but he can carry at most $W$
-  pounds in his knapsack, for some integer $W$.
+  The ith item is worth $i$ dollars and weighs $w_i$ pounds, where $i$-th and 
+  $w_i$ are integers.
+  The thief wants to take as valuable a load as possible, but he can carry at 
+  most $W$ pounds in his knapsack, for some integer $W$.
   Which items should he take?
 
-
 - Fractional knapsack problem:\
-  The setup is the same, but the thief can take fractions of items, rather than having
-  o make a binary (0-1) choice for each item.
+  The setup is the same, but the thief can take fractions of items, rather than 
+  having o make a binary (0-1) choice for each item.
 
-In these two problems, the **Fractional knapsack problem** can be solved by the greedy 
-strategy, but the same strategy cannot solve the **0-1** problem.
+In these two problems, the **Fractional knapsack problem** can be solved by the 
+greedy strategy, but the same strategy cannot solve the **0-1** problem.
 In this case, dynamic programming solves both problems.
 
 
 ## 35 - Approximation Algorithms (Cormen)
-### 35.1 - The vertex-cover problem (Cormen)
-### 35.2 - The traveling-salesman problem (Cormen)
-### 35.3 - The set-covering problem (Cormen)
+Many practical problems are NP-complete and since we don't know how to solve 
+them in a polynomial time, we have three options to work with this class of 
+problems:
+First, if the inputs are sufficiently small, an exponential time algorithm 
+might be a good option.
+Second, it's possible to isolate some specific problem cases and solve that in 
+polynomial time separately.
+Lastly, we might introduce approximation algorithms that solve some problem 
+cases in polynomial time, but these algorithms fail for some inputs.
+
+**Performance ratios for approximation algorithms**
+For optimization problems where we are finding out for a near-optimal solution, 
+we say that an **approximation ratio** of $\rho(n)$ if the cost $C$ of the 
+solution produced by the algorithm is within a factor $\rho(n)$ of the cost 
+$C*$ of an optimal solution.
+If an algorithm achieves an approximation ration of $\rho(n)$ we call it a
+**$\rho(n)$-approximation algorithm**.
+
+Many problems have an approximation ratio as a constant, but others have this 
+factos as a function of the input size $n$.
+There are problems which can trade between approximation quality and time 
+execution, so, how much time is spent, better will be the result.
+
+**Aproximation scheme** is an algorithm that takes an input with $n$ elements 
+and a value $\epsilon$.
+These algorithms produces a solution where $\rho(n) = (1+\epsilon)$, in other 
+words, we have an  $(1+\epsilon)$-approximation algorithm.
+Then, we can instantiate the approximation factor.
+We call an approximation scheme as an **polynomial-time approximation scheme** 
+if dor any fixed $\epsilon>0$ the scheme runs in polynomial time in the size 
+$n$ of input.
+We say that an approximation scheme is a **fully polynomial-time approximation**
+**scheme** if it is an approximation scheme and its running time is polynomial 
+in both $1/\epsilon$ and the size $n$ of the input instance.
+
+### 35.1 - The vertex-cover problem
+Let us define the **optimal vertex cover** as a optimization version of the 
+**vertex cover problem** where we are interested in the minimum set of edges
+that covers all vertex within a graph.
+The following algorithms guarantees that the returned vertex cover is not twice
+the size of the optimal vertex cover.
+```python
+def aprox_vertex_cover(G):
+  c = []
+  e_ = G.edges
+  while len(e_) > 0:
+    (u, v) = get_random_edge(e_)
+    c.append((u,v))
+    e_.remove_incident_edges_from(v)
+    e_.remove_incident_edges_from(u)
+  return c
+```
+
+### 35.2 - The traveling-salesman problem
+The optimization version of this problem is getting the minimum cost of edges in
+a Hamiltonian cycle given a complete undirected graph.
+In many practical situations, the least costly way to go from a place $u$ to a 
+place $w$ is to go directly, in these situations an intermediate vertex increase
+the cost.
+It can be described by the **triangle inequality** where:
+$$c(u,w) \leq c(u,v) + c(v,w)$$
+
+#### **35.2.1 - The traveling-salesman problem with the triangle inequality**
+The first step is calculating the an auxiliar structure of the graph $G$: 
+its minimum spanning tree.
+With that, the algorithm has a lower bound of the traveling-salesman tour.
+Then, this algorithm creates a tour that is not more than twice that the minimum
+spanning tree.
+So, our approximation algorithm follows the steps:
+1. Select a vertex $r \in G.V$ to be a "root" vertex.
+2. Compute a minimum spanning tree $T$ from root $r$ using Prim's algorithm.
+3. Let $H$ be a list of vertices, ordered according when they were first 
+visited in a preorder tree walk of $T$.
+1. **return** the hamiltonian cycle $H$.
+
+#### **35.2.2 - The general traveling-salesman problem**
+We can state that assuming that we have not the triangle inequality, then we 
+cannot find good approximate tours in polynomial time unless P = NP.
+
+### 35.3 - The set-covering problem
+Here we have an optimization version of the set-covering problem, and our goal
+is minimizing the number of subsets of a set $X$, so that the minimization 
+covers all elements of $X$.
+Our problem instance is two attributes:
+1. $X$: the set with all elements
+2. $F$: A set of allowed subsets of $X$.
+
+Then we shall get a minimum subset $C$ of $F$, in which
+$X = \bigcup\limits_{S \in C}S$
+
+#### **A greedy approximation algorithm**
+The greedy method works by picking, at each stage, the set $S$ that covers the 
+greatest number of remaining elements that are uncovered
+
+```python
+def greedy_set_cover(X, F):
+  U = X
+  C = set()
+  
+  while len(U) > 0:
+    # We are looking for an element $S of $F that maximizes ($S ~intersect~ $U)
+    S = F.max_intersection_to(U)
+
+    U = U - S
+    C.add(S)
+  return C
+```
