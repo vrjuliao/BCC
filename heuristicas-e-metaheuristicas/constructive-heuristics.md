@@ -539,3 +539,142 @@ def greedy_set_cover(X, F):
     C.add(S)
   return C
 ```
+
+### 8 - The Traveling Salesman Problem (TSP): a case study (Aarts \& Lenstra)
+#### 8.1 - **Introduction**
+**Symmetric TSP**: the distances between two cities are the same, independently 
+of the direction.
+In other words, for two cities $c_i$ and $c_j$, the distance
+$d(c_i,c_j) = d(c_j,c_i)$.
+Since the conjecture if P=NP is not discovered yet, the solutions of this 
+problem are approximation solutions, where the developed algorithms try to work
+with real-world problems (forgetting the worst cases), or treating multiple 
+problem cases separately.
+Other approach is create an near-optimal algorithm, that return an near-optimal
+tour based on an approximation factor.
+
+This problem has so many applicable situations in real world, because of that, 
+so many algorithms were developed over time.
+Thus, we have a lot of approaches and study cases to analyse and **TSP** is a
+good problem to observe the evolution of approximation algorithms.
+
+The developed heuristics try to solve TSP for big instances, more than 1000
+elements, and we have that TSP is not a typical combinatorial optimization 
+problem, since most such problems seem significantly harder to solve to 
+optimality.
+
+**Tour construction heuristics**: starts the result building from scratch.
+
+Although there are lots of heuristics to get an near-optimal tour of TSP, the
+naive heuristics are sufficient for many cases solving a nice range of instances
+with a good approximation rate.
+
+Since we have a large range of approaches to approximate the TSP solution, for
+granting the performance/results comparisons we need to apply the same problem
+instances, using the same computer to solve those.
+But the existing algorithms are shown just in scientific papers in a high level 
+language together a summation of the results (performance and approximation).
+In short, to compare heuristics we shall do assumptions about the missing 
+details.
+So far, we have the Lin-Kernighan algorithm as the best heuristic of TSP, then
+at the final of each subsection we will do a comparison between the introduced
+algorithms and the **tabu serach** of Lin-Kernighan.
+This comparison will helps us to understand if the introduced heuristic is 
+better or worse than Lin-Kernighan, considering different instances and cases.
+
+#### 8.2 - **Tour construction heuristics**
+Comparison parameters:
+- Running time
+- Quality of the produces tour
+
+The four heuristics in this study:
+- Nearest neighbor
+- Gredy
+- Clarke-Weight
+- Christofides
+
+In which, the first three have a mechanism for generating starting tours in a 
+local search procedure.
+The last one provides the best tour construction among these algorithms.
+
+#### 2.1 **Theoretical results**
+For a given TSP heuristic $A$ and its instance $I$, let $A(I)$ the length
+produced by this heuristic, and $OPT(I)$ is the optimal tour of this instance.
+
+**Theorem A**: Assuming P$\neq$NP, no polynomial-time TSP heuristic can 
+guarantee $\frac{A(I)}{OPT(I)} \leq 2^{\rho(N)}$, with $N$ being the size of 
+$I$, for any fixed polynomial $\rho$ and all instances $I$.
+
+**Theorem B**: Asuming P$\neq$NPm, there exists an $\epsilon>0$ such that no 
+polynomial-time TSP heuristic can guarantee $\frac{A(I)}{OPT(I)}\leq1+\epsilon$
+for all instances $I$ satisfying the triangle inequality.
+
+**Theorem C**: There is an algorithm $A that, given a Euclidean TSP instance 
+and a constant $\epsilon <0$, runs in time $n^{O(1/\epsilon)}$ and guarantees
+$\frac{A(I)}{OPT(I)}<1+\epsilon$
+
+#### 2.2 **Four important tour construction algorithms**
+For our time/memory complexity, let us consider $n$ as the number of cities 
+(nodes) in the graph, and $m$ as edges.
+
+
+**Nearest Neighbor (NN)**\
+This is the naive constructive heuristic, where choosing a start node, we just 
+visit the next non-visited node in the adjacency list.
+The running time of **NN** is $\Theta(n^2)$ with a performance ratio of
+$\Theta(\log n)$.
+
+**Greedy**\
+This is the greedy version of the **NN** algorithm, once being in a node, the 
+heuristic choose the smaller-cost non-visited neighbor in the adjacency list.
+The running time is $\Theta(n^2 \log_2n)$, that is slower than **NN**, but the
+performance ratio grows as $\frac{\log_2n}{3\log\log n}$.
+Then the greedy produces a better approximation than **NN**, although to have a
+greater cost.
+
+**Clarke-Wright (CW)**\
+We start with a pseudo tour, so, this heuristic choose a "central" node and we 
+can imagine the initial graph as a hub.
+When the heuristic is in a non-central node, it should analyze whether it is 
+better back to the center or go to another non-central city.
+This step is executed until back to the center, then the heuristic saves the 
+path containing non-central cities and check these cities as visited.
+After create enough groups of cities that complete whole graph vertices, the
+groups of non-cental cities are connected using a greedy algorithm.
+Each group is considered a "super-node" where the only available edges are the ones which belongs to the imediate neighbors from central node.
+Here the running-time cost is the same than **Greedy**, $\Theta(n^2 \log_2n)$,
+the worst case produces a growth ratio of $\Theta(\frac{\log_2n}{3\log\log n})$
+which also is the same of **Greedy**.
+
+> It's important to say that the performance ratio growth for the three 
+heuristics above consider the instance $I$ obey the triangle inequality.
+
+**Christofides**
+The first step is constructing a MST $T$, since the cost of MSP cannot be
+greater than $OPT(I)$.
+Next we compute a minimum length matching $M$ on the vertices of odd degree in 
+$T$.
+$M$ must be combined with $T$ producing a Euler cycle with the minimum possible
+costs.
+So, the goal is visit the $H = T+M$ graph preventing to visit twice or more the 
+same city.
+The time complexity of this heuristic is $\Theta(n^3)$, but the performance 
+ratio is no longer than $1+\frac{1}{n}$ times the optimal.
+
+#### 2.3 **Experimental methodology**
+
+**The Held-Karp lower bound**\
+According to Held \& Karp, heuristics assuming the triangle inequality cannot 
+be smaller than $\frac{2}{3}OPT(I)$ in the general case.
+It was obtained thanks to a large test beds with larger problem instances.
+
+**Standard test instances**\
+Experimental results are mostly concentrated in real world cases, where TSP 
+instances assuming the triangle inequality in addition to consider them being
+geometric in nature.
+Many applications generate its own random instances with distances considering
+the Euclidian metric.
+Other ones, use a database of instances called ***TSPLIB***.
+All instances of ***TSPLIB*** have the Held-Karp lower bound known, then the 
+majority of papers which works with TSP use that instances library, since there
+is a concise comparison parameter.
