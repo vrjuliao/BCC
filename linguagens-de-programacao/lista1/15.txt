@@ -1,0 +1,14 @@
+a) Em SML o controle de fluxo feito por um `if` deve ter um `else`, nesse caso
+   não há o `else`.
+
+b) O operador de multiplicação não é sobrecarregado para lidar com tipos 
+   diferentes. Então há a necessidade de converter o valor inteiro para 
+   real, ou então o valor real para inteiro, antes da multiplicação.
+
+c) O pattern matching é realizado de forma linear, "da esquerda para a direita".
+   Então, como a primeira declaração da função considera qualquer inteiro N, 
+   a próxima opção de matching seria considera o caso em que o inteiro 0 é
+   passado, porém a primeira definição já aceita um inteiro igual a 0.
+   A solução seria inverter da seguinte forma:
+   fun fact 0 = 1
+     | fact n = n * fact (n-1);
