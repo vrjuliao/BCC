@@ -3,8 +3,14 @@
 #include <utility>
 #include <cmath>
 
+#define ATT "ATT"
+#define EUC_2D "EUC_2D"
+
+
 #include "utils/tsplib_parser.hpp"
 #include "tsp/tsp.hpp"
+#include "tsp/greedy_tsp.hpp"
+
 
 int euclidian_distance(const Node &n1, const Node &n2){
   long double xd = n1.x - n2.x;
@@ -33,12 +39,20 @@ int main(int argc, const char* argv[]){
   }
 
   TSPLIB_Parser parser = TSPLIB_Parser(std::string(argv[1]));
-  std::cout << parser.get_name() << std::endl;
-
+  std::string type = parser.get_edge_weight_type();
   std::vector<std::pair<long double, long double>> list = parser.get_points();
-  for(int i=0; i<list.size(); i++){
-    std::cout << list[i].first << " " << list[i].second << std::endl; 
+  Greedy_TSP solver = Greedy_TSP(list);
+
+  int cost;
+  if (type == EUC_2D){
+    cost = solver.cost(&euclidian_distance);
+  } else if(type == ATT){
+    cost = solver.cost(&pseudo_euclidian_distance);
+  } else {
+    std::cerr << "Not recognized edges weight type" << std::endl;
+    exit(1);
   }
+  std::cout << cost << std::endl;
 
   return 0;
 }
