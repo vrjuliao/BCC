@@ -1,5 +1,7 @@
 #include "tsp/tsp.hpp"
 #include "tsp/greedy_tsp.hpp"
+#include <cstdlib>
+#include <ctime>
 
 Greedy_TSP::Greedy_TSP(const std::vector<std::pair<long double, long double>> &points): TSP(points){}
 
@@ -8,31 +10,45 @@ Greedy_TSP::~Greedy_TSP(){
 }
 
 int Greedy_TSP::cost(std::function<int
-      (Node, Node)> distance) {
-  long double result = 0.0;
-  long double local_max;
-  long double dist;
-  int size = mAdj_list.size();
+    (Node, Node)> distance) {
+
+  int local_max, dist,
+    result = 0, size = mAdj_list.size();
 
   if(size <= 1)
     return result;
 
-/*
-ToDo
-- If a node is selected, it should mark the selected node as visited
-- the cost selection must consider non-visited nodes
-- at the end, it's important add the cost of return from the last node to the first visited node
-  */
-  for(int i=0; i<size-1; i++){
-    local_max = distance(mAdj_list[i], mAdj_list[i+1]);
-    for(int j=i+2; j<size; j++){
-      dist = distance(mAdj_list[i], mAdj_list[j]);
-      if(dist<local_max)
-        local_max = dist;
+  // The first visited node is selected randomly
+  std::srand(time(NULL));
+  int first = std::rand()%size;
+
+  int i, j, next, curr = first;
+  mAdj_list[curr].visited = true;
+  for(i=0; i<size-1; i++){
+    // search the first available node
+    for(j=0; mAdj_list[j].visited; j++){}
+    next = j;
+    local_max = distance(mAdj_list[curr], mAdj_list[next]);
+    
+    // check if there is another available node less distant than *next*
+    for(j+=1;j<size; j++){
+      if(!mAdj_list[j].visited){
+        dist = distance(mAdj_list[curr], mAdj_list[j]);
+        if(dist<local_max){
+          local_max = dist;
+          next = j;
+        }
+      }
     }
+
+    // the cheaper availabe node from *curr* node will be the new *curr*
+    mAdj_list[next].visited = true;
+    curr = next;
     result+=local_max;
   }
 
-  
+  // To complete the cycle, it's necessary add the cost of the edge
+  //   between the last and first visited node.
+  result += distance(mAdj_list[first], mAdj_list[curr]);
   return result;
 };

@@ -14,15 +14,15 @@
 
 int euclidian_distance(const Node &n1, const Node &n2){
   long double xd = n1.x - n2.x;
-  long double yd= n1.y - n2.y;
-  return std::round( std::sqrt( xd*xd + yd*yd));
+  long double yd = n1.y - n2.y;
+  return static_cast<int>(std::round(std::sqrt((xd*xd) + (yd*yd))));
 }
 
 int pseudo_euclidian_distance(const Node &n1, const Node &n2){
   long double xd= n1.x - n2.x;
   long double yd= n1.y - n2.y;
   long double rij= sqrt( (xd*xd + yd*yd)/10.0 );
-  int tij= std::round(rij);
+  int tij= static_cast<int>(std::round(rij));
 
   if(tij<rij)
     return tij+1;
