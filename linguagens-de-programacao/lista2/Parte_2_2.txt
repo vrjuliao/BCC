@@ -1,0 +1,10 @@
+2. Considere a função de interpretação de expressões Booleanas de WHILE,
+B (Tabela 1.2), e suponha que s x = 3. Determine B[¬(x = 1)].
+
+B[¬(x = 1)] = B[¬(A[x] = A[1])]
+            = B[¬(3 = 1)]
+            = B[¬(true)]
+            = B[false]
+
+B[¬(x = 1)]s = B[false]s
+             = ff

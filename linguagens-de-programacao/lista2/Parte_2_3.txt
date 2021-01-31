@@ -1,0 +1,14 @@
+3. Defina uma substituição para expressões Booleanas de WHILE: b[y → a0 ] deve ser a
+expressão Booleana correspondente a b exceto que todas as ocorrências da variável y
+são substituídas pela expressão aritmética a0.
+
+// considere que as substituições para expressões aritméticas foram herdadas da
+// seção Substitutions do capitulo 1 do Livro em questão.
+true[y → a0 ] = true
+¬true[y → a0 ] = false
+false[y → a0 ] = false
+¬false[y → a0 ] = true
+
+(a1 = a2)[y -> a0]  =  {(a1[y -> a0])  =   (a2[y ->a0])}
+(a1 <= a2)[y -> a0] =  {(a1[y -> a0]) <=   (a2[y ->a0])}
+(a1 ∧ a2)[y -> a0]  =  {(a1[y -> a0])  ∧   (a2[y ->a0])}

@@ -1,0 +1,4 @@
+1. Suponha que o valor inicial da variável x é n e o valor inicial de y é m.
+Escreva um programa em WHILE que atribui a Z o valor de n^m
+
+x:=n;y:=m;Z:=1; while (y > 0) do (Z:=(Z*x);y:=(y-1))
