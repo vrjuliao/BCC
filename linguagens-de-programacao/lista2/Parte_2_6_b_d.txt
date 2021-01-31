@@ -1,0 +1,24 @@
+6.b Estenda a linguagem com o comando
+  repeat S until b
+  e defina a relação → para ele. (A semântica de repeat não deve utilizar o operador
+  while da linguagem).
+
+            <S, s> -> s'   <repeat S until b, s'> s"
+[repeat tt]: --------------------------------------  if B[[b]]s = tt
+                    <repeat S until b, s> s"
+
+                      <S, s> -> s'   
+[repeat ff]: --------------------------------  if B[[b]]s = ff
+                 <repeat S until b, s> s'
+
+
+
+6.d Demonstre que repeat S until b e S ; if b then skip else (repeat S until b) são
+semanticamente equivalentes.
+
+Observe que no exercício 6b que: o statement S é sempre executado, independentemente
+da expressão boolean b. Entretanto, a repetição de S só é executada quando a expressão b
+não é satisfeita. 
+Portanto, podemos traduzir <repeat S until b> por repeat <S; if B then skip else (repeat S until b))>.
+Sendo assim, S será executado, e caso b seja atendido, skip faz com que o estado não mude, porém quando
+a expressão não é satisfeita, ocorre uma nova chamada de repeat.

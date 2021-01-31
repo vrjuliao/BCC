@@ -1,0 +1,41 @@
+Considere os seguintes programas:
+1. while ¬(x=1) do (y:=y*x; x:=x-1)
+2. while 1 ≤ x do (y:=y*x; x:=x-1)
+3. while true do skip
+Para cada um deles determine se eles sempre terminam ou se sempre entram em um
+laço infinito. Tente embasar suas repostas usando os axiomas e regras da Tabela 2.1.
+
+
+1.
+Temos que B[[~(x=1)]]s será tt para todo valor de x diferente de 1.
+Supondo que x possua um valor inicial qualquer, ou seja, há um estado s[x],
+quando a operação binária retornar um valor positivo s[x -> x-1].
+Então para qualquer valor inicial de x que seja maior ou igual a 1, o programa para.
+
+Entretanto, observe que para qualquer valor de x menor ou igual a 0, o estado de 
+s[x] não será igual a 1, uma vez que a mudança de estado ocorre seguindo o axioma
+<x:=x-1, s>. Logo, s[x] não terá a oportunidade de se tornar o valor 1.
+Invalidando a condição de parada. portanto o programa não termina.
+
+
+2.
+Neste caso, o validador condicional está sob guarda do estado B[[1<=x]]s, o qual permite
+a mudança do estado s para s[x -> x-1] desde que a condição seja atendida.
+Para o estado inicial s0 em que x seja maior ou igual a 1, o condicional permitirá a mudança
+do estado s para s[x -> x-1], ou seja, x será decrescida de uma unidade a cada nova rodada, até que
+B[[1<=x]]s = ff e a execução seja interrompida. Isso é factível, uma vez que 1 é um valor finito
+e portanto se s0[x] => 1, uma vez que x é decrescido de uma unidade a cada rodada da execução de
+while, o valor de x < 1 poderá ser alcançado, interrompendo o programa.
+
+Para o caso em que x < 1, B[[1<=x]]s = ff, e portanto o programa terminará sem alterar os estados
+iniciais.
+
+
+3.
+Para este caso temos que o programa não termina.
+Observe que B[[true]]s = tt, sendo que tal valor não se altera, independentemente da mudança
+de estados.
+Dado que o loop é executado justamente para o caso de tal expressão booleana ser tt, teremos um
+loop infinito.
+Ademais, a chamada de skip, não altera o estado s0, portanto temos um programa que não altera
+estados, mas também não termina.

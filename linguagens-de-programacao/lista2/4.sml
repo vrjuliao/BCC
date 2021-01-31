@@ -42,3 +42,6 @@ simplify exp2;
 
 val exp3 = Op1(Not, Op1(Not, Op1(Not, Op2(Mul, IConst(2), IConst(0)))));
 simplify exp3;
+
+val t = Op2(Mul, Op2(Add, IConst 1, IConst 2), Op2(Add, IConst 9, IConst 3));
+simplify t

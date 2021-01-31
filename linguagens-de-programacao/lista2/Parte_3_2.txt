@@ -1,0 +1,47 @@
+a)
+
+(* inicio do escopo de global = bloco 0*)
+(* inicio do escopo de g = bloco 1 *)
+fun g x =
+  let
+  (* inicio do escopo de let1 = bloco 2 *)
+  val inc= 1
+  (* inicio do escopo de f = bloco 3 *)
+  fun f y  = y + inc
+  (* fim do escopo de f = bloco 3 *)
+  (* inicio do escopo de h = bloco 4 *)
+  fun h z =
+    let
+    (* inicio do escopo de let2 = bloco 5 *)
+      val inc = 2
+    in
+      f z
+    end
+    (* fim do escopo de let2 = bloco 5 *)
+  in
+    h x
+  end
+  (* fim do escopo de h = bloco 4 *)
+  (* fim do escopo do let1 = bloco 2 *)
+(* fim do escopo de g = bloco 1 *)
+
+b)
+g, x, inc, f, y, h, z
+
+c)
+g -> definido no bloco 0,
+x -> definido no bloco 1,
+inc -> definido no bloco 2 e também no bloco 5,
+f -> definido no bloco 2,
+y -> definido no bloco 3,
+h -> definido no bloco 2,
+z -> definido no bloco 4,
+
+
+d) A execução de g 5 retorna 6.
+Para o caso de SML ter escopo dinâmico, o valor de g 5 seria 7.
+Isso ocorre pois a função f utiliza um nome inc que é herdado do escopo "pai".
+Para o caso padrão de SML (escopo estático), o valor de inc = 1 (linha 3).
+Já no caso do escopo dinâmico, a função h , que é responsável por chamar f,
+declara um novo val inc = 2, e esse novo valor será o que f utilizará para retornar a soma
+y+inc.
