@@ -3,8 +3,8 @@ B (Tabela 1.2), e suponha que s x = 3. Determine B[¬(x = 1)].
 
 B[¬(x = 1)] = B[¬(A[x] = A[1])]
             = B[¬(3 = 1)]
-            = B[¬(true)]
-            = B[false]
+            = B[¬(false)]
+            = B[true]
 
-B[¬(x = 1)]s = B[false]s
-             = ff
+B[¬(x = 1)]s = B[true]s
+             = tt
