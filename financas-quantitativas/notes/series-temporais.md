@@ -123,3 +123,172 @@ independentes.
 
 Quando não há o decaimento da **autocovariância**, temos que o processo é não
 ergódico.
+
+## Modelos de séries temporais
+Os dois modelos são estacionários em covariância e ergódicos
+
+### **Média Móvel**
+**MA(1): Moving Average 1**\
+Ou então **média móvel de primeira ordem**.\
+Suponha o processo estocástico $\{Y_t\}$ estacionário em covariância e ergódico
+em que:
+  1. $Y_t$ e $T_{t-1}$ são correlacionados
+  2. Mas $Y_t$ e $T_{t-j}$ para $j>1$ não são correlacionados.
+
+Esse processo é descrito por:
+$$T_t = \mu + \epsilon_t + \theta\epsilon_{t-1}$$
+para $-1<\theta<1$ em que $\epsilon\sim iid\ WN(0, \sigma^2_\epsilon)$.
+
+Em resumo observe que $Y_t$ depende do $\sigma$ do período anterior, ou seja,
+para médias móveis de primeira ordem, a dependência dura apenas um período de
+tempo.
+Para esse caso temos que $\theta$ é o sinal e a magnitude da correlação entre
+$T_t$ e o processo anterior.
+
+Para observar que **MA(1)** é estacionário em covariância:
+1. Média: $E[Y_t] = \mu + E[\epsilon_t]+\theta E[\epsilon_{t-1}] = \mu$.\
+  Uma vez que $\epsilon$ segue um WN com média 0, temos que os valores
+  das esperanças que envolvem $\epsilon$ são iguais a 0.
+2. $var(Y_t) = \sigma^2_\epsilon + \theta^2\sigma^2_\epsilon$.
+3. $\gamma_1 = cov(Y_t, T_{t-1}) = \theta\sigma^2_\epsilon$
+
+
+**MA(q): Moving Average q**\
+Quando há uma dependência temporal para um período de tamanho $q$.s
+
+### **Modelo autorregressivo - AR(1)**
+A característica principal de um modelo autorregressivo é tal que dada um $Y_t$,
+a dependência de $Y_t$ para um $Y_{t-j}$ diminui (tendendo a 0) à medida que
+$j$ cresce.
+Ou seja, quão maior o período entre dois pontos, menor a dependência entre
+estes.
+
+Um modelo autorregressivo é definido  por:
+$$T_t-\mu = \phi(Y_{t-1} -\mu) + \epsilon_t$$
+Tal que $-1 < \phi < 1$ e $\epsilon_t \sim WN(0, \sigma^2_\epsilon)$.
+
+Quanto a condição $-1 < \phi < 1$ é satisfeita, temos que o modelo AR(1) é
+ergódico e estacionário em covariância.
+É importante sustentar que $\phi$ determina o sinal e intensidade da correlação
+entre $Y_t$ e $Y_{t-1}$.
+
+### **Modelo ARMA$(p, q)$**
+Combinação entre processos AR(p) e MA(q), resultando em um processo estocástico
+autorregressivo de médias móveis.
+Uma série temporal $\{Y_t\}^\infty_{t=-\infty}$ é uma série ARMA quando ela
+generaliza processos AR e MA.
+
+## Integração
+
+Dados macroeconômicos e financeiros, normalmente, possuem tendência de alta.
+Por exemplo a inflação.
+A própria não estacionariedade dos dados é possivelmente  a manifestação de uma
+tendência.
+Uma série nào estacionária possui:
+- Uma tendência determinística $\mu\times t$.
+- Uma tendência estocástica $\sum^{t-1}_{i=0}\epsilon_{t-i}$.
+
+Uma forma simples de transformar uma série não estacionária em uma séria
+estacionária é através do processo de diferenciação:\
+Se uma série precisa ser diferenciada $d$ vezes para se tornar estacionária,
+então dizemos que tal série é **integrada em ordem** $d$.
+Quando a série já é estacionária, ela é integrada em ordem 0.
+
+Há o processo contrário da integração, que é a **soma cumulativa**, ou seja,
+partir de uma série $I(d)$ e chegar a uma série $I(d+1)$
+
+Pode-se executar o teste de Dicky Fuller para validar se uma série é
+estacionária ou não.
+Para tal teste, quando o *p-value* é pequeno (próximo de 0), existe grande
+chances da série ser estacionária.
+
+### **Modelo ARIMA$(p, d, q)$**
+Processos autorregressivos integrados de médias móveis.
+É uma generalização dos processos ARMA, o qual recebe também um terceiro
+parâmetro $d$, que informa a ordem de integração da série.
+
+## Cointegração
+Uma combinação linear de séries temporais $(Y^1_t, Y^2_t, ..., Y^k_t)$ gera uma
+nova série $Y_t$ construída da seguinte forma, para quaisquer conjunto de números
+reais $b_1, b_2, ..., b_k$:
+$$Y_t = b_1Y^1_t+b_2Y^2_t+...+b_kY^k_t$$
+
+Se todas as séries são I($n$) para $n>0$, e alguma combinação linear entre elas é
+I($n-1$), diz-se que tal conjunto de séries temporais é **cointegrada**.
+
+**Teste de Engle-Granger**:\
+Testar se duas séries são cointegradas.
+- Dadas duas séries $x$ e $Y$.
+- Verifique através de algum teste estatístico se ambas são I(1).
+- Resolva o método dos quadrados mínimos para a regressão:\
+  $Y=\beta_0 + \beta_1X+\epsilon$
+- Verifique se a série de resíduos $\epsilon=Y-\beta_0-\beta_1X$ é I(0).
+
+
+## Arbitragem estatística
+É um contraponto ao conceito tradicional de arbitragem (determinística).
+Na arbitragem tradicional, lucro garantido pode ser obtido ao comprar ativos e
+vender (short) outros a descoberto.
+Porém, em arbitragem estatística, observamos uma variação estatística na
+precificação teórica de um ou mais ativos.
+Na arbitragem estatística, buscamos identificar desvios de preços (ou relações)
+na esperança que a tendência do desvio será revertida, gerando oportunidade de
+lucro.
+
+Uma das fórmulas de encontrar tais oportunidades é através da cointegração.
+Suponha um ativo $A$ e outro ativo $B$ em que $A$ apresenta um bom valor de
+entrada.
+Porém você especula ou recebe uma análise de que $B$ terá um bom resultado nos
+próximos dias.
+Então decide realizar um teste de cointegração entre $A$ e $B$, e percebe que
+ambos ativos são cointegrados entre si.
+Assim, há você decide comprar $A$ uma vez que o valor de entrada é mais favorável.
+
+Outro exemplo:\
+Suponha que outros dois ativos $G$ e $H$ são cointegrados.
+Então temos que há uma relação linear entre a série de $G$ e de $H$, tal que
+$Z = G - 2H$.
+Tome como base que $E[Z] = 0$, então se temos que em $P_{G, t-1} = 10$ e
+$P_{H, t-1} = 5$ com $P_{G, t} = 11$, observamos pelo valor da esperança de $Z$
+que $P_{H, t} = 5.50$, para assim satisfazer a equação linear.
+Por fim, a partir dessa observação, podemos realizar alguma estratégia para
+entrar em *long* em um ativo e *short* em outro de forma a proteger a carteira.
+
+### **Modelos ARCH**
+ARCH: **A**uto**r**egressive **C**ondidional **H**eteroskedasticity.
+
+- Heteroscedasticidade: séries temporais em que a variância (ou alguma outra
+  medida de dispersão) não é constante ao longo do tempo.
+- Homoscedasticidade: inverso da anterior, em que as medidas de dispersão
+  são constantes no tempo.
+
+Há uma sugestão de que a volatilidade atual depende de alguma forma das
+volatilidades anteriores.
+Retornos de ativos são imprevisíveis, com poucas evidências de correlação
+linear.
+Porém para volatilidade é possível de obter uma correlação.
+
+**ARCH($q$)**:\
+Suponha um processo estocástico $\{Y_t\}^\infty_{t=-\infty}$.
+Esse modelo básico diz que a variância do processor $Y_t$ é condicional em
+$Y_{t-1} até Y_{t-q}$.
+No caso, o erro $\epsilon_t$ é dividido em dois termos: um desvio padrão
+condicional $\sigma_t$, dependente do tempo, e um outro erro $z_t$.
+Sendo que temos $\epsilon_t = \sigma_t z_t$ com $z_t\sim iid\ WN(0,1)$.
+
+Como temos que a variância $\sigma^2_t$ depende dos períodos anteriores,
+podemos expressar a $t$-ésima variância como:
+$$\sigma^2_t = \alpha_0 + \sum^q_{j=1}\alpha_j\epsilon^2_{t-j}$$
+
+**GARCH**:\
+É a generalização do método ARCH, o nome já indica tal feito, uma vez que
+GARCH é Generalized ARCH.
+A diferença é quem no modelo ARCH a dependência ocorre no fator $\epsilon_t$,
+porém neste modelo, a variância dependerá também das variâncias dos períodos
+anteriores, ou seja:
+$$
+\sigma^2_t 
+  = \alpha_0 
+  + \sum^q_{j=1}\alpha_j\epsilon^2_{t-j}
+  + \sum^q_{j=1}\beta_j\sigma^2_{t-j}
+$$
