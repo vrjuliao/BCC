@@ -218,7 +218,7 @@ I($n-1$), diz-se que tal conjunto de séries temporais é **cointegrada**.
 
 **Teste de Engle-Granger**:\
 Testar se duas séries são cointegradas.
-- Dadas duas séries $x$ e $Y$.
+- Dadas duas séries $X$ e $Y$.
 - Verifique através de algum teste estatístico se ambas são I(1).
 - Resolva o método dos quadrados mínimos para a regressão:\
   $Y=\beta_0 + \beta_1X+\epsilon$
