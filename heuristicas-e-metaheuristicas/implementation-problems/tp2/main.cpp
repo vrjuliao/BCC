@@ -8,7 +8,7 @@
 
 #include "utils/tsplib_parser.hpp"
 #include "tsp/tsp.hpp"
-#include "tsp/greedy_tsp.hpp"
+#include "tsp/opt2_tsp.hpp"
 
 
 int euclidian_distance(const Node &n1, const Node &n2){
@@ -40,7 +40,7 @@ int main(int argc, const char* argv[]){
   TSPLIB_Parser parser = TSPLIB_Parser(std::string(argv[1]));
   std::string type = parser.get_edge_weight_type();
   std::vector<std::pair<long double, long double>> list = parser.get_points();
-  Greedy_TSP solver = Greedy_TSP(list);
+  Opt2_TSP solver = Opt2_TSP(list);
 
   if (type == EUC_2D){
     solver.set_distance_function(&euclidian_distance);

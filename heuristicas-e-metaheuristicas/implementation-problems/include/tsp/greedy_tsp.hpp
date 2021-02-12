@@ -6,7 +6,6 @@
 #include "tsp/tsp.hpp"
 
 class Greedy_TSP: public TSP {
-
 public:
   Greedy_TSP(const std::vector<std::pair<long double, long double>> &points);
   ~Greedy_TSP();
@@ -15,7 +14,10 @@ public:
   @description: implements the abstract method of TSP class.
                 Is the greedy heuristic to yield the TSP cost.
   */
-  virtual int cost(std::function<int(Node, Node)> distance) override;
+
+  // virtual int cost(std::function<int(Node, Node)> distance) override;
+  virtual int cost() override;
+  virtual void solve() override;
 };
   
 
