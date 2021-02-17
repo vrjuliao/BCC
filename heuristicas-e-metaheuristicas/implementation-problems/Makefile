@@ -3,7 +3,7 @@ SRCDIR := src
 OBJDIR := build
 BINDIR := bin
 
-MAIN := tp2/main.cpp
+MAIN := tp3/main.cpp
 
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name "*.$(SRCEXT)")
