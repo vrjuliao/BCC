@@ -1,5 +1,7 @@
 #include "tsp/tabu_tsp.hpp"
-// #include <iostream>
+#include <iostream>
+#include <algorithm>
+#include <numeric>
 
 Tabu_TSP::Tabu_TSP(const std::vector<std::pair<long double, long double>> &points): Greedy_TSP(points){}
 
@@ -9,13 +11,24 @@ int Tabu_TSP::cost(){
   return this->path_cost;
 }
 
+std::vector<int> Tabu_TSP::argsort(const std::vector<NN> &array){
+  std::vector<int> indices(array.size());
+  std::iota(indices.begin(), indices.end(), 0);
+  std::sort(indices.begin(), indices.end(),
+            [&array](int left, int right) -> bool {
+                // sort indices according to corresponding array element
+                return array[left].cost < array[right].cost;
+            });
+
+  return indices;
+}
+
+
 void Tabu_TSP::solve(){
   int size = mAdj_list.size();
   if(size < 2) return;
   
-  
-  
-  // get the nearest neighbor for each node
+  // get the nearest neighbor for each node (subroute of size1)
   std::vector<NN> nn_list = std::vector<NN>(size);
  
   int current_cost, potential_next_cost;
@@ -45,18 +58,21 @@ void Tabu_TSP::solve(){
     }
   }
  
+  // creat the visitation order
+  std::vector<int> nn_order = this->argsort(nn_list);
+
+
   // tabu search
   int next_solution_cost, cur, nxt;
   this->path = mAdj_list;
   std::vector<Node> next_solution = std::vector<Node>(size);
   int neighbor1, neighbor2;
   this->path_cost = Greedy_TSP::cost();
-  
-  // std::cout << this->path_cost << std::endl;
-  
+    
 
+  int count = 1;
   for(int i=0; i<size; i++){
-    neighbor1 = i;
+    neighbor1 = nn_order[i];
     neighbor2 = nn_list[neighbor1].next;
 
     if(nn_list[neighbor1].already_ocurred){
@@ -103,6 +119,7 @@ void Tabu_TSP::solve(){
 
       cur = nxt;
       next_solution[j] = mAdj_list[cur];
+      mAdj_list[cur].visited = true;
       next_solution_cost += best_cost;
     }
     if(nn_list[cur].next == neighbor1)

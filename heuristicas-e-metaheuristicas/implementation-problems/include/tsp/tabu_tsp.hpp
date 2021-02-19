@@ -12,6 +12,7 @@ struct NN {
 class Tabu_TSP : public Greedy_TSP {
 protected:
   int path_cost;
+  std::vector<int> argsort(const std::vector<NN> &array);
 
 public:
   Tabu_TSP(const std::vector<std::pair<long double, long double>> &points);
