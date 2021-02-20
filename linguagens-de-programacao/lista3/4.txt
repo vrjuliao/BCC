@@ -1,0 +1,21 @@
+Reference counting
+  Quando o custo de cópia ou de varredura da memória é muito prejudicial para
+  um programa, esta pode ser uma boa abordagem.
+  Reference counting utiliza um contador para cada referencia de memória
+  alocada e assim gerencia quantas chamadas àquele trecho de memória ainda
+  restam para que tal espaço não seja mais utilizado.
+
+Mark and sweep
+  Para programas que utilizam pouca memória, ou que dividem a alocação em
+  espaços de mesmo tamanho, essa abordagem pode ser utilizada.
+  Assim têm-se que o custo de varredura da memória é algo constante (quando se
+  sabe o total de memória disponível).
+  O fato é que essa abordagem não movimenta blocos de memória, então um cenário
+  ideal para o uso de Mark and Sweep seria em dispositivos com memória limitada.
+
+Copying collector
+  Quando o dispositivo tem memória disponível para permitir uma cópia completa
+  da memória utilizada por um programa, essa abordagem pode ser aplicada.
+  Programas que alocam muitos fragmentos de memória se beneficiam da aplicação
+  de Copying collector, uma vez que na cópia da memória acontece uma
+  condensação dos fragmentos.

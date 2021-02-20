@@ -1,0 +1,18 @@
+(a) F
+
+(b) V - Stacks têm gerenciamento automático.
+
+(c) F - Heaps têm gerenciamento manual.
+
+(d) F - É flexível, mas é limitada pela disponibilidade de memória do
+    dispositivo.
+
+(e) V
+
+(f) V
+
+(g) V - em partes, pois também pode-se representar a memória dinâmica como um
+    HEAP.
+
+(h) V - em partes, pois também pode-se representar a memória dinâmica como uma
+    STACK.

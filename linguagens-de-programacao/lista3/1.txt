@@ -1,0 +1,7 @@
+/*
+ eu não entendi muito bem se essa era uma pergunta de V ou F, mas baseado no
+ livro texto, seção 14.1 temos:
+*/
+
+Variáveis, o programa em si, os valores armazenados nas variáveis.
+Então a única opção que atende a isso é a letra (b)

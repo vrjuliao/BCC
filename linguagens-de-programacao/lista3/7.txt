@@ -1,0 +1,16 @@
+(a)
+  polimorfismo1 : uso de templates, o que permite que auto_ptr adote qualquer tipo de dados.
+  polimorfismo2: sobrecarga de operadores (* e ->) que são utilizados para manipulação e acessoa  ponteiros.
+
+(b)
+  não há nenhum problema de memória. O destrutor de `auto_ptr p` será chamado automáticamente ao final da
+  função foo0, e isso fará com que o endereço de memória alocado para a string seja liberado.
+
+(c)
+  não há nenhum problema de memória. Uma vez que `auto_ptr p` foi criado dentro do escopo do `try`, ao fim
+  desse escopo, o construtor será chamado automáticamente. No caso de escopos de `try` ao invocar um `throw`
+  o escopo do try terminará.
+
+(d)
+  Sim, neste caso há um problema de leak de memória. A liberação do espaço não ocorre, uma vez que o `throw` é 
+  invocado antes da deleção no escopo do `try`.

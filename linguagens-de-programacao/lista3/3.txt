@@ -1,0 +1,13 @@
+(a)
+int valor_inicial, valor_intermediário: memória estática
+
+int taxa: stack
+
+int *valores: stack para armazenar o ponteiro de memória
+              heap para armazenar os três inteiros.
+
+
+(b)
+  valores[0]: 25
+  valores[1]: 75
+  valores[2]: 15
