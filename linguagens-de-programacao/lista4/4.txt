@@ -1,0 +1,12 @@
+(A)
+  s deve possuir dois métodos: remove() e isNotEmpty().
+  É necessário ainda que o método isNotEmpty() retorne um valor passível de comparação (possivelmente um booleano).
+  Também é necessário que remove() retorne um valor capaz de ser transformado em uma string, ou então propriamente uma string.
+  Além disso, para que removeAll() termine é necessário que pelo menos um dos métodos de `s` sejam
+  capazes de provocar uma mudança no objeto o qual faça com que s.isNotEmpty() retorne um valor False.
+
+(B)
+  A expressão se relaciona com prover o valor correto para as funções corretas, ou seja:
+  para a função print() deve-se receber uma string ou então um valor capaz de ser transformado em string,
+  e já para a comparação usada no `while` o tipo retornado por s.isNotEmpty() deve ser passível de uma equiparação
+  com um booleano.

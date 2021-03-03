@@ -1,0 +1,5 @@
+O problema do diamante pode ser exemplificado por um objeto X que herda duas ou mais classes, das quais compartilham um pai Y em comum.
+As duas classes que X é "filho" direto, sobrescrevem um método de Y mas X não realiza tal sobrescrita.
+
+Então ao chamar esse método para uma instancia do objeto X, é necessário resolver qual classe pai de X será responsável por prover a funcionalidade
+do método em questão. Esse é o problema do diamante.

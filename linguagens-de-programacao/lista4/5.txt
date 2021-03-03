@@ -1,0 +1,14 @@
+#1 Pavao is an animal
+#2 Tigre is a mammal
+#3 Krypto is a dog
+#4 Pavao, which is an animal, is eating.
+#5 Tigre, which is a mammal, is sucking milk.
+#6 Tigre, which is an animal, is eating.
+#7 Krypto is barking rather loudly.
+#8 Krypto, which is a mammal is sucking milk.
+#9 Krypto barks when it eats. +  Um erro será produzido em tempo de execução.
+
+// Apos o erro dado na chamada anterior, a funcao test() nao continuara a execucao devido ao não tratamento de erros
+// considerando que a funcao continuaria, teriasmos:
+#10 Um erro será produzido em tempo de execução.
+#11 Krypto is barking rather loudly.
