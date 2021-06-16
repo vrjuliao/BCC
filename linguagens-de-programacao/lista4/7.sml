@@ -1,6 +1,6 @@
 signature MYMATH =
 sig
-  exception NegativeValue;
+  exception NegativeValue
   val fact : int -> int
   val halfPi : real
   val pow : (int * int ) -> int
@@ -18,12 +18,14 @@ struct
                else n * (fact (n-1))
   fun pow(b, 0) = 1
     | pow(b, e) = if e > 0 then b * pow(b, (e-1)) else raise NegativeValue
-  fun double n = 2*n
+  fun double n = if n < 0 then raise NegativeValue else 2*n
 end;
   
 fun useMyMathLib(n, "pow") = (print (Int.toString(MyMathLib.pow(n,n)))
     handle MyMathLib.NegativeValue => print "Nao posso lidar com numeros negativos!")
   | useMyMathLib(n,"fact") = (print (Int.toString(MyMathLib.fact(n)))
+    handle MyMathLib.NegativeValue => print "Nao posso lidar com numeros negativos!")
+  | useMyMathLib(n,"double") = (print (Int.toString(MyMathLib.double(n)))
     handle MyMathLib.NegativeValue => print "Nao posso lidar com numeros negativos!")
   | useMyMathLib _ =  print "";
   
@@ -31,3 +33,4 @@ fun useMyMathLib(n, "pow") = (print (Int.toString(MyMathLib.pow(n,n)))
 
 useMyMathLib(2, "pow");
 useMyMathLib(~2, "fact");
+useMyMathLib(~2, "double");
