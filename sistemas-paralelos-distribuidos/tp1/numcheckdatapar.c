@@ -19,7 +19,6 @@
 #include "numchecks.h"  // conta números com mais condições válidas
 #include "conditions.h" // verifica cada condição
 
-
 #define MAX_THREADS 4
 
 pthread_mutex_t lock;
@@ -129,7 +128,7 @@ main( int argc, char* argv[] )
         // calcula-se o intervalo de ação de cada thread.
         for (i=0;i < MAX_THREADS;++i) {
             if (pthread_create(&(tid[i]), NULL, check_num, (void*) &attr[i]) < 0) {
-                printf("Thread cretion error\n");
+                printf("Thread creation error\n");
                 exit(EXIT_FAILURE);
             }
         }
