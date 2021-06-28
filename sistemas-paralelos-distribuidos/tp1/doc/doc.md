@@ -80,7 +80,7 @@ A divisão em funções, tornou necessário o uso de uma tabela hash para mapear
 aqueles número que já haviam completado uma primeira validação de
 propriedade, mas que ainda não completaram todas as computações.
 Por isso, na primeira checagem de determinado número, inserimos
-esse número no mapa `_not_completed` e então chamamos a função `check_all()`.
+esse número no mapa `_not_completed` e então chamamos a função `_check_all()`.
 Essa ultima chamada valida se um numero contido no *hash map* já teve todas
 as propriedades checadas, e em caso positivo, remove aquele elemento do mapa,
 uma vez que não será mais necessário computar novamente a propriedade
@@ -99,13 +99,18 @@ Logo, espera-se que a paralelização contribua positivamente para tal tarefa.
 ![Gráfico](grafico.png)
 ![Tabela](tabela.png)
 
-O experimento que resultou nos dados acima foi considerou um intervalo de números entre `10` e `100000000` para a entrada do programa.
-Entretanto, é necessário ressaltar que a versão de decomposição de função foi muito mais custosa do que as demais. E por isso não foi possível prosseguir além deste intervalo.
+O experimento que resultou nos dados acima foi considerou um intervalo de números entre `10` e `100000000` para a entrada do programa (**Max num**).
+Os tempos de execução de **Sequencial**, **Dec. de Dados** e
+**Dec/ de Função** são dados em unidades de *segundo*.
+Entretanto, é necessário ressaltar que a versão de decomposição de função foi muito mais custosa do que as demais.
+E para que o gráfico não aumentasse muito a escala, não prosseguimos além desse intervalo no teste de tempo de execução.
 Tanto o programa sequencial, quando a versão de decomposição de
-dados, fora executadas com sucesso para entradas muito superiores a
-$10^{9}$.
-Já o consumo de memória da versão que decompõe em funções superou os limites das máquinas dos laboratórios do DCC para entradas maiores que $10^9$.
-
+dados, foram executadas com sucesso para entradas maiores que
+$10^{9}$, retornando valores corretos em tempo hábil.
+Porém, dada a dependência de acesso à memória, que é protegida
+por mecanismos de exclusão mútua, na decomposição funcional,
+o tempo gasto para computar entradas maiores que $10^8$ ultrapassa
+a casa dos *segundos* e chega muito pŕoximo à dezenas de *minuto*.
 
 Um outro fator de importância quanto à implementação da decomposição por função se dá pelo fato de que apenas uma
 thread consegue agrupar as informações das propriedades de um

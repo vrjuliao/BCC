@@ -14,6 +14,7 @@
 #include <sys/time.h>
 #include <pthread.h>
 #include <unordered_map>
+#include <map>
 
 extern "C" {
     #include "timediff.h"   // calcula tempo decorrido
@@ -50,15 +51,20 @@ void _check_all(long orign) {
     int *data = _not_completed[orign];
     int all = 0;
     for(int i=0; i<5; ++i){
+        // se nem todos as propriedades foram falidadas
+        // pra um determinado numero `orign`,
+        // entao nao prosseguimos com a computacao de `update_max`
         if (data[i] == NOT_CHECKED) return;
         all += data[i];
     }
 
     if (all>0) {
         match_some_test += 1;
-        free(_not_completed[orign]);
-        _not_completed.erase(orign);
     }
+    // a partir deste ponto, `orign` nao será mais acessado
+    // então podemos remove-lo da tabela
+    free(_not_completed[orign]);
+    _not_completed.erase(orign);
     update_max( orign, all );
 }
 
@@ -101,6 +107,8 @@ void *check_num(void * arg){
         (*property) += catched_prop;
 
         pthread_mutex_lock(&lock);
+        // Caso `n` nao teve nenhuma propriedade verificada
+        // inserimos `n` em nosso hash-map
         if(_not_completed.find(n) == _not_completed.end()){
             int *v = (int*) malloc(5*sizeof(int));
             for(int i=0; i<5; ++i)
