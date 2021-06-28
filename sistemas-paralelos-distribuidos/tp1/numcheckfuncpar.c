@@ -23,17 +23,10 @@ extern "C" {
 
 #define MAX_THREADS 5
 
-struct num_data {
-  int is_pal;
-  int is_rep;
-  int is_sum;
-  int is_dou;
-  int is_fou;
-};
-
 struct th_data {
     long maxnum;
     int ndigits;
+    int type;
 };
 
 static const int NOT_CHECKED = -1;
@@ -48,143 +41,95 @@ long match_some_test = 0,
 
 pthread_mutex_t lock;
 
-std::unordered_map<long, num_data*> not_completed = {};
-
+std::unordered_map<long, int*> _not_completed = {};
+static const int PAL = 0, REP = 1, SUM = 2, HTD = 3, HFR = 4;
 
 // valida se todas as funções já foram chamadas para determinado numero
-// deve ser chamado, somente quando há posse do mutex
-void check_all(long orign) {
-    num_data *data = not_completed[orign];
-    if( data->is_rep == NOT_CHECKED || data->is_sum == NOT_CHECKED ||
-        data->is_dou == NOT_CHECKED || data->is_fou == NOT_CHECKED ||
-        data->is_pal == NOT_CHECKED ) return;
-    
+// deve ser chamado, somente quando há posse da mutex
+void _check_all(long orign) {
+    int *data = _not_completed[orign];
+    int all = 0;
+    for(int i=0; i<5; ++i){
+        if (data[i] == NOT_CHECKED) return;
+        all += data[i];
+    }
 
-    int all = data->is_pal + data->is_rep + data->is_sum + data->is_dou + data->is_fou;
     if (all>0) {
         match_some_test += 1;
-        delete data;
+        free(_not_completed[orign]);
+        _not_completed.erase(orign);
     }
     update_max( orign, all );
 }
 
-void *th_is_palindrome(void * arg){
-    th_data * dt = (th_data*) arg; 
-    int pal;
+void *check_num(void * arg){
+    th_data * dt = (th_data*) arg;
+    long* property;
+    int (*check_property)(digit_t, int);
+
+    // Seleciona qual das funções será executada na thread
+    // de acordo com o argumento `type`
+    switch (dt->type) {
+        case PAL:
+            check_property = &is_palindrome;
+            property = &palindromes;
+            break;
+        case REP:
+            check_property = &has_repeated_seq;
+            property = &repeated_seqs;
+            break;
+        case SUM:
+            check_property = &sum_is_ap;
+            property = &sums_are_ap;
+            break;
+        case HTD:
+            check_property = &has_tripled_digits;
+            property = &have_tripled_digits;
+            break;
+        case HFR:
+            check_property = &has_four_repetitions;
+            property = &have_four_repetitions;
+            break;
+    }
+
+    int catched_prop;
     for(long n=0; n<= dt->maxnum; ++n){
         digit_t num;
         break_into_digits(n, num, dt->ndigits);
-        pal = is_palindrome( num, dt->ndigits );
-        palindromes += pal;
+
+        catched_prop = check_property( num, dt->ndigits );
+        (*property) += catched_prop;
 
         pthread_mutex_lock(&lock);
-        if(not_completed.find(n) == not_completed.end()){
-            not_completed[n] = new num_data{-1, -1, -1, -1, -1};
+        if(_not_completed.find(n) == _not_completed.end()){
+            int *v = (int*) malloc(5*sizeof(int));
+            for(int i=0; i<5; ++i)
+                v[i] = NOT_CHECKED;
+            _not_completed[n] = v;
         }
-        not_completed[n]->is_pal = pal;
+        _not_completed[n][dt->type] = catched_prop;
 
-        check_all(n);
+        _check_all(n);
         pthread_mutex_unlock(&lock);
     }
-}
-
-void *th_has_repeated_seq(void * arg){
-    th_data * dt = (th_data*) arg; 
-    int rep;
-    for(long n=0; n <= dt->maxnum; ++n){
-        digit_t num;
-        break_into_digits(n, num, dt->ndigits);
-        rep = has_repeated_seq( num, dt->ndigits );
-        repeated_seqs += rep;
-
-        pthread_mutex_lock(&lock);
-        if(not_completed.find(n) == not_completed.end()){
-            not_completed[n] = new num_data{-1, -1, -1, -1, -1};
-        }
-        not_completed[n]->is_rep = rep;
-
-        check_all(n);
-        pthread_mutex_unlock(&lock);
-    }
-}
-
-void *th_sum_is_ap(void * arg){
-    th_data * dt = (th_data*) arg; 
-    int sum;
-    for(long n=0; n<= dt->maxnum; ++n){
-        digit_t num;
-        break_into_digits(n, num, dt->ndigits);
-        sum = sum_is_ap( num, dt->ndigits );
-        sums_are_ap += sum;
-
-        pthread_mutex_lock(&lock);
-        if(not_completed.find(n) == not_completed.end()){
-            not_completed[n] = new num_data{-1, -1, -1, -1, -1};
-        }
-        not_completed[n]->is_sum = sum;
-
-        check_all(n);
-        pthread_mutex_unlock(&lock);
-    }
-}
-
-void *th_has_tripled_digits(void * arg){
-    th_data * dt = (th_data*) arg; 
-    int dou;
-    for(long n=0; n<= dt->maxnum; ++n){
-        digit_t num;
-        break_into_digits(n, num, dt->ndigits);
-        dou = has_tripled_digits( num, dt->ndigits );
-        have_tripled_digits += dou;
-
-        pthread_mutex_lock(&lock);
-        if(not_completed.find(n) == not_completed.end()){
-            not_completed[n] = new num_data{-1, -1, -1, -1, -1};
-        }
-        not_completed[n]->is_dou = dou;
-
-        check_all(n);
-        pthread_mutex_unlock(&lock);
-    }
-}
-
-void *th_has_four_repetitions(void * arg){
-    th_data * dt = (th_data*) arg; 
-    int fou;
-    for(long n=0; n<= dt->maxnum; ++n){
-        digit_t num;
-        break_into_digits(n, num, dt->ndigits);
-        fou = has_four_repetitions( num, dt->ndigits );
-        have_four_repetitions += fou;
-
-        pthread_mutex_lock(&lock);
-        if(not_completed.find(n) == not_completed.end()){
-            not_completed[n] = new num_data{-1, -1, -1, -1, -1};
-        }
-        not_completed[n]->is_fou = fou;
-
-        check_all(n);
-        pthread_mutex_unlock(&lock);
-    }
+    return NULL;
 }
 
 int
 main( int argc, char* argv[] )
 {
-    int  ndigits; // núm. de dígitos para representar até o maior número
-
     long i, tmp;
 
-    th_data dt = th_data();
+    th_data dt[MAX_THREADS];
     struct timeval t1, t2; // marcação do tempo de execução
 
-    dt.maxnum = atol(argv[1]);
+    dt[PAL].maxnum = atol(argv[1]);
 
     // determinação de ndigits em função do maxnum
-    tmp = dt.maxnum;
-    dt.ndigits=0;
+    tmp = dt[PAL].maxnum;
+    dt[PAL].ndigits=0;
     do {
-        dt.ndigits++;
+        dt[PAL].ndigits++;
         tmp=tmp/10;
     } while (tmp>0);
     pthread_t tid[MAX_THREADS];
@@ -193,11 +138,11 @@ main( int argc, char* argv[] )
     // Note que o valor do parâmetro maxnum é considerado inclusive (<=)
     gettimeofday(&t1,NULL);
 
-    pthread_create(&(tid[0]), NULL, th_is_palindrome, (void*) &dt);
-    pthread_create(&(tid[1]), NULL, th_has_repeated_seq, (void*) &dt);
-    pthread_create(&(tid[2]), NULL, th_sum_is_ap, (void*) &dt);
-    pthread_create(&(tid[3]), NULL, th_has_tripled_digits, (void*) &dt);
-    pthread_create(&(tid[4]), NULL, th_has_four_repetitions, (void*) &dt);
+    for (i=0;i < MAX_THREADS;++i) {
+        dt[i] = dt[0];
+        dt[i].type = i;
+        pthread_create(&(tid[i]), NULL, check_num, (void*) &dt[i]);
+    }
     
     for (i=0;i < MAX_THREADS;++i) {
         pthread_join(tid[i], NULL);
@@ -206,12 +151,12 @@ main( int argc, char* argv[] )
     gettimeofday(&t2,NULL);
 
     // Escrita das estatísticas ao final da execução
-    printf("%ld match_some_test (%d%%)\n", match_some_test, (int)((100.0*match_some_test)/dt.maxnum));
+    printf("%ld match_some_test (%d%%)\n", match_some_test, (int)((100.0*match_some_test)/dt[0].maxnum));
     printf("%ld palindromes\n", palindromes);
     printf("%ld repeated_seqs\n", repeated_seqs);
     printf("%ld sums_are_ap\n", sums_are_ap);
     printf("%ld have_tripled_digits\n", have_tripled_digits);
     printf("%ld have_four_repetitions\n", have_four_repetitions);
-    print_max( dt.ndigits );
+    print_max( dt[0].ndigits );
     printf("\ntempo: %lf\n",timediff(&t2,&t1));
 }

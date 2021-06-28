@@ -1,4 +1,3 @@
-# all: numcheckseq numcheckdatapar 
 all: numcheckseq numcheckdatapar numcheckfuncpar 
 
 clean: 
