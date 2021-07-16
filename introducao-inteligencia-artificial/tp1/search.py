@@ -117,9 +117,7 @@ def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     start = problem.getStartState()
-    actions = []
     queue = util.Queue()
-    # queue.push(problem.getSuccessors(start))
     curr = (start, 0, (-1,-1))
     queue.push(curr) # 1- node coordinate, 2- move, 3- parent coordinate
     visited = {}
@@ -138,17 +136,42 @@ def breadthFirstSearch(problem):
             queue.push((node[0], node[1], curr[0]))
     
     # reverting path
-    result = []
+    actions = []
     last_checked = curr[0]
     while(last_checked != start):
-        result = [visited[last_checked][0]] + result
+        actions = [visited[last_checked][0]] + actions
         last_checked = visited[last_checked][1]
-    return result
+    return actions
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    start = problem.getStartState()
+    pqueue = util.PriorityQueue()
+    # 0- node coordinate, 1- priority, 2- move, 3- parent coordinate, 4- parent priority
+    curr = (start, 0, 0, (-1,-1), 0)
+    pqueue.push(curr, 0) 
+    visited = {}
+    while(not pqueue.isEmpty()):
+        curr = pqueue.pop()
+
+        if curr[0] in visited:
+            continue
+        else:
+            visited[curr[0]] = (curr[1], curr[2], curr[3], curr[4])
+
+        if(problem.isGoalState(curr[0])):
+            break
+        
+        for node in problem.getSuccessors(curr[0]):
+            pqueue.push((node[0], node[2]+curr[1], node[1], curr[0], curr[1]),  node[2]+curr[1])
+    
+    actions = []
+    last_checked = curr[0]
+    while(last_checked != start):
+        actions = [visited[last_checked][1]] + actions
+        last_checked = visited[last_checked][2]
+    return actions
 
 
 def nullHeuristic(state, problem=None):
@@ -158,11 +181,57 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+def greedySearch22(problem, heuristic=nullHeuristic):
+    start = problem.getStartState()
+    actions = []
+    expanded = set()
+    expanded.add(start)
+    curr = (start, 0, 0)
+    print(curr[0], problem.getSuccessors(curr[0]))
+    while(not problem.isGoalState(curr[0])):
+        # choose the best local
+        # print(curr, expanded)
+        # print(curr[0], problem.getSuccessors(curr[0]))
+        cost = float("inf")
+        for next in problem.getSuccessors(curr[0]):
+            if(next[0] not in expanded and heuristic(next[0], problem) < cost):
+                cost = heuristic(next[0], problem)
+                curr = next
+
+        expanded.add(curr[0])
+        actions.append(curr[1])
+
+    return actions
 
 def greedySearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    start = problem.getStartState()
+    pqueue = util.PriorityQueue()
+    # 0- node coordinate, 1- priority, 2- move, 3- parent coordinate, 4- parent priority
+    curr = (start, heuristic(start, problem), 0, (-1,-1), 0)
+    pqueue.push(curr, 0) 
+    visited = {}
+    while(not pqueue.isEmpty()):
+        curr = pqueue.pop()
+
+        if curr[0] in visited:
+            continue
+        else:
+            visited[curr[0]] = (curr[1], curr[2], curr[3], curr[4])
+
+        if(problem.isGoalState(curr[0])):
+            break
+        
+        for node in problem.getSuccessors(curr[0]):
+            pqueue.push((node[0], heuristic(curr[0], problem)+curr[1], node[1], curr[0], curr[1]),  heuristic(curr[0], problem)+curr[1])
+    
+    actions = []
+    last_checked = curr[0]
+    while(last_checked != start):
+        actions = [visited[last_checked][1]] + actions
+        last_checked = visited[last_checked][2]
+    return actions
 
 
 def aStarSearch(problem, heuristic=nullHeuristic):
