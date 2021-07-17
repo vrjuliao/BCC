@@ -181,65 +181,6 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-def greedySearch33(problem, heuristic=nullHeuristic):
-    start = problem.getStartState()
-    actions = []
-    stack = util.Stack()
-    pqueue =  util.PriorityQueue()
-    for ss in problem.getSuccessors(start):
-        print(ss[0], heuristic(ss[0], problem))
-        pqueue.push(ss, heuristic(ss[0], problem))
-    stack.push(pqueue)
-    expanded = set()
-    expanded.add(start)
-    # while(not stack.isEmpty()):
-    curr = (start, 0)
-    while(not problem.isGoalState(curr[0])):
-        children_heap = stack.pop()
-        if(children_heap.isEmpty()):
-            actions.pop()
-            continue
-        curr = children_heap.pop()
-        stack.push(children_heap)
-
-        if(curr[0] in expanded):
-            continue
-        else:
-            expanded.add(curr[0])
-            actions.append(curr[1])
-            # if (problem.isGoalState(curr[0])):
-            #     break
-            # else:
-            pqueue =  util.PriorityQueue()
-            for ss in problem.getSuccessors(curr[0]):
-                print(ss[0], heuristic(ss[0], problem))
-                pqueue.push(ss, heuristic(ss[0], problem))
-            stack.push(pqueue)
-                
-    return actions
-
-def greedySearch22(problem, heuristic=nullHeuristic):
-    start = problem.getStartState()
-    actions = []
-    expanded = set()
-    expanded.add(start)
-    curr = (start, 0, 0)
-    print(curr[0], problem.getSuccessors(curr[0]))
-    while(not problem.isGoalState(curr[0])):
-        # choose the best local
-        # print(curr, expanded)
-        # print(curr[0], problem.getSuccessors(curr[0]))
-        cost = float("inf")
-        for next in problem.getSuccessors(curr[0]):
-            if(next[0] not in expanded and heuristic(next[0], problem) < cost):
-                cost = heuristic(next[0], problem)
-                curr = next
-
-        expanded.add(curr[0])
-        actions.append(curr[1])
-
-    return actions
-
 def greedySearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest heuristic first."""
     "*** YOUR CODE HERE ***"
@@ -301,7 +242,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         last_checked = visited[last_checked][2]
     return actions
 
-
 def foodHeuristic(state, problem):
     """
     Your heuristic for the FoodSearchProblem goes here.
@@ -332,8 +272,16 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
-
+    foodList = foodGrid.asList()
+    totalCost = 0
+    curPoint = position
+    while foodList:
+        cost, food = \
+            min([(util.manhattanDistance(curPoint, food), food) for food in foodList])
+        foodList.remove(food)
+        curPoint = food
+        totalCost += cost
+    return totalCost
 
 # Abbreviations
 bfs = breadthFirstSearch
