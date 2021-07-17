@@ -181,6 +181,43 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+def greedySearch33(problem, heuristic=nullHeuristic):
+    start = problem.getStartState()
+    actions = []
+    stack = util.Stack()
+    pqueue =  util.PriorityQueue()
+    for ss in problem.getSuccessors(start):
+        print(ss[0], heuristic(ss[0], problem))
+        pqueue.push(ss, heuristic(ss[0], problem))
+    stack.push(pqueue)
+    expanded = set()
+    expanded.add(start)
+    # while(not stack.isEmpty()):
+    curr = (start, 0)
+    while(not problem.isGoalState(curr[0])):
+        children_heap = stack.pop()
+        if(children_heap.isEmpty()):
+            actions.pop()
+            continue
+        curr = children_heap.pop()
+        stack.push(children_heap)
+
+        if(curr[0] in expanded):
+            continue
+        else:
+            expanded.add(curr[0])
+            actions.append(curr[1])
+            # if (problem.isGoalState(curr[0])):
+            #     break
+            # else:
+            pqueue =  util.PriorityQueue()
+            for ss in problem.getSuccessors(curr[0]):
+                print(ss[0], heuristic(ss[0], problem))
+                pqueue.push(ss, heuristic(ss[0], problem))
+            stack.push(pqueue)
+                
+    return actions
+
 def greedySearch22(problem, heuristic=nullHeuristic):
     start = problem.getStartState()
     actions = []
@@ -210,7 +247,7 @@ def greedySearch(problem, heuristic=nullHeuristic):
     pqueue = util.PriorityQueue()
     # 0- node coordinate, 1- priority, 2- move, 3- parent coordinate, 4- parent priority
     curr = (start, heuristic(start, problem), 0, (-1,-1), 0)
-    pqueue.push(curr, 0) 
+    pqueue.push(curr, heuristic(start, problem)) 
     visited = {}
     while(not pqueue.isEmpty()):
         curr = pqueue.pop()
@@ -224,7 +261,7 @@ def greedySearch(problem, heuristic=nullHeuristic):
             break
         
         for node in problem.getSuccessors(curr[0]):
-            pqueue.push((node[0], heuristic(curr[0], problem)+curr[1], node[1], curr[0], curr[1]),  heuristic(curr[0], problem)+curr[1])
+            pqueue.push((node[0], heuristic(node[0], problem), node[1], curr[0], curr[1]),  heuristic(node[0], problem))
     
     actions = []
     last_checked = curr[0]
@@ -237,7 +274,32 @@ def greedySearch(problem, heuristic=nullHeuristic):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    start = problem.getStartState()
+    pqueue = util.PriorityQueue()
+    # 0- node coordinate, 1- real-cost, 2- move, 3- parent coordinate, 4- parent priority
+    curr = (start, 0, 0, (-1,-1), 0)
+    pqueue.push(curr, heuristic(start, problem))
+    visited = {}
+    while(not pqueue.isEmpty()):
+        curr = pqueue.pop()
+
+        if curr[0] in visited:
+            continue
+        else:
+            visited[curr[0]] = (curr[1], curr[2], curr[3], curr[4])
+
+        if(problem.isGoalState(curr[0])):
+            break
+        
+        for node in problem.getSuccessors(curr[0]):
+            pqueue.push((node[0], node[2]+curr[1], node[1], curr[0], curr[1]),  heuristic(node[0], problem)+node[2]+curr[1])
+    
+    actions = []
+    last_checked = curr[0]
+    while(last_checked != start):
+        actions = [visited[last_checked][1]] + actions
+        last_checked = visited[last_checked][2]
+    return actions
 
 
 def foodHeuristic(state, problem):
