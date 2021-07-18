@@ -272,16 +272,16 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    foodList = foodGrid.asList()
-    totalCost = 0
-    curPoint = position
-    while foodList:
-        cost, food = \
-            min([(util.manhattanDistance(curPoint, food), food) for food in foodList])
-        foodList.remove(food)
-        curPoint = food
-        totalCost += cost
-    return totalCost
+
+    food_list = foodGrid.asList()
+    heuristic = 0
+
+    # Getting the maximum distance between the current position and the farthest food.
+    for item in food_list:
+        foodDistance = util.manhattanDistance(position, item)
+        if foodDistance > heuristic:
+            heuristic = foodDistance
+    return heuristic
 
 # Abbreviations
 bfs = breadthFirstSearch
