@@ -1,0 +1,6 @@
+doc/sbc-template.*
+!doc/sbc-template.tex
+!doc/sbc-template.pdf
+!doc/sbc-template.sty
+!doc/sbc-template.bib
+./*.pyc

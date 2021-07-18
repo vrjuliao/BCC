@@ -65,7 +65,7 @@ a quantidade de nós expandidos.
 
 \subsection{Busca em Profundidade}
 Este é um algoritmo recursivo, que não considera custos de transições de
-estado, assim como mostram \cite{cormem} e \cite{livro-texto}.
+estado, assim como mostram \cite{stuart:00} e \cite{cormen:01}.
 A composição algorítmica desta solução, faz com que a partir de um determinado
 nó, de maneira recursiva, visite-se imediatamente os nós vizinhos (que ainda
 não foram visitados).
@@ -134,7 +134,7 @@ de decisão.
 Estes algoritmos são \textbf{A*}, \textbf{Greedy}, e
 \textbf{Uniform Cost Search}, os quais possuem a mesma estrutura básica, sendo
 que a única mudança é a função que avalia a qualidade da transição, assim como
-mostrado em \cite{livro texto}.
+mostrado em \cite{stuart}.
 
 Neste ponto, houve a necessidade de utilizar a estrutura
 \textbf{fila de prioridades}, na qual a função \textit{custo de transição}
@@ -160,9 +160,9 @@ A obtenção dessa métricas se deu por meio do seguinte comando:
   \textit{python3 pacman.py --layout \$scenario --pacman SearchAgent --agentArgs fn=\$alg,prob=FoodSearchProblem,heuristic=foodHeuristic}
 \end{center}
 
-Observe, que o comando utiliza a heuristica desenvolvida por este trabalho.
+Observe, que o comando utiliza a heurística desenvolvida por este trabalho.
 Além disso, dadas as duas variáveis contidas no comando, executou-se todas as
-combinações possível de \textit{\$scenaio, \$alg}.
+combinações possíveis de \textit{\$scenaio, \$alg}.
 As quais contiveram os seguintes valores:
 \begin{itemize}
   \item \textbf{\textit{\$alg}}: \textit{dfs} $|$ \textit{bfs} $|$ \textit{ucs} $|$ \textit{gs}
@@ -187,12 +187,38 @@ entre 0 e 1.
   \label{fig:custo}
 \end{figure}
 
+O alto custo do algoritmo \textit{dfs}, destacado na Figura~\ref{fig:custo} é
+causado pela forma como a busca é realizada.
+Nesta solução, o que ocorre é uma busca cega através do mapa do jogo, o que
+pode levar a movimentos desnecessários, elevando o custo da solução.
+Entretanto, este algoritmo possui uma grande vantagem observada nas Figuras
+~\ref{fig:tempo} e ~\ref{fig:expansao}.
+O tempo e a quantidade de nós expandidos estão entre os menores valores
+dentre os cinco algoritmos analisados.
+Sendo que há uma relação entre tais fatores, uma vez que pode-se atribuir ir o
+baixo tempo à baixa quantidade de nós expandidos.
+Tal relação também é rechaçada pelos algoritmos \textit{ucs} e \textit{astar}.
+
 \begin{figure}[hbt!]
   \centering
   \includegraphics[width=.8\textwidth]{fig/tempo.pdf}
   \caption{Média dos tempos de execução de todos possíveis \textit{\$scenarios} para cada \textit{\$alg}.}
   \label{fig:tempo}
 \end{figure}
+
+Entretanto, ao analisar o desempenho de todos os algoritmos, é possível
+confirmar o bom desempenho daqueles que utilizam heurísticas para
+ponderar as transições.
+Tanto \textit{gs} quanto \textit{astar} expandiram poucos nós e tiveram um baixo
+tempo de execução.
+Entretanto, enquanto \textit{astar} é melhor na custo médio das soluções, ele
+também se saiu pior do que \textit{gs} nos fatores Tempo e Número de nós Expandidos.
+Então, por vias práticas, é necessário realizar um \textit{trade-off} entre
+melhor custo e melhor desempenho ao selecionar um destes dois algoritmos.
+Isso comprova o que fora dito durante as aulas, que dentre os cinco
+algoritmos, \textit{astar} é aquele que melhor se aproxima da optimalidade
+com um bom desempenho.
+
 
 \begin{figure}[hbt!]
   \centering
@@ -201,100 +227,138 @@ entre 0 e 1.
   \label{fig:expansao}
 \end{figure}
 
+Uma ultima observação sobre tais resultados é de que os algoritmos \textit{ucs}
+e \textit{bfs} obtiveram ótimos custo, porém há uma alta taxa de nós expandidos
+e também um alto tempo de execução, vide Figuras~\ref{fig:tempo} e
+\ref{fig:expansao}.
+Provavelmente, se os recursos computacionais não forem uma barreira, estas
+duas soluções poderiam ser utilizadas a fim de minimiza o custo, assim
+como mostra a Figura~\ref{fig:custo}.
+Por fim, é importante destacar os recursos do sistema responsável
+pela execução dos testes.
+Tratas-se de uma máquina com CPU Intel core i5, 8GB RAM, sistema operacional
+Ubuntu 18.04.
 
-\section{First Page} \label{sec:firstpage}
+\subsection{Comparação multi fatores}
 
-The first page must display the paper title, the name and address of the
-authors, the abstract in English and ``resumo'' in Portuguese (``resumos'' are
-required only for papers written in Portuguese). The title must be centered
-over the whole page, in 16 point boldface font and with 12 points of space
-before itself. Author names must be centered in 12 point font, bold, all of
-them disposed in the same line, separated by commas and with 12 points of
-space after the title. Addresses must be centered in 12 point font, also with
-12 points of space after the authors' names. E-mail addresses should be
-written using font Courier New, 10 point nominal size, with 6 points of space
-before and 6 points of space after.
-
-The abstract and ``resumo'' (if is the case) must be in 12 point Times font,
-indented 0.8cm on both sides. The word \textbf{Abstract} and \textbf{Resumo},
-should be written in boldface and must precede the text.
-
-\section{CD-ROMs and Printed Proceedings}
-
-In some conferences, the papers are published on CD-ROM while only the
-abstract is published in the printed Proceedings. In this case, authors are
-invited to prepare two final versions of the paper. One, complete, to be
-published on the CD and the other, containing only the first page, with
-abstract and ``resumo'' (for papers in Portuguese).
-
-\section{Sections and Paragraphs}
-
-Section titles must be in boldface, 13pt, flush left. There should be an extra
-12 pt of space before each title. Section numbering is optional. The first
-paragraph of each section should not be indented, while the first lines of
-subsequent paragraphs should be indented by 1.27 cm.
-
-\subsection{Subsections}
-
-The subsection titles must be in boldface, 12pt, flush left.
-
-\section{Figures and Captions}\label{sec:figs}
-
-
-Figure and table captions should be centered if less than one line
-(Figure~\ref{fig:exampleFig1}), otherwise justified and indented by 0.8cm on
-both margins, as shown in Figure~\ref{fig:exampleFig2}. The caption font must
-be Helvetica, 10 point, boldface, with 6 points of space before and after each
-caption.
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=.5\textwidth]{fig1.jpg}
-\caption{A typical figure}
-\label{fig:exampleFig1}
+Os gráficos contidos nas Figuras~\ref{fig:tempo-custo},
+\ref{fig:expansao-custo} e \ref{fig:tempo-expansao} foram obtidos a partir
+do cruzamento das médias que denotam as Figuras~\ref{fig:custo},
+\ref{fig:tempo} e \ref{fig:expansao}.
+A partir desta exibição pode-se classificar os prós e contras de cada resultado
+obtido.
+Mas antes da descrição da análise, por tratar-se de um gráfico de pontos
+e dada a proximidade dos resultados dos algoritmos \textit{bfs} e \textit{ucs},
+estes pontos se sobrepõem em todas as três figuras
+\begin{figure}[hbt!]
+  \centering
+  \includegraphics[width=.8\textwidth]{fig/tempo-custo.pdf}
+  \caption{Comparação tempo e custo de execução}
+  \label{fig:tempo-custo}
 \end{figure}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=.3\textwidth]{fig2.jpg}
-\caption{This figure is an example of a figure caption taking more than one
-  line and justified considering margins mentioned in Section~\ref{sec:figs}.}
-\label{fig:exampleFig2}
+\begin{figure}[hbt!]
+  \centering
+  \includegraphics[width=.8\textwidth]{fig/expansao-custo.pdf}
+  \caption{Comparação da quantidade de nós expandidos e o custo}
+  \label{fig:expansao-custo}
 \end{figure}
 
-In tables, try to avoid the use of colored or shaded backgrounds, and avoid
-thick, doubled, or unnecessary framing lines. When reporting empirical data,
-do not use more decimal digits than warranted by their precision and
-reproducibility. Table caption must be placed before the table (see Table 1)
-and the font used must also be Helvetica, 10 point, boldface, with 6 points of
-space before and after each caption.
+\begin{figure}[hbt!]
+  \centering
+  \includegraphics[width=.8\textwidth]{fig/tempo-expansao.pdf}
+  \caption{Comparação tempo e quantidade de nós expandidos}
+  \label{fig:tempo-expansao}
+\end{figure}
 
-\begin{table}[ht]
-\centering
-\caption{Variables to be considered on the evaluation of interaction
-  techniques}
-\label{tab:exTable1}
-\includegraphics[width=.7\textwidth]{table.jpg}
-\end{table}
+Através dos gráficos de cruzamento de fatores, fica evidente que \textit{gs} é
+um bom meio termo, em que pode-se combinar um bom desempenho e custos reduzidos.
+Além disso, este algoritmo expande poucos nós se aproximando muito do resultado
+ótimo.
+Mas a observação que pode-se realizar de cada um dos gráficos de dados cruzados
+é que quão mais pŕoximo do ponto $(0,0)$, melhor é o desempenho da solução.
+A afirmação sobre a relação entre tempo e quantidade de nós expandidos é aferida
+pela Figura~\ref{fig:tempo-expansao}, em que os pontos são dispersos de maneira
+quase colinear.
 
-\section{Images}
+\subsection{FoodHeuristic}
+Uma vez que a heurística desenvolvida para o passo 7 deste trabalho deve
+considerar múltiplos pontos, pensou-se em uma versão relaxada do problema
+o qual apenas um ponto de comida é considerado, e desconsidera-se a existência
+de obstáculos (paredes).
+Ao avaliar a função heurística de determinado estado, busca-se pelo ponto de
+comida mais distante, e então retorna-se a distância de manhattan entre o estado
+consultado e o estado objetivo mais distante.
+Esta abordagem faz com que a expansão de nós tenda a uma região do mapa, e após
+consumir todos os estados objetivos daquela região, outra região será apontada
+como tendência.
+Tal viés é o responsável por reduzir a quantidade de nós expandidos.
 
-All images and illustrations should be in black-and-white, or gray tones,
-excepting for the papers that will be electronically available (on CD-ROMs,
-internet, etc.). The image resolution on paper should be about 600 dpi for
-black-and-white images, and 150-300 dpi for grayscale images.  Do not include
-images with excessive resolution, as they may take hours to print, without any
-visible difference in the result. 
+\begin{figure}[hbt!]
+  \centering
+  \includegraphics[width=.8\textwidth]{fig/manhattan.png}
+  \caption{Distância de manhattan nas duas primeiras consultas em \textit{trickySearch}}
+  \label{fig:manhattan}
+\end{figure}
 
-\section{References}
+Figura~\ref{fig:manhattan} demonstra a consulta à função heurística no estado
+inicial da fase \textit{trickySearch}.
+Nela é possível observar que só há dois possíveis estados para expandir:
+Aquele que aponta para a \textbf{direita} está a 12 pontos (segundo a
+distância de manhattan) do nó objetivo mais longe.
+Já as posição que está à esquerda do estado inicial, está à 10 pontos de
+distância do estado objetivo mais distante.
+Logo o estado escolhido será aquele que aponta para a esquerda.
 
-Bibliographic references must be unambiguous and uniform.  We recommend giving
-the author names references in brackets, e.g. \cite{knuth:84},
-\cite{boulic:91}, and \cite{smith:99}.
+Esta heurística é consistente e admissível, uma vez que passa pelo teste
+de admissibilidade do passo 7 e também por sempre caminhar para em direção
+daquele estado que optimiza o caminho sem superestimar a solução do problema
+original.
+A consistência é justificada pela construção do caminho, que prioriza uma direção
+para que o Pac-Man caminhe.
+Dessa forma, o caminhamento está na direção da optimalidade, uma vez que a
+heurística implementa uma tendência de movimento para um nó objetivo.
 
-The references must be listed using 12 point font size, with 6 points of space
-before each reference. The first line of each reference should not be
-indented, while the subsequent should be indented by 0.5 cm.
+Por fim, o resultado da execução de \textit{trickySearch} através de
+\textit{foodHeuristics} expande 9551 estados.
+Tal execução é dada pelo comando:
+\begin{center}
+  \textit{python3 pacman.py --layout trickySearch --pacman AStarFoodSearchAgent}
+\end{center}
+
+\section{Conclusão}
+Em resumo, a implementação do trabalho foi muito interessante, uma vez que
+conceitos já lecionados em teoria foram aplicados na prática.
+Isso foi importante para dar a percepção de quão trabalhoso é o processo da
+construção de soluções consistentes para sistemas de inteligência artificial,
+uma vez que é necessário avaliar diversos casos e soluções.
+Além disso, foi necessária a implementação de uma heurística, o que faz com que
+a criatividade seja despertada.
+Ainda é possível destacar que os resultados encontrados foram satisfatórios.
+
+A principal dificuldade encontrada neste trabalho foi o desenvolvimento da
+heurística, para que o valor estivesse abaixo de 10000.
+Foi necessário testar duas abordagens antes da solução empregada:
+uma delas utilizando a distância euclidiana média entre determinado estado e
+todos os demais estados objetivos.
+A outra, era apenas uma pequena mudança que avaliava a distância de manhattan
+média entre um estado e todos os demais estados objetivos.
+
+Acredito que nõa haja sugestões para trabalhos futuros, mas gostaria de deixar
+um elogio a este trabalho.
+Foi extremamente condizente com o que fora lecionado, além de possuir grau
+de dificuldade que considero adequado, visto a qualidade das aulas e do
+material disponibilizado.
+
+% \section{References}
+
+% Bibliographic references must be unambiguous and uniform.  We recommend giving
+% the author names references in brackets, e.g. \cite{knuth:84},
+% \cite{boulic:91}, and \cite{smith:99}.
+
+% The references must be listed using 12 point font size, with 6 points of space
+% before each reference. The first line of each reference should not be
+% indented, while the subsequent should be indented by 0.5 cm.
 
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
