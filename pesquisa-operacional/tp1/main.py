@@ -6,6 +6,7 @@ class Tableau:
     EMPTY = -3
     UNBOUND = -2
     INVIABLE = -1
+
   __n = 0
   __m = 0
   __c = np.array([])
@@ -43,7 +44,6 @@ class Tableau:
     for line in tb[1:,:]:
       tb[0,:] -= line
     
-    # print(tb)
     return tb
 
   # return -1 if there is no column to choose
@@ -92,7 +92,6 @@ class Tableau:
       self.__escalonar(pcol, prow, tb)
       # pegar o novo pivot
       pcol = self.__get_pivot_column_index(tb[0, :-1])
-    # print(tb)
     return tb
 
   def stringfying_float_value(self, data):
@@ -154,8 +153,7 @@ class Tableau:
       ubd_col = self.__A[:, self.__problematic_col] if not self.__vero_unbound else self.__vero[:, self.__problematic_col - self.__m]
 
       for (lin, col) in base:
-        ubd_certif[col] = -ubd_col[lin]
-      
+        ubd_certif[col] = -ubd_col[lin]      
       if not self.__vero_unbound: ubd_certif[self.__problematic_col] = 1
 
       # print unbound result
