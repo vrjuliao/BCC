@@ -6,7 +6,6 @@ class Tableau:
     EMPTY = -3
     UNBOUND = -2
     INVIABLE = -1
-
   __n = 0
   __m = 0
   __c = np.array([])
@@ -14,7 +13,7 @@ class Tableau:
   __b = np.array([])
   __vero = np.array([])
   __y = np.array([])
-  __last_result = Result.EMPTY
+  __status = Result.EMPTY
 
   def __init__(self, n, m, c, A, b):
     self.__n = n
@@ -24,14 +23,14 @@ class Tableau:
     self.__b = np.array(b)
     self.__vero = np.eye(N=n)
     self.__y = np.zeros(n)
-    self.__last_result = self.Result.EMPTY
-    print("self.__A", self.__A)
+    self.__vero_unbound = False
+    self.__status = self.Result.EMPTY
 
   def __create_aux_tableau(self):
     tb = np.zeros((self.__n+1, self.__n+self.__m+self.__n+1))
-    tb[1:,self.__n: self.__n+self.__m] = self.__A
+    tb[1:, :self.__m] = self.__A
     
-    tb[1:, :self.__n] = self.__vero
+    tb[1:,self.__m: self.__n+self.__m] = self.__vero
     for i in range(1, self.__n+1):
       factor = 1
       if(self.__b[i-1] < 0):
@@ -44,7 +43,7 @@ class Tableau:
     for line in tb[1:,:]:
       tb[0,:] -= line
     
-    print(tb)
+    # print(tb)
     return tb
 
   # return -1 if there is no column to choose
@@ -60,7 +59,7 @@ class Tableau:
     min_val = -1
     for i in range(self.__n):
       if round(column[i], 5) > 0:
-        factor = round(column[i]/b[i], 5)
+        factor = round(b[i]/column[i], 5)
         if min_idx == -1 or factor < min_val:
           min_idx = i
           min_val = factor
@@ -68,132 +67,140 @@ class Tableau:
     return min_idx
 
   def __escalonar(self, pcol, prow, tb):
-    tb[prow, :] = np.round(tb[prow, :] * (1/tb[prow, pcol]), 5)
+    # tb[prow, :] = np.round(tb[prow, :] * (1/tb[prow, pcol]), 5)
+    tb[prow, :] = tb[prow, :] * (1/tb[prow, pcol])
 
-    for i in range(self.__m):
+    for i in range(self.__n+1):
       if i == prow:
         continue
       factor = -tb[i, pcol]
       tb[i, :] += (factor*tb[prow,:])
 
   def __solve_tableau(self, tb):
-    # 1 -  pegar o indice da coluna que será pivoteada usando a regra de Bland
-    pcol = self.__get_pivot_column_index(tb[0, self.__n:-1])
+    # pegar o indice da coluna que será pivoteada usando a regra de Bland
+    pcol = self.__get_pivot_column_index(tb[0, :-1])
     while pcol != -1:
-      # 1 - escolher qual a linha ideal para o pivot segundo Bland
-      pcol += self.__n
+      # escolher qual a linha ideal para o pivot segundo Bland
       prow = self.__get_pivot_row_index(tb[1:, pcol], tb[1:, -1])
       if(prow == -1):
-        self.__last_result = self.Result.UNBOUND
-        self.__problematic_col = pcol-self.__n
+        self.__status = self.Result.UNBOUND
+        self.__problematic_col = pcol
+        self.__vero_unbound =  (pcol >= self.__m)
         return tb
       prow += 1
-      print("pcol", pcol)
-      print("prow", prow)
-      # 2 - escalonar a matriz
+      # escalonar a matriz
       self.__escalonar(pcol, prow, tb)
-      print(tb)
-      # 3 - pegar o novo pivot
-      pcol = self.__get_pivot_column_index(tb[0, self.__n:-1])
-
+      # pegar o novo pivot
+      pcol = self.__get_pivot_column_index(tb[0, :-1])
+    # print(tb)
     return tb
 
   def stringfying_float_value(self, data):
     epsilon = 1e-10
     return ('%.10f' % round(data + epsilon, 5)).rstrip('0').rstrip('.')
 
+  # when a column is a piece of an identity matrix,
+  # this funcion return the index of the unique 1 inside
+  # that column, or return -1 if `column` is not unitary
+  def __index_of_unique_one(self, col):
+    zeros_in_col = np.round(col, 5) == 0.0
+    ones_in_col = np.round(col, 5) == 1.0
+    
+    if(np.count_nonzero(zeros_in_col) == (self.__n-1) # count the quantity of zeros
+      and np.count_nonzero(ones_in_col) == 1): # count the quantity of zeros
+      return  np.where(ones_in_col)[0][0]
+    return -1
 
   def __get_base_indexes(self):
     bases = dict()
     for col_idx in range(self.__m):
       if(round(self.__c[col_idx], 5) == 0.0):
         col = self.__A[:, col_idx]
-        zeros_in_col = np.round(col, 5) == 0.0
-        ones_in_col = np.round(col, 5) == 1.0
-        if(np.count_nonzero(zeros_in_col) == self.__m-1 # count the quantity of zeros
-          and np.count_nonzero(ones_in_col) == 1): # count the quantity of zeros
-          line = np.where(ones_in_col)[0][0]
-          if line not in bases:
-            bases[line] = col_idx
-    return list(bases.values())
+        line = self.__index_of_unique_one(col)
+        if line >= 0 and line not in bases:
+          bases[line] = col_idx
+        
+    return list(bases.items())
+
+  def __canonical_form(self, tb):
+    matA = tb[1:, :self.__m].T
+    vecC = tb[0, :self.__m]
+    basis = set()
+    for i in range(self.__m):
+      one_idx = self.__index_of_unique_one(matA[i])
+      if one_idx >= 0 and one_idx not in basis:
+        basis.add(one_idx)
+        tb[0,:] += ((-vecC[i])*tb[one_idx+1,:])
 
   def __get_solution(self):
-    col_of_basis = self.__get_base_indexes()
-    print("b", self.__b)
-    print("col_of_basis", col_of_basis)
-    result = np.zeros(self.__m)
-    for i in range(len(col_of_basis)):
-      result[col_of_basis[i]] = self.__b[i]
+    base = self.__get_base_indexes()
 
-    return result
+    # print(base)
+    result = np.zeros(self.__m)
+    for (line, col) in base :
+      result[col] = self.__b[line]
+
+    return result, base
 
   def __print_result(self):
-    if self.__last_result == self.Result.UNBOUND:
+    if self.__status == self.Result.UNBOUND:
       print("ilimitada")
-      solution = self.__get_solution()
+      solution, base = self.__get_solution()
       print(" ".join(map(self.stringfying_float_value, solution)))
 
+      # obtem o certificado de ilimitada
+      # toma como base os valores no vetor solucao que sao diferentes de 0
       ubd_certif = np.zeros(self.__m)
-      ubd_col = self.__A[:, self.__problematic_col]
-      ubd_val = 0
+      ubd_col = self.__A[:, self.__problematic_col] if not self.__vero_unbound else self.__vero[:, self.__problematic_col - self.__m]
 
-      for i in range(self.__n):
-        if round(solution[i], 5) != 0.0:
-          ubd_certif[i] = -ubd_col[ubd_val]
-          ubd_val += 1
-      ubd_certif[self.__problematic_col] = 1
+      for (lin, col) in base:
+        ubd_certif[col] = -ubd_col[lin]
+      
+      if not self.__vero_unbound: ubd_certif[self.__problematic_col] = 1
 
       # print unbound result
       print(" ".join(map(self.stringfying_float_value, ubd_certif)))
 
-    elif self.__last_result == self.Result.INVIABLE:
+    elif self.__status == self.Result.INVIABLE:
       # print inviable result
       print("inviavel")
       print(" ".join(map(self.stringfying_float_value, self.__y)))
     else:
       print("otima")
-      print(self.__optimal)
-      solution = self.__get_solution()
+      print(self.stringfying_float_value(self.__optimal))
+      solution, _ = self.__get_solution()
       print(" ".join(map(self.stringfying_float_value, solution)))
       print(" ".join(map(self.stringfying_float_value, self.__y)))
-      # print success result
-      pass
 
   def solve(self):
-    #create the auxiliar tableau
     tb = self.__create_aux_tableau()
     # solve the auxiliar
     tb = self.__solve_tableau(tb)
 
     if round(tb[0][-1], 5) == 0:
-      # viável : continuar a execuçao
       # remover a parte auxiliar da matrix A
       tb = np.delete(tb, np.s_[self.__n+self.__m:-1], axis=1)
-      # tb = np.array((self.__n+1, self.__n+self.__m+1))
-      # tb[0, :self.__n] = tbAux[0, :self.__n] # y
-      # tb[1:, :self.__n] = tbAux[1:, :self.__n] # vero
-      # tb[1:, self.__n:self.__n+self.__m] = tbAux[1:, self.__n:self.__n+self.__m] # A
-      # tb[1:, -1] = tbAux[1:, -1] # b
       
       # Colocar o vetor minus_C no cabeçalho
-      print("solving primal")
-      tb[0, self.__n:self.__n+self.__m] = -self.__c # -C
-      print(tb)
+      tb[0, :self.__m] = -self.__c # -C
+      tb[0, self.__m:self.__n+self.__m] = np.zeros(self.__n)
+      
+      # canoic form
+      self.__canonical_form(tb)
 
       #resolver o tableau remontado
       tb = self.__solve_tableau(tb)
-      # extrair o vetor `c`
-      self.__c =  -tb[0, self.__n:self.__n+self.__m]
 
+      self.__c =  -tb[0, :self.__m]
       self.__optimal = tb[0, -1]
 
     else:
-      self.__last_result = self.Result.INVIABLE
+      self.__status = self.Result.INVIABLE
     
-    # extrair as informações do tableu para as variáveis corretas
-    self.__y = tb[0, :self.__n]
-    self.__vero = tb[1:, :self.__n]
-    self.__A = tb[1:, self.__n:self.__n+self.__m]
+    # extrair as informações do tableau para as variáveis corretas
+    self.__y = tb[0, self.__m:self.__n+self.__m]
+    self.__vero = tb[1:, self.__m:self.__n+self.__m]
+    self.__A = tb[1:, :self.__m]
     self.__b = tb[1:, -1]
 
     self.__print_result()
