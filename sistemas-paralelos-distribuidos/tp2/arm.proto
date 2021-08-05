@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+// service definition.
+service Arm {
+  rpc Insercao (InsercaoReq) returns (IntRet) {}
+  
+  rpc Consulta (ConsultaReq) returns (ConsultaRet) {}
+
+  rpc Termina (Empty) returns (IntRet) {}
+}
+
+message InsercaoReq {
+  int32 chave = 1;
+  string desc = 2;
+  int32 valor = 3;
+}
+
+message IntRet {
+  int32 valor = 1;
+}
+
+message ConsultaReq {
+  int32 chave = 1;
+}
+
+message ConsultaRet {
+  string desc = 1;
+  int32 valor = 2;
+}
+
+message Empty {}

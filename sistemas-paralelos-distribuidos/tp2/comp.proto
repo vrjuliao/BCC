@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+// service definition.
+service Comp {  
+  rpc Consulta (CompConsultaReq) returns (CompConsultaRet) {}
+
+  rpc Termina (CompEmpty) returns (CompIntRet) {}
+}
+
+message CompConsultaReq {
+  int32 ch = 1;
+}
+
+message CompConsultaRet {
+  string nome = 1;
+  int32 matr = 2;
+  string curso = 3;
+  int32 cred = 4;
+}
+
+message CompIntRet {
+  int32 valor = 1;
+}
+
+message CompEmpty {}

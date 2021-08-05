@@ -133,7 +133,6 @@ class Tableau:
   def __get_solution(self):
     base = self.__get_base_indexes()
 
-    # print(base)
     result = np.zeros(self.__m)
     for (line, col) in base :
       result[col] = self.__b[line]
