@@ -5,7 +5,9 @@ import arm_pb2 as arm_pb2
 import comp_pb2 as comp_stub
 import comp_pb2_grpc
 import arm_pb2_grpc
+import threading
 
+done = threading.Event()
 # Classe de implementação do servidor de consulta RCP
 class Comp(comp_pb2_grpc.CompServicer):
   def __init__(self, server, siga_host, matricula_host):
@@ -49,7 +51,7 @@ class Comp(comp_pb2_grpc.CompServicer):
     
     # uma vez que e' necesario interromper o servidor, adiciona-se um dalay
     # de 1 segundo, para que haja tempo sucifiente de responder ao cliente
-    self.__server.stop(1)
+    done.set()
     return comp_stub.CompIntRet(valor=(ret_siga.valor + ret_matricula.valor))
 
 # disparo do servidor
@@ -63,7 +65,8 @@ def serv(args):
   server.start()
 
   # a thread principal sera bloqueada ate que o Comp.Termina() seja executado
-  server.wait_for_termination()
+  done.wait()
+  server.stop(1)
 
 if __name__ == '__main__':
   serv(sys.argv[1:])
