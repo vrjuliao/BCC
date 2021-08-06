@@ -1,3 +1,7 @@
+# argv[1] : <porto>
+# argv[2] : <hostname siga>:<porto>
+# argv[3] : <hostname matricula>:<porto>
+
 import sys
 import concurrent.futures as futures
 import grpc

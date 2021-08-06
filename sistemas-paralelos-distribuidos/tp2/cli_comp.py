@@ -19,7 +19,7 @@ def cli(server_host):
       # parsing da entrada
       line = list(map(str, input().split(',')))
     except EOFError:
-      pass
+      return
     
     if (line[0] == 'C'):
       # Consulta o servidor. line[1] contem a chave a ser consultada
