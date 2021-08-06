@@ -1,0 +1,12 @@
+I,12,doze,1112
+I,13,treze,1113
+I,14,quatorze,1114
+I,15,quinze,1115
+I,16,dezesseis,1116
+I,17,dezessete,1117
+I,18,dezoito,1118
+I,19,dezenove,1119
+I,20,vinte,12
+C,11
+C,13
+C,15
