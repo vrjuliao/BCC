@@ -51,7 +51,7 @@ class QLearningAgent(ReinforcementAgent):
           or the Q node value otherwise
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.qValues[(state,action)]
 
 
     def computeValueFromQValues(self, state):
@@ -62,7 +62,18 @@ class QLearningAgent(ReinforcementAgent):
           terminal state, you should return a value of 0.0.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        l_actions = self.getLegalActions(state)
+
+        if len(l_actions) == 0:
+            return 0
+        
+        result = float('-inf')
+        for act in l_actions:
+            qval = self.getQValue(state, act)
+            if qval > result:
+                result = qval
+
+        return result
 
     def computeActionFromQValues(self, state):
         """
@@ -71,7 +82,20 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        l_actions = self.getLegalActions(state)
+
+        if len(l_actions) == 0:
+            return None
+        
+        val = float('-inf')
+        res = None
+        for act in l_actions:
+            qval = self.getQValue(state, act)
+            if qval > val:
+                res = act
+                val = qval
+
+        return res
 
     def getAction(self, state):
         """
@@ -88,7 +112,11 @@ class QLearningAgent(ReinforcementAgent):
         legalActions = self.getLegalActions(state)
         action = None
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        if(len(legalActions) != 0):
+            if util.flipCoin(self.epsilon):
+                action = random.choice(legalActions)
+            else:
+                action = self.computeActionFromQValues(state)
 
         return action
 
@@ -102,7 +130,9 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        sample = reward + self.discount * self.getValue(nextState)
+        self.qValues[(state,action)] = (1 - self.alpha) * self.qValues[(state,action)] + self.alpha * sample
+
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
