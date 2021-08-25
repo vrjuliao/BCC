@@ -26,8 +26,11 @@ def main():
   print(tb.stringfying_float_value(tb.get_result()))
   solution, _ = tb.get_solution()
   print(" ".join(map(tb.stringfying_float_value, solution)))
-  y = tb.get_certified()
-  print(" ".join(map(tb.stringfying_float_value, y[:m])))
+  certfied = tb.get_certified()
+  y = np.zeros(curr_n)
+  y[0] = 1
+  y[1:-1] = certfied[m:]
+  print(" ".join(map(tb.stringfying_float_value, y)))
 
 if __name__ == '__main__':
   # create function to read the input and start the tableau resolution
