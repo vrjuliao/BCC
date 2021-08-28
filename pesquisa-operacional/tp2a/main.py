@@ -2,12 +2,12 @@ from simplex import Tableau
 import numpy as np
 
 def main():
-  curr_n,m = map(int, input().split())
+  curr_n,m = map(int, input().split()) # n, m
   n = curr_n+m-2
-  b_list = list(map(int, input().split()))
+  b_list = list(map(int, input().split())) # b_vec
   incidencyMat  = []
   for i in range(curr_n):
-    line = list(map(int, input().split()))
+    line = list(map(int, input().split())) #incidency matrix rows
     incidencyMat.append(line)
 
   # mount the matrix A of the tableau
