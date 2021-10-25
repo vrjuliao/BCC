@@ -1,7 +1,5 @@
 import numpy as np
 
-import numpy as np
-
 class Tableau:
   class Result:
     EMPTY = -3
