@@ -79,5 +79,57 @@ houve também a necessidade de modificar as partes de código que anteriormente
 importavam de `scheduling-profiler`.
 
 - ReactiveX/RxJava\
-Assim como abordado anteriormente
-[Pull request 6853](https://github.com/ReactiveX/RxJava/pull/6853)
+É possível afirmar que em muitos casos, os nomes dos parâmetros fazem parte do
+nome da função, uma vez que a boa atribuição desses nomes dará um bom
+entendimento sobre qual parâmetro é responsável por qual ação dentro do método
+ou da função.
+No caso do código em Java, quando JavaDoc é utilizado, também é necessário
+alterar as informações na parte de documentação que é embarcada junto ao
+código.
+Então, neste caso, temos uma alteração que implica em outra: A alteração de
+nomes que implica na alteração das informações da documentação.
+No [Pull request 6853](https://github.com/ReactiveX/RxJava/pull/6853), a
+alteração principal focou em mudar o nome dos parâmetros de alguns métodos a
+fim de que isso implicasse num maior entendimento do papel de cada valor
+recebido pelo método.
+É possível observar que a alteração também foi propagada para os comentários
+que são precedidos pela tag `@param` do JavaDoc.
+
+## 2.
+
+a) No problema concreto 2, no sistema **ReativeX/RxJava**, ocorreu a
+**padronização da notação das amostras de código** na documentação.
+Essa padronização estabelece que as amostras de código devem seguir o que
+determina o JavaDoc.
+Inicialmente, amostras de código eram escritas sem qualquer padronização,
+existindo inclusive algumas amostras com com a mesma notação que os
+*inline codes* de markdown, ou seja, entre crases, entretanto na notação
+de JavaDoc os pedaços de código são cercados por chaves, de maneira que
+a chave esquerda é seguida pela tag `@code`.
+Essa é uma modificação que ocorre em vários partes do código, mas de maneira gradual, ou seja, há mais de um changeset com essa responsabilidade.
+Um exemplo da modificação pode ser observado por:
+```Java
+ // `map(CharSequence::toString)`
+ // {@code map(CharSequence::toString)}
+```
+
+- Link dos pull requests:\
+  [https://github.com/ReactiveX/RxJava/pull/6943](https://github.com/ReactiveX/RxJava/pull/6943)\
+  [https://github.com/ReactiveX/RxJava/pull/6346](https://github.com/ReactiveX/RxJava/pull/6346)
+
+
+b) No problema concreto 3, no sistema **Facebook/React**, trata-se de
+**Renaming de pacote** uma vez que um pacote inicialmente. fora criado
+com o objetivo de dar suporte a um componente que organizava elementos por
+data, mas que foi modificado para suportar um comportamento de uma *timeline*.
+Para isso, todo um módulo que inicialmente era armazenado no diretório
+`packages/react-devtools-scheduling-profiler` foi movido para
+`packages/react-devtools-timeline`.
+também foi necessário modificar todas as importações desse pacote, modificando
+o caminho da importação, uma vez que um diretório foi apagado e criou-se um
+novo, com outro nome.
+Entretanto, é possível observar que os componentes desse pacote não foram
+modificados, o que configura um refactoring que obedece o fato de que
+refactorings não devem modificar o comportamento do código.
+  - Link do pull request:\
+  [https://github.com/facebook/react/pull/22691](https://github.com/facebook/react/pull/22691)

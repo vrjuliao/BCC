@@ -1,0 +1,11 @@
+./packages/@vuepress/markdown/lib/component.js:27: warning: htmlBlock has 36 NLOC, 13 CCN, 329 token, 4 PARAM, 54 length
+./packages/@vuepress/theme-default/util/index.js:124: warning: resolveSidebarItems has 22 NLOC, 11 CCN, 129 token, 4 PARAM, 25 length
+./packages/@vuepress/plugin-active-header-links/clientRootMixin.js:15: warning: setActiveHash has 36 NLOC, 11 CCN, 269 token, 0 PARAM, 48 length
+./packages/@vuepress/core/lib/node/internal-plugins/palette/index.js:9: warning: ready has 34 NLOC, 11 CCN, 222 token, 0 PARAM, 45 length
+./packages/@vuepress/core/lib/node/loadTheme.js:73: warning: resolveTheme has 39 NLOC, 11 CCN, 228 token, 4 PARAM, 61 length
+./packages/@vuepress/theme-default/util/index.js:79: warning: resolvePath has 26 NLOC, 10 CCN, 168 token, 3 PARAM, 37 length
+./packages/@vuepress/core/lib/node/plugin-api/util.js:19: warning: exports.flattenPlugin has 42 NLOC, 9 CCN, 190 token, 7 PARAM, 49 length
+./packages/@vuepress/core/lib/node/internal-plugins/style/index.js:12: warning: ready has 31 NLOC, 9 CCN, 176 token, 0 PARAM, 42 length
+./packages/@vuepress/core/lib/node/Page.js:88: warning: process has 52 NLOC, 9 CCN, 331 token, 4 PARAM, 63 length
+./packages/@vuepress/markdown/lib/snippet.js:76: warning: md.renderer.rules.fence has 32 NLOC, 9 CCN, 194 token, 0 PARAM, 35 length
+./packages/@vuepress/markdown/lib/snippet.js:112: warning: parser has 17 NLOC, 9 CCN, 156 token, 4 PARAM, 29 length
