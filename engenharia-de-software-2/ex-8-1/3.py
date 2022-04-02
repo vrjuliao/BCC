@@ -1,26 +1,25 @@
 import pydriller
+from pydriller.metrics.process.code_churn import CodeChurn
+from pydriller.metrics.process.contributors_count import ContributorsCount
 
-repo = pydriller.Git("~/workfolder/dayjs/")
 hash1 = "f858260790250880fc74ab7108073435f534d7f1"
-commit1 = repo.get_commit(hash1)
-
-print("Commit1:",hash1)
-added, removed = 0, 0
-for file in commit1.modified_files:
-    added += file.added_lines
-    removed += file.deleted_lines
-    print("{} - Added lines {} - Removed Lines {}".format(file.filename, file.added_lines, file.deleted_lines))
-print("Total added lines: {} - Total removed lines: {}".format(added, removed))
-
-print()
-
 hash2 = "319f616e572a03b984013d04d1b3a18ffd5b1190"
-commit2 = repo.get_commit(hash2)
+repo_path = "~/workfolder/dayjs"
 
-print("Commit2:",hash2)
-added, removed = 0, 0
-for file in commit2.modified_files:
-    added += file.added_lines
-    removed += file.deleted_lines
-    print("{} - Added lines {} - Removed Lines {}".format(file.filename, file.added_lines, file.deleted_lines))
-print("Total added lines: {} - Total removed lines: {}".format(added, removed))
+churn_metric = CodeChurn(path_to_repo=repo_path,
+                   from_commit=hash1,
+                   to_commit=hash2)
+files_count = churn_metric.count()
+files_max = churn_metric.max()
+files_avg = churn_metric.avg()
+print('Code churn total para cada arquivo: {}'.format(files_count))
+print('Maximo code churn para cada arquivo: {}'.format(files_max))
+print('Code churn médio para cada arquivo: {}'.format(files_avg))
+
+count_metric = ContributorsCount(path_to_repo=repo_path,
+                           from_commit=hash1,
+                           to_commit=hash2)
+count = count_metric.count()
+minor = count_metric.count_minor()
+print('Numero de contribuidores por arquivo: {}'.format(count))
+print('Numero de contribuidores "menores" por arquivo: {}'.format(minor))
