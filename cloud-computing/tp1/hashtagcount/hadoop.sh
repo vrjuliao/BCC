@@ -1,0 +1,12 @@
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export HADOOP_INSTALL=/home/vrjuliao/.java/classes/hadoop-2.7.3/
+export HADOOP_HOME=$HADOOP_INSTALL
+export HADOOP_MAPRED_HOME=$HADOOP_INSTALL
+export HADOOP_COMMON_HOME=$HADOOP_INSTALL
+export HADOOP_HDFS_HOME=$HADOOP_INSTALL
+export HADOOP_YARN_HOME=$HADOOP_INSTALL
+export HADOOP_CONF_DIR=$HADOOP_INSTALL/etc/hadoop
+export PATH=$PATH:$HADOOP_INSTALL/bin
+export HADOOP_CLASSPATH="$(hadoop classpath):`pwd`/classes/"
+# export SPARK_HOME=/home/hadoop/spark
+# export PATH=$PATH:$SPARK_HOME/bin
