@@ -2,31 +2,36 @@ from datetime import datetime
 from flask import Flask, request, jsonify
 import pickle
 import json
-from datetime import date
-import os
-import os.path
+from datetime import datetime
+import requests
 
-last_update_date = date.min
+last_update_date = datetime.min
 latest_version = 'v0.0.0'
-repository_path = os.path.abspath('')
 model = None
-# model = pickle.load(open(os.path.join(repository_path,'isamerican.pickle'), 'rb'))
+version_file_url = "https://raw.githubusercontent.com/vrjuliao/BCC/master/cloud-computing/tp2/classsifier/VERSION.json"
+model_file_url = "https://raw.githubusercontent.com/vrjuliao/BCC/master/cloud-computing/tp2/classsifier/isamerican.pickle"
 
+def get_version():
+  global version_file_url
+  req = requests.get(version_file_url)
+  return json.loads(req.content)
 
+def get_model():
+  global model_file_url
+  req = requests.get(model_file_url)
+  return pickle.loads(req.content)
 
 def load_model():
-  global last_update_date, latest_version, repository_path, model
-  model_metadata = os.environ.get('MODEL_METADATA')
+  global last_update_date, latest_version, model
+  model_metadata = get_version()
   if model_metadata is not None:
-    model_metadata = json.loads(model_metadata)
-    year, month, day = tuple(model_metadata.split('-'))
-    current_update_date = date.fromisoformat(year, month, day)
+    current_update_date = datetime.fromisoformat(model_metadata['last_update'])
     if(current_update_date > last_update_date):
       last_update_date = current_update_date
       latest_version = model_metadata['version']
+      model = get_model()
     else: return 
   else: return
-  model = pickle.load(open(os.path.join(repository_path,'isamerican.pickle'), 'rb'))
 
 app = Flask(__name__)
 @app.route("/api/american", methods=["POST"])

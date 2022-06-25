@@ -4,4 +4,4 @@ COPY . /server
 WORKDIR /server
 RUN pip3 install -r requirements.txt
 ENV FLASK_APP isamerican_server
-CMD flask run --port 5026
+CMD ["flask", "run", "--host", "0.0.0.0", "--port", "5026"]
