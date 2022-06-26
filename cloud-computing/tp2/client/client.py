@@ -1,6 +1,10 @@
 import requests
 import sys
 
+# usage: 
+# python3 client.py <host> <port> <message>
+# python3 client.py http://127.0.0.1 5026 the book is on the table
+
 text = ' '.join(sys.argv[3:])
 host = sys.argv[1]
 port = sys.argv[2]

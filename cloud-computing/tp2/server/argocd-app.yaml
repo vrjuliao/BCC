@@ -1,0 +1,202 @@
+metadata:
+  creationTimestamp: "2022-06-26T18:11:05Z"
+  generation: 92
+  managedFields:
+  - apiVersion: argoproj.io/v1alpha1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:spec:
+        .: {}
+        f:destination:
+          .: {}
+          f:namespace: {}
+          f:server: {}
+        f:project: {}
+        f:source:
+          .: {}
+          f:path: {}
+          f:repoURL: {}
+        f:syncPolicy:
+          .: {}
+          f:automated: {}
+      f:status:
+        .: {}
+        f:health:
+          .: {}
+          f:status: {}
+        f:history: {}
+        f:operationState:
+          .: {}
+          f:finishedAt: {}
+          f:message: {}
+          f:operation:
+            .: {}
+            f:initiatedBy:
+              .: {}
+              f:automated: {}
+            f:retry:
+              .: {}
+              f:limit: {}
+            f:sync:
+              .: {}
+              f:revision: {}
+          f:phase: {}
+          f:startedAt: {}
+          f:syncResult:
+            .: {}
+            f:resources: {}
+            f:revision: {}
+            f:source:
+              .: {}
+              f:path: {}
+              f:repoURL: {}
+        f:reconciledAt: {}
+        f:resources: {}
+        f:sourceType: {}
+        f:summary:
+          .: {}
+          f:images: {}
+        f:sync:
+          .: {}
+          f:comparedTo:
+            .: {}
+            f:destination:
+              .: {}
+              f:namespace: {}
+              f:server: {}
+            f:source:
+              .: {}
+              f:path: {}
+              f:repoURL: {}
+          f:revision: {}
+          f:status: {}
+    manager: Go-http-client
+    operation: Update
+    time: "2022-06-26T19:47:24Z"
+  name: viniciusramos-american-predictor
+  namespace: argocd
+  resourceVersion: "3611143"
+  uid: 3032310b-5bd8-4623-9db6-a31ae6d2b74e
+spec:
+  destination:
+    namespace: viniciusramos
+    server: https://kubernetes.default.svc
+  project: viniciusramos-project
+  source:
+    path: .
+    repoURL: https://github.com/vrjuliao/cloud-computing-assignment2
+  syncPolicy:
+    automated: {}
+status:
+  health:
+    status: Healthy
+  history:
+  - deployStartedAt: "2022-06-26T18:11:06Z"
+    deployedAt: "2022-06-26T18:11:07Z"
+    id: 0
+    revision: 3a55227fdc0252b492111c3777c9b3aa13032abd
+    source:
+      path: .
+      repoURL: https://github.com/vrjuliao/cloud-computing-assignment2
+  - deployStartedAt: "2022-06-26T18:20:19Z"
+    deployedAt: "2022-06-26T18:20:23Z"
+    id: 1
+    revision: 8a96328db6a52c572da21dc9a04611ea1bc653f4
+    source:
+      path: .
+      repoURL: https://github.com/vrjuliao/cloud-computing-assignment2
+  - deployStartedAt: "2022-06-26T18:32:19Z"
+    deployedAt: "2022-06-26T18:32:24Z"
+    id: 2
+    revision: 21e0ff3dedf23f31c827c1dfd368ee0f22a1b945
+    source:
+      path: .
+      repoURL: https://github.com/vrjuliao/cloud-computing-assignment2
+  - deployStartedAt: "2022-06-26T18:50:19Z"
+    deployedAt: "2022-06-26T18:50:26Z"
+    id: 3
+    revision: 03470d5e863842febe424bb1e0d0365faeb870d8
+    source:
+      path: .
+      repoURL: https://github.com/vrjuliao/cloud-computing-assignment2
+  - deployStartedAt: "2022-06-26T19:14:19Z"
+    deployedAt: "2022-06-26T19:14:24Z"
+    id: 4
+    revision: 13c40c01d6eecb7b524f9a8fac5782d1716bd22b
+    source:
+      path: .
+      repoURL: https://github.com/vrjuliao/cloud-computing-assignment2
+  - deployStartedAt: "2022-06-26T19:47:19Z"
+    deployedAt: "2022-06-26T19:47:24Z"
+    id: 5
+    revision: d2d93f9cffdfd85ecd49bc88728e448f76d4ad55
+    source:
+      path: .
+      repoURL: https://github.com/vrjuliao/cloud-computing-assignment2
+  operationState:
+    finishedAt: "2022-06-26T19:47:24Z"
+    message: successfully synced (all tasks run)
+    operation:
+      initiatedBy:
+        automated: true
+      retry:
+        limit: 5
+      sync:
+        revision: d2d93f9cffdfd85ecd49bc88728e448f76d4ad55
+    phase: Succeeded
+    startedAt: "2022-06-26T19:47:19Z"
+    syncResult:
+      resources:
+      - group: ""
+        hookPhase: Running
+        kind: Service
+        message: service/viniciusramos-american-predictor-service unchanged
+        name: viniciusramos-american-predictor-service
+        namespace: viniciusramos
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      - group: apps
+        hookPhase: Running
+        kind: Deployment
+        message: deployment.apps/viniciusramos-deployment configured
+        name: viniciusramos-deployment
+        namespace: viniciusramos
+        status: Synced
+        syncPhase: Sync
+        version: v1
+      revision: d2d93f9cffdfd85ecd49bc88728e448f76d4ad55
+      source:
+        path: .
+        repoURL: https://github.com/vrjuliao/cloud-computing-assignment2
+  reconciledAt: "2022-06-26T19:47:24Z"
+  resources:
+  - health:
+      status: Healthy
+    kind: Service
+    name: viniciusramos-american-predictor-service
+    namespace: viniciusramos
+    status: Synced
+    version: v1
+  - group: apps
+    health:
+      status: Healthy
+    kind: Deployment
+    name: viniciusramos-deployment
+    namespace: viniciusramos
+    status: Synced
+    version: v1
+  sourceType: Directory
+  summary:
+    images:
+    - docker.io/vrjuliao/american-predictor:v0.0.3
+  sync:
+    comparedTo:
+      destination:
+        namespace: viniciusramos
+        server: https://kubernetes.default.svc
+      source:
+        path: .
+        repoURL: https://github.com/vrjuliao/cloud-computing-assignment2
+    revision: d2d93f9cffdfd85ecd49bc88728e448f76d4ad55
+    status: Synced
