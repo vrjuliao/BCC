@@ -125,30 +125,3 @@ Vinicius Julião Ramos
    3. Which visual resources have the authors used to explain their points?\
    Graph images, tables, pseudo codes and data graphics are used for that end.
    
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
