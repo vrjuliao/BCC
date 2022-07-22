@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: viniciusramos-dashboard
+  labels:
+    app: viniciusramos-dashboard
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: viniciusramos-dashboard
+  template:
+    metadata:
+      labels:
+        app: viniciusramos-dashboard
+    spec:
+      containers:
+      - name: viniciusramos-dashboard
+        image: docker.io/vrjuliao/cloud-computing-dashboard:v0.0.1
+        ports:
+        - containerPort: 5126

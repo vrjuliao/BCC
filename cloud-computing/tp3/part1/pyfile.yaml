@@ -1,0 +1,45 @@
+apiVersion: v1
+data:
+  pyfile: "from datetime import datetime, timedelta\n\ndef aggregate(aggregation,
+    data, key_template):\n    for (key, value) in data.items():\n        cpu_id =
+    key.split('-')[1]\n        new_key = key_template.format(id=cpu_id)\n        if
+    new_key in aggregation:\n            aggregation[new_key] += value\n        else:\n
+    \           aggregation[new_key] = value\n    \ndef compute_answer(agggrgator,
+    data, count):\n    for (key, agg) in data.items():\n        agggrgator[key] =
+    agg/count\n\n\ndef handler(input: dict, context: object):\n    metric_str = 'cpu_percent'\n
+    \   cpu_percent = dict(filter(lambda item: item[0].startswith(metric_str),\n                                           input.items()))\n
+    \   current_datetime_str = input['timestamp']\n    current_datetime = datetime.fromisoformat(current_datetime_str)\n
+    \   \n    mem_usage_timestamps = {}\n    if 'mem_usage' in context.env:\n        mem_usage_timestamps
+    = context.env['mem_usage']\n    else:\n        context.env['mem_usage'] = {}\n\n
+    \   minute_delta = timedelta(seconds=60)\n    hour_delta = timedelta(seconds=3600)\n\n
+    \   mem_usage_agg = input['virtual_memory-percent']\n    mem_usage_count = 1\n
+    \   to_erase = []\n    for (tmstp, mem_usage) in mem_usage_timestamps.items():\n
+    \       prev_datetime = datetime.fromisoformat(tmstp)\n        if prev_datetime
+    + minute_delta >= current_datetime:\n            mem_usage_agg += mem_usage\n
+    \           mem_usage_count += 1\n        else: to_erase.append(tmstp)\n\n    for
+    tmstp in to_erase: del context.env['mem_usage'][tmstp]\n    context.env['mem_usage'][current_datetime_str]
+    = input['virtual_memory-percent']\n    \n    \n    minute_agg = {}\n    aggregate(minute_agg,
+    cpu_percent, 'avg-util-cpu{id}-60sec')\n    minute_count = 1\n    hour_agg = {}\n
+    \   aggregate(hour_agg, cpu_percent, 'avg-util-cpu{id}-60min')\n    hour_count
+    = 1\n\n    cpu_usage_timestamps = {}\n    if 'cpu_usage' in context.env:\n        cpu_usage_timestamps
+    = context.env['cpu_usage']\n    else:\n        context.env['cpu_usage'] = {}\n\n
+    \   to_erase = []\n    for (tmstp, cpu_usage) in cpu_usage_timestamps.items():\n
+    \       prev_datetime = datetime.fromisoformat(tmstp)\n        if prev_datetime
+    + minute_delta >= current_datetime:\n            minute_count +=  1\n            hour_count
+    +=  1\n            aggregate(minute_agg, cpu_usage, 'avg-util-cpu{id}-60sec')\n
+    \           aggregate(hour_agg, cpu_usage, 'avg-util-cpu{id}-60min')\n        elif
+    prev_datetime + hour_delta >= current_datetime:\n            hour_count +=  1\n
+    \           aggregate(hour_agg, cpu_usage, 'avg-util-cpu{id}-60min')\n        else:\n
+    \           to_erase.append(tmstp)\n    \n    for time_greater in to_erase:\n
+    \       del context.env['cpu_usage'][time_greater]\n\n    context.env['cpu_usage'][current_datetime_str]
+    = cpu_percent\n\n    answer = {}\n    compute_answer(answer, minute_agg, minute_count)\n
+    \   compute_answer(answer, hour_agg, hour_count)\n    compute_answer(answer, {'avg-virtual-memory-usage-60sec':
+    mem_usage_agg}, mem_usage_count)\n    answer['timestamp'] = current_datetime_str\n
+    \   return answer\n"
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2022-07-21T05:15:04Z"
+  name: pyfile
+  namespace: viniciusramos
+  resourceVersion: "6264308"
+  uid: ad43b0e0-6bc9-45e3-be48-b376a779b431

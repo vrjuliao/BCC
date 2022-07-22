@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: viniciusramos-dashboard-service
+spec:
+  selector:
+    app: viniciusramos-dashboard
+  ports:
+    - protocol: TCP
+      port: 5126
+      targetPort: 5126
